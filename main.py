@@ -1,16 +1,21 @@
 from tkinter import *
 from tkinter import ttk
+import tkinter as tk
 import tkinter.font as tkfont
+from PIL import Image, ImageTk
+import os
 
 root = Tk()
 root.title('Prime Properties - Inventory Management System')
 root.geometry('1366x768')
 root.configure(bg="#191919")
 root.state('zoomed')
+root.table_image = []
 
 header = tkfont.Font(family='Oswald', weight='bold', size=20)
 sub = tkfont.Font(family='Open Sans', size=12)
-table_font = tkfont.Font(family='Open Sans', size=10)
+table_header_font = tkfont.Font(family='Open Sans', weight='bold', size=13)
+table_data_font = tkfont.Font(family='Open Sans', size=10)
 
 
 def goToNext(currentFrames, nextFunc):
@@ -48,71 +53,46 @@ def history():
     history_bg.columnconfigure(0, weight=1)
     history_bg.place(relx=.5, rely=.5, anchor="c")
 
-    history_text = tkfont.Font(family='Open Sans', weight="bold", size=15)
-    logout_text = tkfont.Font(family='Open Sans', weight="bold", size=10)
+    history_table = Frame(history_bg, bg="#191919", width=600, height=500)
+    history_table.place(relx=.70, rely=.5, anchor="c")
 
-    history_table = Frame(history_bg, bg="#191919", width=600, height=575)
-    history_table.place(relx=.5, rely=.5, anchor="c")
+    history_canvas = Canvas(history_table, bg="#191919", width=600, height=500)
 
-    horizontal_scroll = Scrollbar(history_table, orient='horizontal')
+    horizontal_scroll = Scrollbar(history_table, orient=HORIZONTAL)
     horizontal_scroll.pack(side=BOTTOM, fill=X)
-    vertical_scroll = Scrollbar(history_table)
+    horizontal_scroll.config(command=history_canvas.xview)
+    vertical_scroll = Scrollbar(history_table, orient=VERTICAL)
     vertical_scroll.pack(side=RIGHT, fill=Y)
+    vertical_scroll.config(command=history_canvas.yview)
 
-    history_data = ttk.Treeview(history_table, height=25, xscrollcommand=horizontal_scroll.set, yscrollcommand=vertical_scroll.set)
-    history_data.pack()
+    history_canvas.configure(xscrollcommand=horizontal_scroll.set, yscrollcommand=vertical_scroll.set)
+    history_canvas.pack(expand=True, side=LEFT, fill=BOTH)
 
-    horizontal_scroll.config(command=history_data.xview)
-    vertical_scroll.config(command=history_data.yview)
-    history_data.config(xscrollcommand=horizontal_scroll.set, yscrollcommand=vertical_scroll.set)
+    cell_width = 175
+    cell_height = 75
+    history_table_header = ["Photo", "Asset Name", "Company", "Owner", "Location",
+                            "Price", "Payment Status", "Amount", "Status", "Operation"]
+    for row in range(100):
+        y = row * cell_height
+        for column in range(10):
+            x = column * cell_width
+            history_canvas.create_rectangle(x, y, x + cell_width, y + cell_height, fill="#EAEAEA")
 
-    history_data["columns"] = ("photo", "asset_name", "company", "owner", "location", "price", "payment_status", "amount", "status", "operation")
-    history_data.column("#0", width=0, stretch=NO)
-    history_data.column("photo", width=100, anchor=CENTER)
-    history_data.column("asset_name", width=100, anchor=CENTER)
-    history_data.column("company", width=100, anchor=CENTER)
-    history_data.column("owner", width=100, anchor=CENTER)
-    history_data.column("location", width=100, anchor=CENTER)
-    history_data.column("price", width=100, anchor=CENTER)
-    history_data.column("payment_status", width=100, anchor=CENTER)
-    history_data.column("amount", width=100, anchor=CENTER)
-    history_data.column("status", width=100, anchor=CENTER)
-    history_data.column("operation", width=100, anchor=CENTER)
+            x_text = x + (cell_width / 2)
+            y_text = y + (cell_height / 2)
 
-    history_data.heading("#0", text="", anchor=CENTER)
-    history_data.heading("photo", text="Photo", anchor=CENTER)
-    history_data.heading("asset_name", text="Asset Name", anchor=CENTER)
-    history_data.heading("company", text="Company", anchor=CENTER)
-    history_data.heading("owner", text="Owner", anchor=CENTER)
-    history_data.heading("location", text="Location", anchor=CENTER)
-    history_data.heading("price", text="Price", anchor=CENTER)
-    history_data.heading("payment_status", text="Payment Status", anchor=CENTER)
-    history_data.heading("amount", text="Amount", anchor=CENTER)
-    history_data.heading("status", text="Status", anchor=CENTER)
-    history_data.heading("operation", text="Operation", anchor=CENTER)
-
-    history_data.insert(parent='', index='end', iid=0, text='', values=('1', '2', '3', '4', '5', '6', '7', '8', '9', '10'))
-    history_data.insert(parent='', index='end', iid=1, text='', values=('1', '2', '3', '4', '5', '6', '7', '8', '9', '10'))
-    history_data.insert(parent='', index='end', iid=2, text='', values=('1', '2', '3', '4', '5', '6', '7', '8', '9', '10'))
-    history_data.insert(parent='', index='end', iid=3, text='', values=('1', '2', '3', '4', '5', '6', '7', '8', '9', '10'))
-    history_data.insert(parent='', index='end', iid=4, text='', values=('1', '2', '3', '4', '5', '6', '7', '8', '9', '10'))
-    history_data.insert(parent='', index='end', iid=5, text='', values=('1', '2', '3', '4', '5', '6', '7', '8', '9', '10'))
-    history_data.insert(parent='', index='end', iid=6, text='', values=('1', '2', '3', '4', '5', '6', '7', '8', '9', '10'))
-    history_data.insert(parent='', index='end', iid=7, text='', values=('1', '2', '3', '4', '5', '6', '7', '8', '9', '10'))
-    history_data.insert(parent='', index='end', iid=8, text='', values=('1', '2', '3', '4', '5', '6', '7', '8', '9', '10'))
-    history_data.insert(parent='', index='end', iid=9, text='', values=('1', '2', '3', '4', '5', '6', '7', '8', '9', '10'))
-    history_data.insert(parent='', index='end', iid=10, text='', values=('1', '2', '3', '4', '5', '6', '7', '8', '9', '10'))
-    history_data.insert(parent='', index='end', iid=11, text='', values=('1', '2', '3', '4', '5', '6', '7', '8', '9', '10'))
-    history_data.insert(parent='', index='end', iid=12, text='', values=('1', '2', '3', '4', '5', '6', '7', '8', '9', '10'))
-    history_data.insert(parent='', index='end', iid=13, text='', values=('1', '2', '3', '4', '5', '6', '7', '8', '9', '10'))
-    history_data.insert(parent='', index='end', iid=14, text='', values=('1', '2', '3', '4', '5', '6', '7', '8', '9', '10'))
-    history_data.insert(parent='', index='end', iid=15, text='', values=('1', '2', '3', '4', '5', '6', '7', '8', '9', '10'))
-
-    history_data.pack()
-
-    frames = [history, history_bg, history_table]
-    logout_btn = Button(history_bg, text="Logout", width=10, command=lambda: goToNext(frames, 1), bg="#EEF5DB", fg="#363636", bd=0, font=logout_text)
-    logout_btn.place(relx=.5, rely=0.9, anchor="c")
+            if row == 0:
+                history_canvas.create_text((x_text, y_text), text=history_table_header[column], font=table_header_font)
+            else:
+                if column == 0:
+                    image = Image.open(os.getcwd() + r'\assets\img\sample_photo.png')
+                    resized_img = image.resize((50, 50), Image.ANTIALIAS)
+                    table_image = ImageTk.PhotoImage(resized_img)
+                    root.table_image.append(table_image)
+                    history_canvas.create_image(x + 63, y + 13, image=table_image, anchor=NW)
+                else:
+                    history_canvas.create_text((x_text, y_text), text="Table Data", font=table_data_font)
+    history_canvas.configure(scrollregion=history_canvas.bbox("all"))
 
 
 def nav():
