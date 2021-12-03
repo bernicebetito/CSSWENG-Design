@@ -18,34 +18,51 @@ field_label = tkfont.Font(family='Open Sans', size=10)
 buttonA = tkfont.Font(family='Open Sans', weight="bold", size=15)
 buttonB = tkfont.Font(family='Open Sans', weight="bold", size=10)
 
+valid_login = True
+
 
 def displayHeader(frame, header_y, sub_y):
     Label(frame, text="PRIME PROPERTIES", bg="#DDDDDD", fg="#3E3E3E", font=header).place(relx=.5, rely=header_y, anchor="c")
     Label(frame, text="Inventory Management System", bg="#DDDDDD", fg="#6A6A6A", font=sub).place(relx=.5, rely=sub_y, anchor="c")
 
 
+def checkCredentials(frames, nextFunc):
+    global valid_login
+
+    if len(username.get()) > 1 and len(password.get()) > 1:
+        # add other checking stuff
+        valid_login = True
+        goToNext(frames, nextFunc)
+    else:
+        valid_login = False
+        login()
+
+
 def goToNext(currentFrames, nextFunc):
     for i in currentFrames:
         i.destroy()
 
-    if nextFunc == 1: # Login
+    if valid_login:
+        if nextFunc == 1:  # Login
+            login()
+        elif nextFunc == 2:  # Nav
+            nav()
+        elif nextFunc == 3:  # Create Asset
+            nav()
+        elif nextFunc == 4:  # Create User
+            nav()
+        elif nextFunc == 5:  # Find
+            nav()
+        elif nextFunc == 6:  # History
+            history()
+        elif nextFunc == 7:  # Receive
+            nav()
+        elif nextFunc == 8:  # Update
+            nav()
+        elif nextFunc == 9:  # Delete
+            nav()
+    else:
         login()
-    elif nextFunc == 2: # Nav
-        nav()
-    elif nextFunc == 3: # Create Asset
-        nav()
-    elif nextFunc == 4: # Create User
-        nav()
-    elif nextFunc == 5: # Find
-        nav()
-    elif nextFunc == 6: # History
-        history()
-    elif nextFunc == 7: # Receive
-        nav()
-    elif nextFunc == 8: # Update
-        nav()
-    elif nextFunc == 9: # Delete
-        nav()
 
 
 def history():
@@ -147,27 +164,30 @@ def nav():
     receive_btn = Button(nav_bg, text="Receive", width=15, command=lambda: goToNext(frames, 7), bg="#24434D", fg="#FFFFFF", bd=0, font=buttonA)
     update_btn = Button(nav_bg, text="Update", width=15, command=lambda: goToNext(frames, 8), bg="#4F6367", fg="#FFFFFF", bd=0, font=buttonA)
     delete_btn = Button(nav_bg, text="Delete", width=15, command=lambda: goToNext(frames, 9), bg="#FE5F55", fg="#FFFFFF", bd=0, font=buttonA)
+    change_btn = Button(nav_bg, text="Change Password", width=15, command=lambda: goToNext(frames, 10), bg="#363636", fg="#FFFFFF", bd=0, font=buttonA)
     logout_btn = Button(nav_bg, text="Logout", width=10, command=lambda: goToNext(frames, 1), bg="#EEF5DB", fg="#363636", bd=0, font=buttonB)
 
     if username.get() == "manager":
         displayHeader(nav_bg, 0.05, 0.10)
 
-        create_asset_btn.place(relx=.5, rely=0.2, anchor="c")
-        create_user_btn.place(relx=.5, rely=0.3, anchor="c")
-        find_btn.place(relx=.5, rely=0.4, anchor="c")
-        history_btn.place(relx=.5, rely=0.5, anchor="c")
-        receive_btn.place(relx=.5, rely=0.6, anchor="c")
-        update_btn.place(relx=.5, rely=0.7, anchor="c")
-        delete_btn.place(relx=.5, rely=0.8, anchor="c")
-        logout_btn.place(relx=.5, rely=0.9, anchor="c")
+        create_asset_btn.place(relx=.5, rely=0.225, anchor="c")
+        create_user_btn.place(relx=.5, rely=0.310, anchor="c")
+        find_btn.place(relx=.5, rely=0.390, anchor="c")
+        history_btn.place(relx=.5, rely=0.475, anchor="c")
+        receive_btn.place(relx=.5, rely=0.560, anchor="c")
+        update_btn.place(relx=.5, rely=0.645, anchor="c")
+        delete_btn.place(relx=.5, rely=0.730, anchor="c")
+        change_btn.place(relx=.5, rely=0.815, anchor="c")
+        logout_btn.place(relx=.5, rely=0.925, anchor="c")
     elif username.get() == "clerk":
         displayHeader(nav_bg, 0.15, 0.20)
 
         create_asset_btn.place(relx=.5, rely=0.350, anchor="c")
-        find_btn.place(relx=.5, rely=0.475, anchor="c")
-        receive_btn.place(relx=.5, rely=0.600, anchor="c")
-        update_btn.place(relx=.5, rely=0.725, anchor="c")
-        logout_btn.place(relx=.5, rely=0.850, anchor="c")
+        find_btn.place(relx=.5, rely=0.450, anchor="c")
+        receive_btn.place(relx=.5, rely=0.550, anchor="c")
+        update_btn.place(relx=.5, rely=0.650, anchor="c")
+        change_btn.place(relx=.5, rely=0.750, anchor="c")
+        logout_btn.place(relx=.5, rely=0.900, anchor="c")
 
 
 def login():
@@ -194,10 +214,17 @@ def login():
     username_field.place(height=20, width=225, relx=.5, rely=0.5, anchor="c")
 
     Label(login_bg, text="Password", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.6, anchor="c")
-    Entry(login_bg, textvariable=password, show="*", width=35, bd=0).place(height=20, width=225, relx=.5, rely=0.65, anchor="c")
+    password_field = Entry(login_bg, textvariable=password, show="*", width=35, bd=0)
+    password_field.place(height=20, width=225, relx=.5, rely=0.65, anchor="c")
+
+    if not valid_login:
+        username_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
+        password_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
+        Label(login_bg, text="Invalid Username and / or Password", bg="#DDDDDD", fg="#D64000", font=field_label)\
+            .place(relx=.5, rely=0.725, anchor="c")
 
     frames = [login, login_bg]
-    login_btn = Button(login_bg, text="Login", height=1, width=10, command=lambda:goToNext(frames, 2), bg="#6D94AA", fg="#FFFFFF", bd=0, font=buttonB)
+    login_btn = Button(login_bg, text="Login", height=1, width=10, command=lambda:checkCredentials(frames, 2), bg="#6D94AA", fg="#FFFFFF", bd=0, font=buttonB)
     login_btn.place(relx=.5, rely=0.8, anchor="c")
 
 
