@@ -15,6 +15,7 @@ class Table(object):
         self.header_font = tkfont.Font(family='Open Sans', weight='bold', size=13)
         self.data_font = tkfont.Font(family='Open Sans', size=10)
         self.images = []
+        self.selected = []
 
 
     def setScrollbars(self, frame):
@@ -49,5 +50,51 @@ class Table(object):
                     if column == col_image:
                         self.images.append(self.contents[row][column])
                         self.canvas.create_image(x + 50, y + 13, image=self.contents[row][column], anchor=NW)
+                    else:
+                        self.canvas.create_text((x_text, y_text), text=self.contents[row][column], font=self.data_font)
+
+
+    def checkboxClicked(self):
+        curr_clicked = self.canvas.find_withtag("current")[0] - 25
+        curr_clicked /= 23
+        curr_clicked = int(curr_clicked)
+
+        if curr_clicked in self.selected:
+            self.canvas.itemconfig(self.checkboxes[int(curr_clicked + 1)], fill="#E8E8E8")
+            self.selected.remove(curr_clicked)
+        else:
+            self.canvas.itemconfig(self.checkboxes[int(curr_clicked + 1)], fill="#666666")
+            self.selected.append(curr_clicked)
+
+
+    def getSelected(self):
+        return self.selected
+
+
+    def checkboxTable(self):
+        self.images = []
+        self.checkboxes = {}
+        col_image = 0
+        for row in range(self.rows):
+            y = row * self.cell_height
+            for column in range(self.cols):
+                x = column * self.cell_width
+                self.canvas.create_rectangle(x, y, x + self.cell_width, y + self.cell_height, fill="#EAEAEA")
+
+                x_text = x + (self.cell_width / 2)
+                y_text = y + (self.cell_height / 2)
+
+                if row == 0:
+                    self.canvas.create_text((x_text, y_text), text=self.contents[row][column], font=self.header_font)
+                    if str(self.contents[row][column]) == "Photo":
+                        col_image = column
+                else:
+                    if column == col_image:
+                        self.images.append(self.contents[row][column])
+                        self.canvas.create_image(x + 50, y + 13, image=self.contents[row][column], anchor=NW)
+                    elif column == 0:
+                        self.canvas.create_rectangle(x_text - 9, y_text - 9, x_text + 9, y_text + 9, fill="#191919")
+                        self.checkboxes[row] = self.canvas.create_rectangle(x_text - 8, y_text - 8, x_text + 8, y_text + 8, fill="#E8E8E8")
+                        self.canvas.tag_bind(self.checkboxes[row], "<Button-1>", lambda e: self.checkboxClicked())
                     else:
                         self.canvas.create_text((x_text, y_text), text=self.contents[row][column], font=self.data_font)

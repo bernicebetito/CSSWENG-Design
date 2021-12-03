@@ -83,11 +83,11 @@ def history():
     Label(history_form_frame, text="Filter by Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.575, anchor="c")
     Entry(history_form_frame, textvariable=status, bd=0).place(height=20, width=225, relx=.5, rely=0.625, anchor="c")
 
-    filter_btn = Button(history_form_frame, text="Filter", width=15, command=lambda: goToNext(frames, 6), bg="#FE5F55", fg="#FFFFFF", bd=0, font=buttonA)
+    filter_btn = Button(history_form_frame, text="Filter", width=13, command=lambda: goToNext(frames, 6), bg="#FE5F55", fg="#FFFFFF", bd=0, font=buttonA)
     filter_btn.place(relx=.5, rely=0.725, anchor="c")
 
     frames = [history, history_bg, history_form_frame, history_table_frame]
-    back_btn = Button(history_form_frame, text="Back", width=15, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
+    back_btn = Button(history_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
     back_btn.place(relx=.15, rely=0.950, anchor="c")
 
     history_canvas = Canvas(history_table_frame, bg="#191919", width=825, height=500)
