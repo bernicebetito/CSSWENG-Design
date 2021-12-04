@@ -3,7 +3,9 @@ from tkinter import ttk
 import tkinter as tk
 import tkinter.font as tkfont
 from PIL import Image, ImageTk
-import os, table
+from tkinter import filedialog
+from tkinter.filedialog import askopenfile
+import os, table, create
 
 root = Tk()
 root.title('Prime Properties - Inventory Management System')
@@ -26,6 +28,21 @@ def displayHeader(frame, header_y, sub_y):
     Label(frame, text="Inventory Management System", bg="#DDDDDD", fg="#6A6A6A", font=sub).place(relx=.5, rely=sub_y, anchor="c")
 
 
+def uploadImage(canvas, text):
+    global upload_img, photo_filename
+    fileTypes = [('JPG Files', '*.jpg'),
+                 ('JPEG Files', '*.jpeg'),
+                 ('PNG Files', '*.png')]
+    photo_filename = filedialog.askopenfilename(filetypes=fileTypes)
+    if len(photo_filename) > 0:
+        image = Image.open(photo_filename)
+        resized_img = image.resize((250, 250), Image.ANTIALIAS)
+        upload_img = ImageTk.PhotoImage(resized_img)
+
+        canvas.create_image(0, 0, image=upload_img, anchor=NW)
+        canvas.delete(text)
+
+
 def checkCredentials(frames, nextFunc):
     global valid_login
 
@@ -38,6 +55,31 @@ def checkCredentials(frames, nextFunc):
         login()
 
 
+def checkCreateAsset(frames, create_fields):
+    create_asset = create.createAsset(create_fields)
+    approved_create = create_asset.submitForm()
+
+    if approved_create:
+        for i in frames:
+            i.destroy()
+
+        approved_create_bg = Frame(root, bg="#DDDDDD", width=300, height=300)
+        approved_create_bg.columnconfigure(0, weight=1)
+        approved_create_bg.place(relx=.5, rely=.5, anchor="c")
+
+        displayHeader(approved_create_bg, 0.15, 0.25)
+
+        approved_create_label = tkfont.Font(family='Oswald', weight="bold", size=25)
+        Label(approved_create_bg, text="Asset Created\nSuccessfully!", bg="#DDDDDD", fg="#6B9A39", font=approved_create_label).place(
+            relx=.5, rely=0.5, anchor="c")
+
+        frames = [approved_create_bg]
+        approved_create_btn = Button(approved_create_bg, text="Back to Home", height=1, width=15,
+                                     command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0,
+                                     font=buttonA)
+        approved_create_btn.place(relx=.5, rely=0.8, anchor="c")
+
+
 def goToNext(currentFrames, nextFunc):
     for i in currentFrames:
         i.destroy()
@@ -48,7 +90,7 @@ def goToNext(currentFrames, nextFunc):
         elif nextFunc == 2:  # Nav
             nav()
         elif nextFunc == 3:  # Create Asset
-            nav()
+            createAsset()
         elif nextFunc == 4:  # Create User
             nav()
         elif nextFunc == 5:  # Find
@@ -66,11 +108,6 @@ def goToNext(currentFrames, nextFunc):
 
 
 def history():
-    history = Frame(root)
-    history.pack()
-    history.columnconfigure(0, weight=1)
-    history.place(relx=.5, rely=.5, anchor="c")
-
     history_bg = Frame(root, bg="#DDDDDD", width=1200, height=600)
     history_bg.pack()
     history_bg.columnconfigure(0, weight=1)
@@ -103,7 +140,7 @@ def history():
     filter_btn = Button(history_form_frame, text="Filter", width=13, command=lambda: goToNext(frames, 6), bg="#FE5F55", fg="#FFFFFF", bd=0, font=buttonA)
     filter_btn.place(relx=.5, rely=0.725, anchor="c")
 
-    frames = [history, history_bg, history_form_frame, history_table_frame]
+    frames = [history_bg, history_form_frame, history_table_frame]
     back_btn = Button(history_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
     back_btn.place(relx=.15, rely=0.950, anchor="c")
 
@@ -142,12 +179,87 @@ def history():
     history_canvas.configure(scrollregion=history_canvas.bbox("all"))
 
 
-def nav():
-    nav = Frame(root)
-    nav.pack()
-    nav.columnconfigure(0, weight=1)
-    nav.place(relx=.5, rely=.5, anchor="c")
+def createAsset():
+    create_name = StringVar()
+    create_company = StringVar()
+    create_status = StringVar()
+    create_location = StringVar()
+    create_price = StringVar()
+    create_quantity = StringVar()
+    create_ownership = StringVar()
+    create_payment_status = StringVar()
 
+    create_bg = Frame(root, bg="#DDDDDD", width=950, height=600)
+    create_bg.columnconfigure(0, weight=1)
+    create_bg.place(relx=.5, rely=.5, anchor="c")
+
+    create_left = Frame(create_bg, bg="#DDDDDD", width=300, height=575)
+    create_left.columnconfigure(0, weight=1)
+    create_left.place(relx=.175, rely=.5, anchor="c")
+
+    create_right = Frame(create_bg, bg="#DDDDDD", width=575, height=550)
+    create_right.place(relx=.675, rely=.5, anchor="c")
+
+    frames = [create_bg, create_left, create_right]
+
+    displayHeader(create_left, 0.050, 0.100)
+    create_photo_preview = Canvas(create_left, bg="#FFFFFF", width=250, height=250)
+    create_photo_preview.place(relx=.5, rely=0.450, anchor="c")
+    create_photo_text = create_photo_preview.create_text((125, 125), text="No Photo Uploaded", font=field_label)
+
+    upload_btn = Button(create_left, text="Upload", width=13, command=lambda: uploadImage(create_photo_preview, create_photo_text), bg="#B3D687", fg="#FFFFFF", bd=0, font=buttonA)
+    upload_btn.place(relx=.5, rely=0.725, anchor="c")
+    back_btn = Button(create_left, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
+    back_btn.place(relx=.15, rely=0.950, anchor="c")
+
+    Label(create_right, text="Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.100, rely=0.200, anchor="c")
+    create_name_field = Entry(create_right, textvariable=create_name, width=35, bd=0)
+    create_name_field.place(height=25, width=250, relx=.245, rely=0.250, anchor="c")
+
+    Label(create_right, text="Company", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.590, rely=0.200, anchor="c")
+    create_company_field = Entry(create_right, textvariable=create_company, width=35, bd=0)
+    create_company_field.place(height=25, width=250, relx=.750, rely=0.250, anchor="c")
+
+    Label(create_right, text="Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.070, rely=0.350, anchor="c")
+    create_status_field = Entry(create_right, textvariable=create_status, width=35, bd=0)
+    create_status_field.place(height=25, width=250, relx=.245, rely=0.400, anchor="c")
+
+    Label(create_right, text="Unit Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.605, rely=0.350, anchor="c")
+    create_location_field = Entry(create_right, textvariable=create_location, width=35, bd=0)
+    create_location_field.place(height=25, width=250, relx=.750, rely=0.400, anchor="c")
+
+    Label(create_right, text="Price", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.065, rely=0.500, anchor="c")
+    create_price_field = Entry(create_right, textvariable=create_price, width=35, bd=0)
+    create_price_field.place(height=25, width=250, relx=.245, rely=0.550, anchor="c")
+
+    Label(create_right, text="Quantity", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.585, rely=0.500, anchor="c")
+    create_quantity_field = Entry(create_right, textvariable=create_quantity, width=35, bd=0)
+    create_quantity_field.place(height=25, width=250, relx=.750, rely=0.550, anchor="c")
+
+    Label(create_right, text="Ownership", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.090, rely=0.650, anchor="c")
+    create_owner_field = Entry(create_right, textvariable=create_ownership, width=35, bd=0)
+    create_owner_field.place(height=25, width=250, relx=.245, rely=0.700, anchor="c")
+
+    Label(create_right, text="Payment Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.625, rely=0.650, anchor="c")
+    create_payment_field = Entry(create_right, textvariable=create_payment_status, width=35, bd=0)
+    create_payment_field.place(height=25, width=250, relx=.750, rely=0.700, anchor="c")
+
+    create_fields = {
+        "name": create_name,
+        "company": create_company,
+        "status": create_status,
+        "location": create_location,
+        "price": create_price,
+        "quantity": create_quantity,
+        "ownership": create_ownership,
+        "payment_status": create_payment_status
+    }
+
+    create_btn = Button(create_right, text="Create", width=15, command=lambda: checkCreateAsset(frames, create_fields), bg="#B8D8D8", fg="#FFFFFF", bd=0, font=buttonA)
+    create_btn.place(relx=.250, rely=0.975, anchor="c")
+
+
+def nav():
     if username.get() == "manager":
         nav_bg = Frame(root, bg="#DDDDDD", width=300, height=600)
     else:
@@ -156,7 +268,7 @@ def nav():
     nav_bg.columnconfigure(0, weight=1)
     nav_bg.place(relx=.5, rely=.5, anchor="c")
 
-    frames = [nav, nav_bg]
+    frames = [nav_bg]
     create_asset_btn = Button(nav_bg, text="Create Asset", width=15, command=lambda: goToNext(frames, 3), bg="#B8D8D8", fg="#FFFFFF", bd=0, font=buttonA)
     create_user_btn = Button(nav_bg, text="Create User", width=15, command=lambda: goToNext(frames, 4), bg="#8EB8CF", fg="#FFFFFF", bd=0, font=buttonA)
     find_btn = Button(nav_bg, text="Find", width=15, command=lambda: goToNext(frames, 5), bg="#7A9E9F", fg="#FFFFFF", bd=0, font=buttonA)
@@ -192,11 +304,6 @@ def nav():
 
 def login():
     global username, password
-    login = Frame(root)
-    login.pack()
-    login.columnconfigure(0, weight=1)
-    login.place(relx=.5, rely=.5, anchor="c")
-
     login_bg = Frame(root, bg="#DDDDDD", width=300, height=450)
     login_bg.columnconfigure(0, weight=1)
     login_bg.place(relx=.5, rely=.5, anchor="c")
@@ -223,8 +330,8 @@ def login():
         Label(login_bg, text="Invalid Username and / or Password", bg="#DDDDDD", fg="#D64000", font=field_label)\
             .place(relx=.5, rely=0.725, anchor="c")
 
-    frames = [login, login_bg]
-    login_btn = Button(login_bg, text="Login", height=1, width=10, command=lambda:checkCredentials(frames, 2), bg="#6D94AA", fg="#FFFFFF", bd=0, font=buttonB)
+    frames = [login_bg]
+    login_btn = Button(login_bg, text="Login", height=1, width=13, command=lambda:checkCredentials(frames, 2), bg="#6D94AA", fg="#FFFFFF", bd=0, font=buttonA)
     login_btn.place(relx=.5, rely=0.8, anchor="c")
 
 
