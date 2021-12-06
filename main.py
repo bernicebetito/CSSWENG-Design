@@ -4,7 +4,7 @@ import tkinter.font as tkfont
 from PIL import Image, ImageTk
 from tkinter import filedialog
 from tkinter.filedialog import askopenfile
-import os, table, create
+import os, table, create, history
 
 root = Tk()
 root.title('Prime Properties - Inventory Management System')
@@ -94,120 +94,50 @@ def goToNext(currentFrames, nextFunc):
         elif nextFunc == 5:  # Find
             nav()
         elif nextFunc == 6:  # History
-            history()
+            historyPage()
         elif nextFunc == 7:  # Receive
             nav()
         elif nextFunc == 8:  # Update
             nav()
         elif nextFunc == 9:  # Delete
             nav()
+        elif nextFunc == 10:  # Change Password
+            changePassword()
     else:
         login()
 
 
-def history():
-    history_bg = Frame(root, bg="#DDDDDD", width=1200, height=600)
-    history_bg.pack()
-    history_bg.columnconfigure(0, weight=1)
-    history_bg.place(relx=.5, rely=.5, anchor="c")
+def login():
+    global username, password
+    login_bg = Frame(root, bg="#DDDDDD", width=300, height=450)
+    login_bg.columnconfigure(0, weight=1)
+    login_bg.place(relx=.5, rely=.5, anchor="c")
 
-    history_form_frame = Frame(history_bg, bg="#DDDDDD", width=300, height=550)
-    history_form_frame.place(relx=.135, rely=.5, anchor="c")
+    displayHeader(login_bg, 0.20, 0.25)
 
-    history_table_frame = Frame(history_bg, bg="#191919", width=825, height=500)
-    history_table_frame.place(relx=.625, rely=.5, anchor="c")
+    login_label = tkfont.Font(family='Oswald', weight="bold", size=15)
+    Label(login_bg, text="LOGIN", bg="#DDDDDD", fg="#3E3E3E", font=login_label).place(relx=.5, rely=0.375, anchor="c")
 
-    displayHeader(history_form_frame, 0.050, 0.100)
+    username = StringVar()
+    password = StringVar()
+    Label(login_bg, text="Username", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.45, anchor="c")
+    username_field = Entry(login_bg, textvariable=username, bd=0)
+    username_field.focus()
+    username_field.place(height=20, width=225, relx=.5, rely=0.5, anchor="c")
 
-    asset_name = StringVar()
-    location = StringVar()
-    owner = StringVar()
-    status = StringVar()
-    Label(history_form_frame, text="Filter by Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.200, anchor="c")
-    Entry(history_form_frame, textvariable=asset_name, bd=0).place(height=20, width=225, relx=.5, rely=0.250, anchor="c")
+    Label(login_bg, text="Password", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.6, anchor="c")
+    password_field = Entry(login_bg, textvariable=password, show="*", width=35, bd=0)
+    password_field.place(height=20, width=225, relx=.5, rely=0.65, anchor="c")
 
-    Label(history_form_frame, text="Filter by Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.325, anchor="c")
-    Entry(history_form_frame, textvariable=location, bd=0).place(height=20, width=225, relx=.5, rely=0.375, anchor="c")
+    if not valid_login:
+        username_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
+        password_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
+        Label(login_bg, text="Invalid Username and / or Password", bg="#DDDDDD", fg="#D64000", font=field_label)\
+            .place(relx=.5, rely=0.725, anchor="c")
 
-    Label(history_form_frame, text="Filter by Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.450, anchor="c")
-    Entry(history_form_frame, textvariable=owner, bd=0).place(height=20, width=225, relx=.5, rely=0.500, anchor="c")
-
-    Label(history_form_frame, text="Filter by Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.575, anchor="c")
-    Entry(history_form_frame, textvariable=status, bd=0).place(height=20, width=225, relx=.5, rely=0.625, anchor="c")
-
-    filter_btn = Button(history_form_frame, text="Filter", width=13, command=lambda: goToNext(frames, 6), bg="#FE5F55", fg="#FFFFFF", bd=0, font=buttonA)
-    filter_btn.place(relx=.5, rely=0.725, anchor="c")
-
-    frames = [history_bg, history_form_frame, history_table_frame]
-    back_btn = Button(history_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
-    back_btn.place(relx=.15, rely=0.950, anchor="c")
-
-    history_canvas = Canvas(history_table_frame, bg="#191919", width=825, height=500)
-
-    history_measurements = {
-        "cell_width": 150,
-        "cell_height": 75,
-        "rows": 100,
-        "columns": 10
-    }
-    history_table_header = ["Photo", "Asset Name", "Company", "Owner", "Location",
-                            "Price", "Payment Status", "Amount", "Status", "Operation"]
-
-    history_table_contents = []
-    root.table_image = []
-    for row in range(100):
-        curr_row = []
-        for column in range(10):
-            if row == 0:
-                curr_row.append(history_table_header[column])
-            else:
-                if column == 0:
-                    image = Image.open(os.getcwd() + r'\assets\img\sample_photo.png')
-                    resized_img = image.resize((50, 50), Image.ANTIALIAS)
-                    table_image = ImageTk.PhotoImage(resized_img)
-                    root.table_image.append(table_image)
-                    curr_row.append(table_image)
-                else:
-                    curr_row.append("Testing Text")
-        history_table_contents.append(curr_row)
-
-    history_table = table.Table(history_measurements, history_canvas, history_table_contents)
-    history_table.setScrollbars(history_table_frame)
-    history_table.createTable()
-    history_canvas.configure(scrollregion=history_canvas.bbox("all"))
-
-
-def createAsset():
-    create_bg = Frame(root, bg="#DDDDDD", width=950, height=600)
-    create_bg.columnconfigure(0, weight=1)
-    create_bg.place(relx=.5, rely=.5, anchor="c")
-
-    create_left = Frame(create_bg, bg="#DDDDDD", width=300, height=575)
-    create_left.columnconfigure(0, weight=1)
-    create_left.place(relx=.175, rely=.5, anchor="c")
-
-    create_right = Frame(create_bg, bg="#DDDDDD", width=575, height=550)
-    create_right.place(relx=.675, rely=.5, anchor="c")
-
-    frames = [create_bg, create_left, create_right]
-
-    displayHeader(create_left, 0.050, 0.100)
-    create_photo_preview = Canvas(create_left, bg="#FFFFFF", width=250, height=250)
-    create_photo_preview.place(relx=.5, rely=0.450, anchor="c")
-    create_photo_text = create_photo_preview.create_text((125, 125), text="No Photo Uploaded", font=field_label)
-
-    upload_btn = Button(create_left, text="Upload", width=13, command=lambda: uploadImage(create_photo_preview, create_photo_text), bg="#B3D687", fg="#FFFFFF", bd=0, font=buttonA)
-    upload_btn.place(relx=.5, rely=0.725, anchor="c")
-    back_btn = Button(create_left, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
-    back_btn.place(relx=.15, rely=0.950, anchor="c")
-
-    create_form = create.createAsset(root)
-    create_form.setCreate(create_right, field_label)
-
-    create_btn = Button(create_right, text="Create", width=15, command=lambda: checkCreateAsset(frames, create_form),
-                        bg="#B8D8D8", fg="#FFFFFF", bd=0, font=buttonA)
-    create_btn.place(relx=.250, rely=0.975, anchor="c")
-    create_form.setButton(create_btn)
+    frames = [login_bg]
+    login_btn = Button(login_bg, text="Login", height=1, width=13, command=lambda:checkCredentials(frames, 2), bg="#6D94AA", fg="#FFFFFF", bd=0, font=buttonA)
+    login_btn.place(relx=.5, rely=0.8, anchor="c")
 
 
 def nav():
@@ -253,37 +183,60 @@ def nav():
         logout_btn.place(relx=.5, rely=0.900, anchor="c")
 
 
-def login():
-    global username, password
-    login_bg = Frame(root, bg="#DDDDDD", width=300, height=450)
-    login_bg.columnconfigure(0, weight=1)
-    login_bg.place(relx=.5, rely=.5, anchor="c")
+def createAsset():
+    create_bg = Frame(root, bg="#DDDDDD", width=950, height=600)
+    create_bg.columnconfigure(0, weight=1)
+    create_bg.place(relx=.5, rely=.5, anchor="c")
 
-    displayHeader(login_bg, 0.20, 0.25)
+    create_left = Frame(create_bg, bg="#DDDDDD", width=300, height=575)
+    create_left.columnconfigure(0, weight=1)
+    create_left.place(relx=.175, rely=.5, anchor="c")
 
-    login_label = tkfont.Font(family='Oswald', weight="bold", size=15)
-    Label(login_bg, text="LOGIN", bg="#DDDDDD", fg="#3E3E3E", font=login_label).place(relx=.5, rely=0.375, anchor="c")
+    create_right = Frame(create_bg, bg="#DDDDDD", width=575, height=550)
+    create_right.place(relx=.675, rely=.5, anchor="c")
 
-    username = StringVar()
-    password = StringVar()
-    Label(login_bg, text="Username", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.45, anchor="c")
-    username_field = Entry(login_bg, textvariable=username, bd=0)
-    username_field.focus()
-    username_field.place(height=20, width=225, relx=.5, rely=0.5, anchor="c")
+    frames = [create_bg, create_left, create_right]
 
-    Label(login_bg, text="Password", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.6, anchor="c")
-    password_field = Entry(login_bg, textvariable=password, show="*", width=35, bd=0)
-    password_field.place(height=20, width=225, relx=.5, rely=0.65, anchor="c")
+    displayHeader(create_left, 0.050, 0.100)
+    create_photo_preview = Canvas(create_left, bg="#FFFFFF", width=250, height=250)
+    create_photo_preview.place(relx=.5, rely=0.450, anchor="c")
+    create_photo_text = create_photo_preview.create_text((125, 125), text="No Photo Uploaded", font=field_label)
 
-    if not valid_login:
-        username_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
-        password_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
-        Label(login_bg, text="Invalid Username and / or Password", bg="#DDDDDD", fg="#D64000", font=field_label)\
-            .place(relx=.5, rely=0.725, anchor="c")
+    upload_btn = Button(create_left, text="Upload", width=13, command=lambda: uploadImage(create_photo_preview, create_photo_text), bg="#B3D687", fg="#FFFFFF", bd=0, font=buttonA)
+    upload_btn.place(relx=.5, rely=0.725, anchor="c")
+    back_btn = Button(create_left, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
+    back_btn.place(relx=.15, rely=0.950, anchor="c")
 
-    frames = [login_bg]
-    login_btn = Button(login_bg, text="Login", height=1, width=13, command=lambda:checkCredentials(frames, 2), bg="#6D94AA", fg="#FFFFFF", bd=0, font=buttonA)
-    login_btn.place(relx=.5, rely=0.8, anchor="c")
+    create_form = create.createAsset(root)
+    create_form.setCreate(create_right, field_label)
+
+    create_btn = Button(create_right, text="Create", width=15, command=lambda: checkCreateAsset(frames, create_form),
+                        bg="#B8D8D8", fg="#FFFFFF", bd=0, font=buttonA)
+    create_btn.place(relx=.250, rely=0.975, anchor="c")
+    create_form.setButton(create_btn)
+
+
+def historyPage():
+    history_bg = Frame(root, bg="#DDDDDD", width=1200, height=600)
+    history_bg.pack()
+    history_bg.columnconfigure(0, weight=1)
+    history_bg.place(relx=.5, rely=.5, anchor="c")
+
+    history_form_frame = Frame(history_bg, bg="#DDDDDD", width=300, height=550)
+    history_form_frame.place(relx=.135, rely=.5, anchor="c")
+
+    history_table_frame = Frame(history_bg, bg="#191919", width=825, height=500)
+    history_table_frame.place(relx=.625, rely=.5, anchor="c")
+
+    displayHeader(history_form_frame, 0.050, 0.100)
+
+    history_page = history.History(root)
+    history_page.displayHistory(history_form_frame, field_label, buttonA)
+    history_page.displayTable(history_table_frame)
+
+    frames = [history_bg, history_form_frame, history_table_frame]
+    back_btn = Button(history_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
+    back_btn.place(relx=.15, rely=0.950, anchor="c")
 
 
 login()
