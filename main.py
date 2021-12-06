@@ -1,6 +1,5 @@
 from tkinter import *
 from tkinter import ttk
-import tkinter as tk
 import tkinter.font as tkfont
 from PIL import Image, ImageTk
 from tkinter import filedialog
@@ -55,8 +54,7 @@ def checkCredentials(frames, nextFunc):
         login()
 
 
-def checkCreateAsset(frames, create_fields):
-    create_asset = create.createAsset(create_fields)
+def checkCreateAsset(frames, create_asset):
     approved_create = create_asset.submitForm()
 
     if approved_create:
@@ -180,15 +178,6 @@ def history():
 
 
 def createAsset():
-    create_name = StringVar()
-    create_company = StringVar()
-    create_status = StringVar()
-    create_location = StringVar()
-    create_price = StringVar()
-    create_quantity = StringVar()
-    create_ownership = StringVar()
-    create_payment_status = StringVar()
-
     create_bg = Frame(root, bg="#DDDDDD", width=950, height=600)
     create_bg.columnconfigure(0, weight=1)
     create_bg.place(relx=.5, rely=.5, anchor="c")
@@ -212,51 +201,13 @@ def createAsset():
     back_btn = Button(create_left, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
     back_btn.place(relx=.15, rely=0.950, anchor="c")
 
-    Label(create_right, text="Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.100, rely=0.200, anchor="c")
-    create_name_field = Entry(create_right, textvariable=create_name, width=35, bd=0)
-    create_name_field.place(height=25, width=250, relx=.245, rely=0.250, anchor="c")
+    create_form = create.createAsset(root)
+    create_form.setCreate(create_right, field_label)
 
-    Label(create_right, text="Company", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.590, rely=0.200, anchor="c")
-    create_company_field = Entry(create_right, textvariable=create_company, width=35, bd=0)
-    create_company_field.place(height=25, width=250, relx=.750, rely=0.250, anchor="c")
-
-    Label(create_right, text="Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.070, rely=0.350, anchor="c")
-    create_status_field = Entry(create_right, textvariable=create_status, width=35, bd=0)
-    create_status_field.place(height=25, width=250, relx=.245, rely=0.400, anchor="c")
-
-    Label(create_right, text="Unit Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.605, rely=0.350, anchor="c")
-    create_location_field = Entry(create_right, textvariable=create_location, width=35, bd=0)
-    create_location_field.place(height=25, width=250, relx=.750, rely=0.400, anchor="c")
-
-    Label(create_right, text="Price", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.065, rely=0.500, anchor="c")
-    create_price_field = Entry(create_right, textvariable=create_price, width=35, bd=0)
-    create_price_field.place(height=25, width=250, relx=.245, rely=0.550, anchor="c")
-
-    Label(create_right, text="Quantity", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.585, rely=0.500, anchor="c")
-    create_quantity_field = Entry(create_right, textvariable=create_quantity, width=35, bd=0)
-    create_quantity_field.place(height=25, width=250, relx=.750, rely=0.550, anchor="c")
-
-    Label(create_right, text="Ownership", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.090, rely=0.650, anchor="c")
-    create_owner_field = Entry(create_right, textvariable=create_ownership, width=35, bd=0)
-    create_owner_field.place(height=25, width=250, relx=.245, rely=0.700, anchor="c")
-
-    Label(create_right, text="Payment Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.625, rely=0.650, anchor="c")
-    create_payment_field = Entry(create_right, textvariable=create_payment_status, width=35, bd=0)
-    create_payment_field.place(height=25, width=250, relx=.750, rely=0.700, anchor="c")
-
-    create_fields = {
-        "name": create_name,
-        "company": create_company,
-        "status": create_status,
-        "location": create_location,
-        "price": create_price,
-        "quantity": create_quantity,
-        "ownership": create_ownership,
-        "payment_status": create_payment_status
-    }
-
-    create_btn = Button(create_right, text="Create", width=15, command=lambda: checkCreateAsset(frames, create_fields), bg="#B8D8D8", fg="#FFFFFF", bd=0, font=buttonA)
+    create_btn = Button(create_right, text="Create", width=15, command=lambda: checkCreateAsset(frames, create_form),
+                        bg="#B8D8D8", fg="#FFFFFF", bd=0, font=buttonA)
     create_btn.place(relx=.250, rely=0.975, anchor="c")
+    create_form.setButton(create_btn)
 
 
 def nav():
