@@ -4,7 +4,7 @@ import tkinter.font as tkfont
 from PIL import Image, ImageTk
 from tkinter import filedialog
 from tkinter.filedialog import askopenfile
-import os, table, create, history
+import os, credentials, create, history
 
 root = Tk()
 root.title('Prime Properties - Inventory Management System')
@@ -19,6 +19,7 @@ field_label = tkfont.Font(family='Open Sans', size=10)
 buttonA = tkfont.Font(family='Open Sans', weight="bold", size=15)
 buttonB = tkfont.Font(family='Open Sans', weight="bold", size=10)
 
+login_credentials = credentials.User()
 valid_login = True
 
 
@@ -42,40 +43,24 @@ def uploadImage(canvas, text):
         canvas.delete(text)
 
 
-def checkCredentials(frames, nextFunc):
-    global valid_login
-
-    if len(username.get()) > 1 and len(password.get()) > 1:
-        # add other checking stuff
-        valid_login = True
-        goToNext(frames, nextFunc)
-    else:
-        valid_login = False
-        login()
-
-
-def checkCreateAsset(frames, create_asset):
-    approved_create = create_asset.submitForm()
-
-    if approved_create:
-        for i in frames:
+def approvedMessage(frames, message):
+    for i in frames:
             i.destroy()
 
-        approved_create_bg = Frame(root, bg="#DDDDDD", width=300, height=300)
-        approved_create_bg.columnconfigure(0, weight=1)
-        approved_create_bg.place(relx=.5, rely=.5, anchor="c")
+    approved_create_bg = Frame(root, bg="#DDDDDD", width=300, height=300)
+    approved_create_bg.columnconfigure(0, weight=1)
+    approved_create_bg.place(relx=.5, rely=.5, anchor="c")
 
-        displayHeader(approved_create_bg, 0.15, 0.25)
+    displayHeader(approved_create_bg, 0.15, 0.25)
 
-        approved_create_label = tkfont.Font(family='Oswald', weight="bold", size=25)
-        Label(approved_create_bg, text="Asset Created\nSuccessfully!", bg="#DDDDDD", fg="#6B9A39", font=approved_create_label).place(
-            relx=.5, rely=0.5, anchor="c")
+    approved_create_label = tkfont.Font(family='Oswald', weight="bold", size=25)
+    Label(approved_create_bg, text=message, bg="#DDDDDD", fg="#6B9A39", font=approved_create_label).place(relx=.5, rely=0.5, anchor="c")
 
-        frames = [approved_create_bg]
-        approved_create_btn = Button(approved_create_bg, text="Back to Home", height=1, width=15,
-                                     command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0,
-                                     font=buttonA)
-        approved_create_btn.place(relx=.5, rely=0.8, anchor="c")
+    approved_frames = [approved_create_bg]
+    approved_create_btn = Button(approved_create_bg, text="Back to Home", height=1, width=15,
+                                 command=lambda: goToNext(approved_frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0,
+                                 font=buttonA)
+    approved_create_btn.place(relx=.5, rely=0.8, anchor="c")
 
 
 def goToNext(currentFrames, nextFunc):
@@ -108,32 +93,23 @@ def goToNext(currentFrames, nextFunc):
 
 
 def login():
-    global username, password
+    global login_credentials
     login_bg = Frame(root, bg="#DDDDDD", width=300, height=450)
     login_bg.columnconfigure(0, weight=1)
     login_bg.place(relx=.5, rely=.5, anchor="c")
 
     displayHeader(login_bg, 0.20, 0.25)
+    login_credentials = credentials.User()
+    login_credentials.setLogin(login_bg, field_label)
 
-    login_label = tkfont.Font(family='Oswald', weight="bold", size=15)
-    Label(login_bg, text="LOGIN", bg="#DDDDDD", fg="#3E3E3E", font=login_label).place(relx=.5, rely=0.375, anchor="c")
-
-    username = StringVar()
-    password = StringVar()
-    Label(login_bg, text="Username", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.45, anchor="c")
-    username_field = Entry(login_bg, textvariable=username, bd=0)
-    username_field.focus()
-    username_field.place(height=20, width=225, relx=.5, rely=0.5, anchor="c")
-
-    Label(login_bg, text="Password", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.6, anchor="c")
-    password_field = Entry(login_bg, textvariable=password, show="*", width=35, bd=0)
-    password_field.place(height=20, width=225, relx=.5, rely=0.65, anchor="c")
-
-    if not valid_login:
-        username_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
-        password_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
-        Label(login_bg, text="Invalid Username and / or Password", bg="#DDDDDD", fg="#D64000", font=field_label)\
-            .place(relx=.5, rely=0.725, anchor="c")
+    def checkCredentials(frames, nextFunc):
+        global valid_login, username
+        if login_credentials.checkLoginCredentials():
+            username = login_credentials.getUsername()
+            valid_login = True
+            goToNext(frames, nextFunc)
+        else:
+            valid_login = False
 
     frames = [login_bg]
     login_btn = Button(login_bg, text="Login", height=1, width=13, command=lambda:checkCredentials(frames, 2), bg="#6D94AA", fg="#FFFFFF", bd=0, font=buttonA)
@@ -141,7 +117,7 @@ def login():
 
 
 def nav():
-    if username.get() == "manager":
+    if username == "manager":
         nav_bg = Frame(root, bg="#DDDDDD", width=300, height=600)
     else:
         nav_bg = Frame(root, bg="#DDDDDD", width=300, height=450)
@@ -157,10 +133,10 @@ def nav():
     receive_btn = Button(nav_bg, text="Receive", width=15, command=lambda: goToNext(frames, 7), bg="#24434D", fg="#FFFFFF", bd=0, font=buttonA)
     update_btn = Button(nav_bg, text="Update", width=15, command=lambda: goToNext(frames, 8), bg="#4F6367", fg="#FFFFFF", bd=0, font=buttonA)
     delete_btn = Button(nav_bg, text="Delete", width=15, command=lambda: goToNext(frames, 9), bg="#FE5F55", fg="#FFFFFF", bd=0, font=buttonA)
-    change_btn = Button(nav_bg, text="Change Password", width=15, command=lambda: goToNext(frames, 10), bg="#363636", fg="#FFFFFF", bd=0, font=buttonA)
-    logout_btn = Button(nav_bg, text="Logout", width=10, command=lambda: goToNext(frames, 1), bg="#EEF5DB", fg="#363636", bd=0, font=buttonB)
+    change_btn = Button(nav_bg, text="Change Password", width=15, command=lambda: goToNext(frames, 10), bg="#8C241E", fg="#FFFFFF", bd=0, font=buttonA)
+    logout_btn = Button(nav_bg, text="Logout", width=10, command=lambda: goToNext(frames, 1), bg="#363636", fg="#FFFFFF", bd=0, font=buttonB)
 
-    if username.get() == "manager":
+    if username == "manager":
         displayHeader(nav_bg, 0.05, 0.10)
 
         create_asset_btn.place(relx=.5, rely=0.225, anchor="c")
@@ -172,7 +148,7 @@ def nav():
         delete_btn.place(relx=.5, rely=0.730, anchor="c")
         change_btn.place(relx=.5, rely=0.815, anchor="c")
         logout_btn.place(relx=.5, rely=0.925, anchor="c")
-    elif username.get() == "clerk":
+    elif username == "clerk":
         displayHeader(nav_bg, 0.15, 0.20)
 
         create_asset_btn.place(relx=.5, rely=0.350, anchor="c")
@@ -210,6 +186,10 @@ def createAsset():
     create_form = create.createAsset(root)
     create_form.setCreate(create_right, field_label)
 
+    def checkCreateAsset(frames, form):
+        if form.submitForm():
+            approvedMessage(frames, "Asset Created\nSuccessfully!")
+
     create_btn = Button(create_right, text="Create", width=15, command=lambda: checkCreateAsset(frames, create_form),
                         bg="#B8D8D8", fg="#FFFFFF", bd=0, font=buttonA)
     create_btn.place(relx=.250, rely=0.975, anchor="c")
@@ -237,6 +217,27 @@ def historyPage():
     frames = [history_bg, history_form_frame, history_table_frame]
     back_btn = Button(history_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
     back_btn.place(relx=.15, rely=0.950, anchor="c")
+
+
+def changePassword():
+    change_pass_bg = Frame(root, bg="#DDDDDD", width=300, height=450)
+    change_pass_bg.columnconfigure(0, weight=1)
+    change_pass_bg.place(relx=.5, rely=.5, anchor="c")
+
+    displayHeader(change_pass_bg, 0.10, 0.15)
+    login_credentials.setChangePassword(change_pass_bg, field_label)
+
+    def validateChangePassword(frames):
+        if login_credentials.checkChangePassword():
+            approvedMessage(frames, "Password Updated\nSuccessfully!")
+
+    frames = [change_pass_bg]
+    change_pass_btn = Button(change_pass_bg, text="Change Password", height=1, width=15, command=lambda: validateChangePassword(frames), bg="#8C241E", fg="#FFFFFF", bd=0, font=buttonA)
+    change_pass_btn.place(relx=.5, rely=0.825, anchor="c")
+
+    frames = [change_pass_bg]
+    back_btn = Button(change_pass_bg, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
+    back_btn.place(relx=.5, rely=0.950, anchor="c")
 
 
 login()
