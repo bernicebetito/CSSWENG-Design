@@ -4,7 +4,7 @@ import tkinter.font as tkfont
 from PIL import Image, ImageTk
 from tkinter import filedialog
 from tkinter.filedialog import askopenfile
-import os, credentials, create, history
+import os, credentials, asset, history
 
 root = Tk()
 root.title('Prime Properties - Inventory Management System')
@@ -75,7 +75,7 @@ def goToNext(currentFrames, nextFunc):
         elif nextFunc == 3:  # Create Asset
             createAsset()
         elif nextFunc == 4:  # Create User
-            nav()
+            createUser()
         elif nextFunc == 5:  # Find
             nav()
         elif nextFunc == 6:  # History
@@ -183,7 +183,7 @@ def createAsset():
     back_btn = Button(create_left, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
     back_btn.place(relx=.15, rely=0.950, anchor="c")
 
-    create_form = create.createAsset(root)
+    create_form = asset.createAsset(root)
     create_form.setCreate(create_right, field_label)
 
     def checkCreateAsset(frames, form):
@@ -194,6 +194,29 @@ def createAsset():
                         bg="#B8D8D8", fg="#FFFFFF", bd=0, font=buttonA)
     create_btn.place(relx=.250, rely=0.975, anchor="c")
     create_form.setButton(create_btn)
+
+
+def createUser():
+    create_user_bg = Frame(root, bg="#DDDDDD", width=300, height=450)
+    create_user_bg.columnconfigure(0, weight=1)
+    create_user_bg.place(relx=.5, rely=.5, anchor="c")
+
+    displayHeader(create_user_bg, 0.10, 0.15)
+    create_user = credentials.createNewUser()
+    create_user.setCreateNewUser(create_user_bg, field_label)
+
+    def validateCreateUser(frames):
+        if create_user.checkNewUser():
+            approvedMessage(frames, "User Created\nSuccessfully!")
+
+    frames = [create_user_bg]
+    change_pass_btn = Button(create_user_bg, text="Create User", height=1, width=15,
+                             command=lambda: validateCreateUser(frames), bg="#8EB8CF", fg="#FFFFFF", bd=0,
+                             font=buttonA)
+    change_pass_btn.place(relx=.5, rely=0.800, anchor="c")
+
+    back_btn = Button(create_user_bg, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
+    back_btn.place(relx=.5, rely=0.900, anchor="c")
 
 
 def historyPage():
@@ -233,11 +256,10 @@ def changePassword():
 
     frames = [change_pass_bg]
     change_pass_btn = Button(change_pass_bg, text="Change Password", height=1, width=15, command=lambda: validateChangePassword(frames), bg="#8C241E", fg="#FFFFFF", bd=0, font=buttonA)
-    change_pass_btn.place(relx=.5, rely=0.825, anchor="c")
+    change_pass_btn.place(relx=.5, rely=0.800, anchor="c")
 
-    frames = [change_pass_bg]
     back_btn = Button(change_pass_bg, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
-    back_btn.place(relx=.5, rely=0.950, anchor="c")
+    back_btn.place(relx=.5, rely=0.900, anchor="c")
 
 
 login()
