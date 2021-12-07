@@ -1,10 +1,8 @@
 from tkinter import *
-from tkinter import ttk
 import tkinter.font as tkfont
 from PIL import Image, ImageTk
 from tkinter import filedialog
-from tkinter.filedialog import askopenfile
-import os, credentials, asset, history
+import credentials, asset, history
 
 root = Tk()
 root.title('Prime Properties - Inventory Management System')
@@ -85,7 +83,7 @@ def goToNext(currentFrames, nextFunc):
         elif nextFunc == 8:  # Update
             nav()
         elif nextFunc == 9:  # Delete
-            nav()
+            deleteAsset()
         elif nextFunc == 10:  # Change Password
             changePassword()
     else:
@@ -239,6 +237,38 @@ def historyPage():
 
     frames = [history_bg, history_form_frame, history_table_frame]
     back_btn = Button(history_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
+    back_btn.place(relx=.15, rely=0.950, anchor="c")
+
+
+def deleteAsset():
+    delete_bg = Frame(root, bg="#DDDDDD", width=1200, height=600)
+    delete_bg.pack()
+    delete_bg.columnconfigure(0, weight=1)
+    delete_bg.place(relx=.5, rely=.5, anchor="c")
+
+    delete_form_frame = Frame(delete_bg, bg="#DDDDDD", width=300, height=550)
+    delete_form_frame.place(relx=.135, rely=.5, anchor="c")
+
+    delete_table_frame = Frame(delete_bg, bg="#191919", width=825, height=500)
+    delete_table_frame.place(relx=.625, rely=.5, anchor="c")
+
+    displayHeader(delete_form_frame, 0.050, 0.100)
+
+    delete_page = asset.deleteAsset(root)
+    delete_page.displayDelete(delete_form_frame, field_label, buttonA)
+    delete_page.displayTable(delete_table_frame)
+
+    def validDeleteAssets(frames):
+        if delete_page.checkAssets():
+            approvedMessage(frames, "Assets Deleted\nSuccessfully!")
+
+    frames = [delete_bg, delete_form_frame, delete_table_frame]
+    delete_btn = Button(delete_form_frame, text="Delete", width=13, command=lambda: validDeleteAssets(frames), bg="#FE5F55",
+                        fg="#FFFFFF", bd=0, font=buttonA)
+    delete_btn.place(relx=.25, rely=0.850, anchor="c")
+
+    back_btn = Button(delete_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E",
+                      fg="#FFFFFF", bd=0, font=buttonB)
     back_btn.place(relx=.15, rely=0.950, anchor="c")
 
 

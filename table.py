@@ -1,5 +1,4 @@
 from tkinter import *
-from tkinter import ttk
 import tkinter.font as tkfont
 
 
@@ -53,9 +52,9 @@ class Table(object):
                         self.canvas.create_text((x_text, y_text), text=self.contents[row][column], font=self.data_font)
 
 
-    def checkboxClicked(self):
-        curr_clicked = self.canvas.find_withtag("current")[0] - 25
-        curr_clicked /= 23
+    def checkboxClicked(self, numA, numB):
+        curr_clicked = self.canvas.find_withtag("current")[0] - numA
+        curr_clicked /= numB
         curr_clicked = int(curr_clicked)
 
         if curr_clicked in self.selected:
@@ -70,7 +69,7 @@ class Table(object):
         return self.selected
 
 
-    def checkboxTable(self):
+    def checkboxTable(self, numA, numB):
         self.images = []
         self.checkboxes = {}
         col_image = 0
@@ -94,6 +93,6 @@ class Table(object):
                     elif column == 0:
                         self.canvas.create_rectangle(x_text - 9, y_text - 9, x_text + 9, y_text + 9, fill="#191919")
                         self.checkboxes[row] = self.canvas.create_rectangle(x_text - 8, y_text - 8, x_text + 8, y_text + 8, fill="#E8E8E8")
-                        self.canvas.tag_bind(self.checkboxes[row], "<Button-1>", lambda e: self.checkboxClicked())
+                        self.canvas.tag_bind(self.checkboxes[row], "<Button-1>", lambda e: self.checkboxClicked(numA, numB))
                     else:
                         self.canvas.create_text((x_text, y_text), text=self.contents[row][column], font=self.data_font)

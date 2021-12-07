@@ -1,9 +1,10 @@
 from tkinter import *
-from tkinter import ttk
+from PIL import Image, ImageTk
+import tkinter.font as tkfont
+import os, table
 
 
 class createAsset():
-
     def __init__(self, root):
         self.create_name = StringVar()
         self.create_company = StringVar()
@@ -75,7 +76,6 @@ class createAsset():
                 self.create_error_label.config(text="Please Fill Up All Fields")
             return False
 
-
     def setCreate(self, create_right, field_label):
         Label(create_right, text="Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.100, rely=0.200, anchor="c")
         self.create_name_field = Entry(create_right, textvariable=self.create_name, width=35, bd=0)
@@ -121,3 +121,84 @@ class createAsset():
 
         self.create_error_label = Label(create_right, bg="#DDDDDD", fg="#D64000", font=field_label)
         self.create_error_label.place(relx=.5, rely=0.750, anchor="c")
+
+
+class deleteAsset():
+    def __init__(self, root):
+        self.root = root
+        self.delete_asset_name = StringVar()
+        self.delete_disposed_on = Radiobutton()
+        self.delete_disposed_off = Radiobutton()
+        self.delete_disposed_int = IntVar()
+        self.delete_assets = []
+
+    def filterTable(self):
+        # Where filtering would happen
+        print("Filter button clicked")
+
+    def checkAssets(self):
+        self.delete_assets = self.delete_table.getSelected()
+        if len(self.delete_assets) > 0:
+            for i in self.delete_assets:
+                print(i)
+
+            # Will Add Confirmation Page
+            return True
+        else:
+            return False
+
+    def displayDelete(self, delete_form_frame, field_label, buttonA):
+        Label(delete_form_frame, text="Filter by Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=0.325, rely=0.200, anchor="c")
+        Entry(delete_form_frame, textvariable=self.delete_asset_name, bd=0).place(height=20, width=225, relx=.5, rely=0.250, anchor="c")
+
+        Label(delete_form_frame, text="Disposed Filter", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=0.300, rely=0.325, anchor="c")
+        self.delete_disposed_on = Radiobutton(delete_form_frame, text="On", bg="#DDDDDD", variable=self.delete_disposed_int, value=1)
+        self.delete_disposed_on.place(relx=.60, rely=0.325, anchor="c")
+
+        self.delete_disposed_off = Radiobutton(delete_form_frame, text="Off", bg="#DDDDDD", variable=self.delete_disposed_int, value=2)
+        self.delete_disposed_off.place(relx=.80, rely=0.325, anchor="c")
+
+        filter_btn = Button(delete_form_frame, text="Filter", width=13, command=lambda: self.filterTable(), bg="#DC5047", fg="#FFFFFF", bd=0, font=buttonA)
+        filter_btn.place(relx=.5, rely=0.425, anchor="c")
+
+        filter_ins = Label(delete_form_frame, text="Choose Assets to Delete", bg="#DDDDDD", fg="#363636", font=field_label)
+        filter_ins.place(relx=.5, rely=0.550, anchor="c")
+
+        current_font = tkfont.Font(filter_ins, filter_ins.cget("font"))
+        current_font.configure(weight="bold", slant="italic")
+        filter_ins.config(font=current_font)
+
+    def displayTable(self, delete_table_frame):
+        delete_canvas = Canvas(delete_table_frame, bg="#191919", width=825, height=500)
+
+        delete_measurements = {
+            "cell_width": 150,
+            "cell_height": 75,
+            "rows": 100,
+            "columns": 10
+        }
+        delete_table_header = ["Delete?", "Photo", "Asset Name", "Company", "Owner", "Location",
+                                "Price", "Payment Status", "Amount", "Status"]
+
+        delete_table_contents = []
+        self.root.table_image = []
+        for row in range(100):
+            curr_row = []
+            for column in range(10):
+                if row == 0:
+                    curr_row.append(delete_table_header[column])
+                else:
+                    if column == 1:
+                        image = Image.open(os.getcwd() + r'\assets\img\sample_photo.png')
+                        resized_img = image.resize((50, 50), Image.ANTIALIAS)
+                        table_image = ImageTk.PhotoImage(resized_img)
+                        self.root.table_image.append(table_image)
+                        curr_row.append(table_image)
+                    else:
+                        curr_row.append("Testing Text")
+            delete_table_contents.append(curr_row)
+
+        self.delete_table = table.Table(delete_measurements, delete_canvas, delete_table_contents)
+        self.delete_table.setScrollbars(delete_table_frame)
+        self.delete_table.checkboxTable(23, 21)
+        delete_canvas.configure(scrollregion=delete_canvas.bbox("all"))
