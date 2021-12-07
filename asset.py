@@ -141,8 +141,6 @@ class deleteAsset():
         if len(self.delete_assets) > 0:
             for i in self.delete_assets:
                 print(i)
-
-            # Will Add Confirmation Page
             return True
         else:
             return False
@@ -202,3 +200,74 @@ class deleteAsset():
         self.delete_table.setScrollbars(delete_table_frame)
         self.delete_table.checkboxTable(23, 21)
         delete_canvas.configure(scrollregion=delete_canvas.bbox("all"))
+
+
+
+class receiveAsset():
+    def __init__(self, root):
+        self.root = root
+        self.receive_receipt_num = IntVar()
+        self.receive_asset_name = StringVar()
+        self.receive_owner = StringVar()
+        self.receive_assets = []
+
+    def filterTable(self):
+        # Where filtering would happen
+        print("Filter button clicked")
+
+    def checkAssets(self):
+        self.receive_assets = self.receive_table.getSelected()
+        if len(self.receive_assets) > 0:
+            for i in self.receive_assets:
+                print(i)
+            return True
+        else:
+            return False
+
+    def displayReceive(self, receive_form_frame, field_label, buttonA):
+        Label(receive_form_frame, text="Search by Receipt Number", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.200, anchor="c")
+        Entry(receive_form_frame, textvariable=self.receive_receipt_num, bd=0).place(height=20, width=225, relx=.5, rely=0.250, anchor="c")
+
+        Label(receive_form_frame, text="Search by Asset Number", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.325, anchor="c")
+        Entry(receive_form_frame, textvariable=self.receive_asset_name, bd=0).place(height=20, width=225, relx=.5, rely=0.375, anchor="c")
+
+        Label(receive_form_frame, text="Search by Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.450, anchor="c")
+        Entry(receive_form_frame, textvariable=self.receive_owner, bd=0).place(height=20, width=225, relx=.5, rely=0.500, anchor="c")
+
+        filter_btn = Button(receive_form_frame, text="Search", width=13, command=lambda: self.filterTable(), bg="#DC5047", fg="#FFFFFF", bd=0, font=buttonA)
+        filter_btn.place(relx=.5, rely=0.600, anchor="c")
+
+    def displayTable(self, receive_table_frame):
+        receive_canvas = Canvas(receive_table_frame, bg="#191919", width=825, height=500)
+
+        receive_measurements = {
+            "cell_width": 150,
+            "cell_height": 75,
+            "rows": 100,
+            "columns": 11
+        }
+        receive_table_header = ["Receive", "Receipt #", "Photo", "Asset Name", "Company", "Owner", "Location",
+                                "Price", "Payment Status", "Amount", "Status"]
+
+        receive_table_contents = []
+        self.root.table_image = []
+        for row in range(100):
+            curr_row = []
+            for column in range(11):
+                if row == 0:
+                    curr_row.append(receive_table_header[column])
+                else:
+                    if column == 2:
+                        image = Image.open(os.getcwd() + r'\assets\img\sample_photo.png')
+                        resized_img = image.resize((50, 50), Image.ANTIALIAS)
+                        table_image = ImageTk.PhotoImage(resized_img)
+                        self.root.table_image.append(table_image)
+                        curr_row.append(table_image)
+                    else:
+                        curr_row.append("Testing Text")
+            receive_table_contents.append(curr_row)
+
+        self.receive_table = table.Table(receive_measurements, receive_canvas, receive_table_contents)
+        self.receive_table.setScrollbars(receive_table_frame)
+        self.receive_table.checkboxTable(23, 21)
+        receive_canvas.configure(scrollregion=receive_canvas.bbox("all"))

@@ -79,7 +79,7 @@ def goToNext(currentFrames, nextFunc):
         elif nextFunc == 6:  # History
             historyPage()
         elif nextFunc == 7:  # Receive
-            nav()
+            receiveAsset()
         elif nextFunc == 8:  # Update
             nav()
         elif nextFunc == 9:  # Delete
@@ -237,6 +237,41 @@ def historyPage():
 
     frames = [history_bg, history_form_frame, history_table_frame]
     back_btn = Button(history_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
+    back_btn.place(relx=.15, rely=0.950, anchor="c")
+
+
+def receiveAsset():
+    receive_bg = Frame(root, bg="#DDDDDD", width=1200, height=600)
+    receive_bg.pack()
+    receive_bg.columnconfigure(0, weight=1)
+    receive_bg.place(relx=.5, rely=.5, anchor="c")
+
+    receive_form_frame = Frame(receive_bg, bg="#DDDDDD", width=300, height=550)
+    receive_form_frame.place(relx=.135, rely=.5, anchor="c")
+
+    receive_table_frame = Frame(receive_bg, bg="#191919", width=825, height=500)
+    receive_table_frame.place(relx=.625, rely=.5, anchor="c")
+
+    displayHeader(receive_form_frame, 0.050, 0.100)
+
+    receive_page = asset.receiveAsset(root)
+    receive_page.displayReceive(receive_form_frame, field_label, buttonA)
+    receive_page.displayTable(receive_table_frame)
+
+    def validReceiveAssets(frames):
+        if receive_page.checkAssets():
+            approvedMessage(frames, "Assets Received!")
+
+    frames = [receive_bg, receive_form_frame, receive_table_frame]
+    receive_btn = Button(receive_form_frame, text="Receive", width=13, command=lambda: validReceiveAssets(frames), bg="#24434D",
+                        fg="#FFFFFF", bd=0, font=buttonA)
+    receive_btn.place(relx=.25, rely=0.750, anchor="c")
+    cancel_btn = Button(receive_form_frame, text="Cancel", width=13, command=lambda: validReceiveAssets(frames), bg="#FFFFFF",
+                         fg="#24434D", bd=0, font=buttonA)
+    cancel_btn.place(relx=.25, rely=0.850, anchor="c")
+
+    back_btn = Button(receive_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E",
+                      fg="#FFFFFF", bd=0, font=buttonB)
     back_btn.place(relx=.15, rely=0.950, anchor="c")
 
 
