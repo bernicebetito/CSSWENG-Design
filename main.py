@@ -22,8 +22,8 @@ valid_login = True
 
 
 def displayHeader(frame, header_y, sub_y):
-    Label(frame, text="PRIME PROPERTIES", bg="#DDDDDD", fg="#3E3E3E", font=header).place(relx=.5, rely=header_y, anchor="c")
-    Label(frame, text="Inventory Management System", bg="#DDDDDD", fg="#6A6A6A", font=sub).place(relx=.5, rely=sub_y, anchor="c")
+    Label(frame, text="PRIME PROPERTIES", bg="#DDDDDD", fg="#3E3E3E", font=header).place(relx=.5, rely=header_y, anchor="center")
+    Label(frame, text="Inventory Management System", bg="#DDDDDD", fg="#6A6A6A", font=sub).place(relx=.5, rely=sub_y, anchor="center")
 
 
 def uploadImage(canvas, text):
@@ -47,18 +47,18 @@ def approvedMessage(frames, message):
 
     approved_create_bg = Frame(root, bg="#DDDDDD", width=300, height=300)
     approved_create_bg.columnconfigure(0, weight=1)
-    approved_create_bg.place(relx=.5, rely=.5, anchor="c")
+    approved_create_bg.place(relx=.5, rely=.5, anchor="center")
 
     displayHeader(approved_create_bg, 0.15, 0.25)
 
     approved_create_label = tkfont.Font(family='Oswald', weight="bold", size=25)
-    Label(approved_create_bg, text=message, bg="#DDDDDD", fg="#6B9A39", font=approved_create_label).place(relx=.5, rely=0.5, anchor="c")
+    Label(approved_create_bg, text=message, bg="#DDDDDD", fg="#6B9A39", font=approved_create_label).place(relx=.5, rely=0.5, anchor="center")
 
     approved_frames = [approved_create_bg]
     approved_create_btn = Button(approved_create_bg, text="Back to Home", height=1, width=15,
                                  command=lambda: goToNext(approved_frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0,
                                  font=buttonA)
-    approved_create_btn.place(relx=.5, rely=0.8, anchor="c")
+    approved_create_btn.place(relx=.5, rely=0.8, anchor="center")
 
 
 def goToNext(currentFrames, nextFunc):
@@ -74,18 +74,22 @@ def goToNext(currentFrames, nextFunc):
             createAsset()
         elif nextFunc == 4:  # Manage Users
             manageUser()
-        elif nextFunc == 5:  # Find
-            nav()
-        elif nextFunc == 6:  # History
-            historyPage()
-        elif nextFunc == 7:  # Receive
-            receiveAsset()
-        elif nextFunc == 8:  # Update
-            nav()
-        elif nextFunc == 9:  # Delete
-            deleteAsset()
-        elif nextFunc == 10:  # Change Password
+        elif nextFunc == 5:  # Create Users
+            createUser()
+        elif nextFunc == 6:  # Perform Operation (Users)
+            performUsers()
+        elif nextFunc == 7:  # Change Password
             changePassword()
+        elif nextFunc == 8:  # Find
+            nav()
+        elif nextFunc == 9:  # History
+            historyPage()
+        elif nextFunc == 10:  # Receive
+            receiveAsset()
+        elif nextFunc == 11:  # Update
+            nav()
+        elif nextFunc == 12:  # Delete
+            deleteAsset()
     else:
         login()
 
@@ -94,7 +98,7 @@ def login():
     global login_credentials
     login_bg = Frame(root, bg="#DDDDDD", width=300, height=450)
     login_bg.columnconfigure(0, weight=1)
-    login_bg.place(relx=.5, rely=.5, anchor="c")
+    login_bg.place(relx=.5, rely=.5, anchor="center")
 
     displayHeader(login_bg, 0.20, 0.25)
     login_credentials = user.User()
@@ -111,7 +115,7 @@ def login():
 
     frames = [login_bg]
     login_btn = Button(login_bg, text="Login", height=1, width=13, command=lambda:checkCredentials(frames, 2), bg="#6D94AA", fg="#FFFFFF", bd=0, font=buttonA)
-    login_btn.place(relx=.5, rely=0.8, anchor="c")
+    login_btn.place(relx=.5, rely=0.8, anchor="center")
 
 
 def nav():
@@ -121,62 +125,62 @@ def nav():
         nav_bg = Frame(root, bg="#DDDDDD", width=300, height=400)
 
     nav_bg.columnconfigure(0, weight=1)
-    nav_bg.place(relx=.5, rely=.5, anchor="c")
+    nav_bg.place(relx=.5, rely=.5, anchor="center")
 
     frames = [nav_bg]
     create_asset_btn = Button(nav_bg, text="Create Asset", width=15, command=lambda: goToNext(frames, 3), bg="#B8D8D8", fg="#FFFFFF", bd=0, font=buttonA)
     manage_user_btn = Button(nav_bg, text="Manage Users", width=15, command=lambda: goToNext(frames, 4), bg="#8EB8CF", fg="#FFFFFF", bd=0, font=buttonA)
-    find_btn = Button(nav_bg, text="Find", width=15, command=lambda: goToNext(frames, 5), bg="#7A9E9F", fg="#FFFFFF", bd=0, font=buttonA)
-    history_btn = Button(nav_bg, text="History", width=15, command=lambda: goToNext(frames, 6), bg="#3D626D", fg="#FFFFFF", bd=0, font=buttonA)
-    receive_btn = Button(nav_bg, text="Receive", width=15, command=lambda: goToNext(frames, 7), bg="#24434D", fg="#FFFFFF", bd=0, font=buttonA)
-    update_btn = Button(nav_bg, text="Update", width=15, command=lambda: goToNext(frames, 8), bg="#4F6367", fg="#FFFFFF", bd=0, font=buttonA)
-    delete_btn = Button(nav_bg, text="Delete", width=15, command=lambda: goToNext(frames, 9), bg="#FE5F55", fg="#FFFFFF", bd=0, font=buttonA)
+    find_btn = Button(nav_bg, text="Find", width=15, command=lambda: goToNext(frames, 8), bg="#7A9E9F", fg="#FFFFFF", bd=0, font=buttonA)
+    history_btn = Button(nav_bg, text="History", width=15, command=lambda: goToNext(frames, 9), bg="#3D626D", fg="#FFFFFF", bd=0, font=buttonA)
+    receive_btn = Button(nav_bg, text="Receive", width=15, command=lambda: goToNext(frames, 10), bg="#24434D", fg="#FFFFFF", bd=0, font=buttonA)
+    update_btn = Button(nav_bg, text="Update", width=15, command=lambda: goToNext(frames, 11), bg="#4F6367", fg="#FFFFFF", bd=0, font=buttonA)
+    delete_btn = Button(nav_bg, text="Delete", width=15, command=lambda: goToNext(frames, 12), bg="#FE5F55", fg="#FFFFFF", bd=0, font=buttonA)
     logout_btn = Button(nav_bg, text="Logout", width=10, command=lambda: goToNext(frames, 1), bg="#363636", fg="#FFFFFF", bd=0, font=buttonB)
 
     if username == "manager":
         displayHeader(nav_bg, 0.05, 0.10)
 
-        create_asset_btn.place(relx=.5, rely=0.225, anchor="c")
-        manage_user_btn.place(relx=.5, rely=0.325, anchor="c")
-        find_btn.place(relx=.5, rely=0.425, anchor="c")
-        history_btn.place(relx=.5, rely=0.525, anchor="c")
-        receive_btn.place(relx=.5, rely=0.625, anchor="c")
-        update_btn.place(relx=.5, rely=0.725, anchor="c")
-        delete_btn.place(relx=.5, rely=0.825, anchor="c")
-        logout_btn.place(relx=.5, rely=0.925, anchor="c")
+        create_asset_btn.place(relx=.5, rely=0.225, anchor="center")
+        manage_user_btn.place(relx=.5, rely=0.325, anchor="center")
+        find_btn.place(relx=.5, rely=0.425, anchor="center")
+        history_btn.place(relx=.5, rely=0.525, anchor="center")
+        receive_btn.place(relx=.5, rely=0.625, anchor="center")
+        update_btn.place(relx=.5, rely=0.725, anchor="center")
+        delete_btn.place(relx=.5, rely=0.825, anchor="center")
+        logout_btn.place(relx=.5, rely=0.925, anchor="center")
     elif username == "clerk":
         displayHeader(nav_bg, 0.15, 0.20)
 
-        create_asset_btn.place(relx=.5, rely=0.350, anchor="c")
-        find_btn.place(relx=.5, rely=0.475, anchor="c")
-        receive_btn.place(relx=.5, rely=0.600, anchor="c")
-        update_btn.place(relx=.5, rely=0.725, anchor="c")
-        logout_btn.place(relx=.5, rely=0.850, anchor="c")
+        create_asset_btn.place(relx=.5, rely=0.350, anchor="center")
+        find_btn.place(relx=.5, rely=0.475, anchor="center")
+        receive_btn.place(relx=.5, rely=0.600, anchor="center")
+        update_btn.place(relx=.5, rely=0.725, anchor="center")
+        logout_btn.place(relx=.5, rely=0.850, anchor="center")
 
 
 def createAsset():
     create_bg = Frame(root, bg="#DDDDDD", width=950, height=600)
     create_bg.columnconfigure(0, weight=1)
-    create_bg.place(relx=.5, rely=.5, anchor="c")
+    create_bg.place(relx=.5, rely=.5, anchor="center")
 
     create_left = Frame(create_bg, bg="#DDDDDD", width=300, height=575)
     create_left.columnconfigure(0, weight=1)
-    create_left.place(relx=.175, rely=.5, anchor="c")
+    create_left.place(relx=.175, rely=.5, anchor="center")
 
     create_right = Frame(create_bg, bg="#DDDDDD", width=575, height=550)
-    create_right.place(relx=.675, rely=.5, anchor="c")
+    create_right.place(relx=.675, rely=.5, anchor="center")
 
     frames = [create_bg, create_left, create_right]
 
     displayHeader(create_left, 0.050, 0.100)
     create_photo_preview = Canvas(create_left, bg="#FFFFFF", width=250, height=250)
-    create_photo_preview.place(relx=.5, rely=0.450, anchor="c")
+    create_photo_preview.place(relx=.5, rely=0.450, anchor="center")
     create_photo_text = create_photo_preview.create_text((125, 125), text="No Photo Uploaded", font=field_label)
 
     upload_btn = Button(create_left, text="Upload", width=13, command=lambda: uploadImage(create_photo_preview, create_photo_text), bg="#B3D687", fg="#FFFFFF", bd=0, font=buttonA)
-    upload_btn.place(relx=.5, rely=0.725, anchor="c")
+    upload_btn.place(relx=.5, rely=0.725, anchor="center")
     back_btn = Button(create_left, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
-    back_btn.place(relx=.15, rely=0.950, anchor="c")
+    back_btn.place(relx=.15, rely=0.950, anchor="center")
 
     create_form = asset.createAsset(root)
     create_form.setCreate(create_right, field_label)
@@ -187,14 +191,45 @@ def createAsset():
 
     create_btn = Button(create_right, text="Create", width=15, command=lambda: checkCreateAsset(frames, create_form),
                         bg="#B8D8D8", fg="#FFFFFF", bd=0, font=buttonA)
-    create_btn.place(relx=.250, rely=0.975, anchor="c")
+    create_btn.place(relx=.250, rely=0.975, anchor="center")
     create_form.setButton(create_btn)
 
 
 def manageUser():
+    global manage_page
+    manage_bg = Frame(root, bg="#DDDDDD", width=825, height=600)
+    manage_bg.pack()
+    manage_bg.columnconfigure(0, weight=1)
+    manage_bg.place(relx=.5, rely=.5, anchor="center")
+
+    manage_form_frame = Frame(manage_bg, bg="#DDDDDD", width=300, height=550)
+    manage_form_frame.place(relx=.200, rely=.5, anchor="center")
+
+    manage_table_frame = Frame(manage_bg, bg="#191919", width=455, height=500)
+    manage_table_frame.place(relx=.675, rely=.5, anchor="center")
+
+    displayHeader(manage_form_frame, 0.050, 0.100)
+
+    manage_page = user.manageUser(root)
+    manage_page.displayUsers(manage_form_frame, field_label, buttonA)
+    manage_page.displayTable(manage_table_frame)
+
+    frames = [manage_bg, manage_form_frame, manage_table_frame]
+    back_btn = Button(manage_form_frame, text="Create New User", width=15, command=lambda: goToNext(frames, 5), bg="#8EB8CF",
+                      fg="#FFFFFF", bd=0, font=buttonA)
+    back_btn.place(relx=.30, rely=0.750, anchor="center")
+    back_btn = Button(manage_form_frame, text="Perform Operation", width=15, command=lambda: goToNext(frames, 6), bg="#8EB8CF",
+                      fg="#FFFFFF", bd=0, font=buttonA)
+    back_btn.place(relx=.30, rely=0.850, anchor="center")
+    back_btn = Button(manage_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E",
+                      fg="#FFFFFF", bd=0, font=buttonB)
+    back_btn.place(relx=.15, rely=0.950, anchor="center")
+
+
+def createUser():
     create_user_bg = Frame(root, bg="#DDDDDD", width=300, height=450)
     create_user_bg.columnconfigure(0, weight=1)
-    create_user_bg.place(relx=.5, rely=.5, anchor="c")
+    create_user_bg.place(relx=.5, rely=.5, anchor="center")
 
     displayHeader(create_user_bg, 0.10, 0.15)
     create_user = user.createNewUser()
@@ -208,23 +243,69 @@ def manageUser():
     change_pass_btn = Button(create_user_bg, text="Create User", height=1, width=15,
                              command=lambda: validateCreateUser(frames), bg="#8EB8CF", fg="#FFFFFF", bd=0,
                              font=buttonA)
-    change_pass_btn.place(relx=.5, rely=0.800, anchor="c")
+    change_pass_btn.place(relx=.5, rely=0.800, anchor="center")
 
-    back_btn = Button(create_user_bg, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
-    back_btn.place(relx=.5, rely=0.900, anchor="c")
+    back_btn = Button(create_user_bg, text="Back", width=10, command=lambda: goToNext(frames, 4), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
+    back_btn.place(relx=.5, rely=0.900, anchor="center")
+
+
+def performUsers():
+    global manage_page
+    operation_user_bg = Frame(root, bg="#DDDDDD", width=500, height=550)
+    operation_user_bg.columnconfigure(0, weight=1)
+    operation_user_bg.place(relx=.5, rely=.5, anchor="center")
+
+    operation_table_frame = Frame(operation_user_bg, bg="#DDDDDD", width=300, height=150)
+    operation_table_frame.place(relx=.5, rely=.5, anchor="center")
+
+    displayHeader(operation_user_bg, 0.10, 0.15)
+    manage_page.displaySelectedUser(operation_user_bg, operation_table_frame)
+
+    frames = [operation_user_bg, operation_table_frame]
+    change_pass_btn = Button(operation_user_bg, text="Change Password", height=1, width=15,
+                             command=lambda: goToNext(frames, 2), bg="#8EB8CF", fg="#FFFFFF", bd=0, font=buttonA)
+    change_pass_btn.place(relx=.25, rely=0.750, anchor="center")
+
+    delete_btn = Button(operation_user_bg, text="Delete", height=1, width=15,
+                             command=lambda: goToNext(frames, 2), bg="#8EB8CF", fg="#FFFFFF", bd=0, font=buttonA)
+    delete_btn.place(relx=.75, rely=0.750, anchor="center")
+
+    back_btn = Button(operation_user_bg, text="Back", width=10, command=lambda: goToNext(frames, 4), bg="#2D2E2E",
+                      fg="#FFFFFF", bd=0, font=buttonB)
+    back_btn.place(relx=.5, rely=0.900, anchor="center")
+
+
+def changePassword():
+    change_pass_bg = Frame(root, bg="#DDDDDD", width=300, height=450)
+    change_pass_bg.columnconfigure(0, weight=1)
+    change_pass_bg.place(relx=.5, rely=.5, anchor="center")
+
+    displayHeader(change_pass_bg, 0.10, 0.15)
+    login_credentials.setChangePassword(change_pass_bg, field_label)
+
+    def validateChangePassword(frames):
+        if login_credentials.checkChangePassword():
+            approvedMessage(frames, "Password Updated\nSuccessfully!")
+
+    frames = [change_pass_bg]
+    change_pass_btn = Button(change_pass_bg, text="Change Password", height=1, width=15, command=lambda: validateChangePassword(frames), bg="#8C241E", fg="#FFFFFF", bd=0, font=buttonA)
+    change_pass_btn.place(relx=.5, rely=0.800, anchor="center")
+
+    back_btn = Button(change_pass_bg, text="Back", width=10, command=lambda: goToNext(frames, 6), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
+    back_btn.place(relx=.5, rely=0.900, anchor="center")
 
 
 def historyPage():
     history_bg = Frame(root, bg="#DDDDDD", width=1200, height=600)
     history_bg.pack()
     history_bg.columnconfigure(0, weight=1)
-    history_bg.place(relx=.5, rely=.5, anchor="c")
+    history_bg.place(relx=.5, rely=.5, anchor="center")
 
     history_form_frame = Frame(history_bg, bg="#DDDDDD", width=300, height=550)
-    history_form_frame.place(relx=.135, rely=.5, anchor="c")
+    history_form_frame.place(relx=.135, rely=.5, anchor="center")
 
     history_table_frame = Frame(history_bg, bg="#191919", width=825, height=500)
-    history_table_frame.place(relx=.625, rely=.5, anchor="c")
+    history_table_frame.place(relx=.625, rely=.5, anchor="center")
 
     displayHeader(history_form_frame, 0.050, 0.100)
 
@@ -234,20 +315,20 @@ def historyPage():
 
     frames = [history_bg, history_form_frame, history_table_frame]
     back_btn = Button(history_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
-    back_btn.place(relx=.15, rely=0.950, anchor="c")
+    back_btn.place(relx=.15, rely=0.950, anchor="center")
 
 
 def receiveAsset():
     receive_bg = Frame(root, bg="#DDDDDD", width=1200, height=600)
     receive_bg.pack()
     receive_bg.columnconfigure(0, weight=1)
-    receive_bg.place(relx=.5, rely=.5, anchor="c")
+    receive_bg.place(relx=.5, rely=.5, anchor="center")
 
     receive_form_frame = Frame(receive_bg, bg="#DDDDDD", width=300, height=550)
-    receive_form_frame.place(relx=.135, rely=.5, anchor="c")
+    receive_form_frame.place(relx=.135, rely=.5, anchor="center")
 
     receive_table_frame = Frame(receive_bg, bg="#191919", width=825, height=500)
-    receive_table_frame.place(relx=.625, rely=.5, anchor="c")
+    receive_table_frame.place(relx=.625, rely=.5, anchor="center")
 
     displayHeader(receive_form_frame, 0.050, 0.100)
 
@@ -262,27 +343,27 @@ def receiveAsset():
     frames = [receive_bg, receive_form_frame, receive_table_frame]
     receive_btn = Button(receive_form_frame, text="Receive", width=13, command=lambda: validReceiveAssets(frames), bg="#24434D",
                         fg="#FFFFFF", bd=0, font=buttonA)
-    receive_btn.place(relx=.25, rely=0.750, anchor="c")
+    receive_btn.place(relx=.25, rely=0.750, anchor="center")
     cancel_btn = Button(receive_form_frame, text="Cancel", width=13, command=lambda: validReceiveAssets(frames), bg="#FFFFFF",
                          fg="#24434D", bd=0, font=buttonA)
-    cancel_btn.place(relx=.25, rely=0.850, anchor="c")
+    cancel_btn.place(relx=.25, rely=0.850, anchor="center")
 
     back_btn = Button(receive_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E",
                       fg="#FFFFFF", bd=0, font=buttonB)
-    back_btn.place(relx=.15, rely=0.950, anchor="c")
+    back_btn.place(relx=.15, rely=0.950, anchor="center")
 
 
 def deleteAsset():
     delete_bg = Frame(root, bg="#DDDDDD", width=1200, height=600)
     delete_bg.pack()
     delete_bg.columnconfigure(0, weight=1)
-    delete_bg.place(relx=.5, rely=.5, anchor="c")
+    delete_bg.place(relx=.5, rely=.5, anchor="center")
 
     delete_form_frame = Frame(delete_bg, bg="#DDDDDD", width=300, height=550)
-    delete_form_frame.place(relx=.135, rely=.5, anchor="c")
+    delete_form_frame.place(relx=.135, rely=.5, anchor="center")
 
     delete_table_frame = Frame(delete_bg, bg="#191919", width=825, height=500)
-    delete_table_frame.place(relx=.625, rely=.5, anchor="c")
+    delete_table_frame.place(relx=.625, rely=.5, anchor="center")
 
     displayHeader(delete_form_frame, 0.050, 0.100)
 
@@ -297,31 +378,11 @@ def deleteAsset():
     frames = [delete_bg, delete_form_frame, delete_table_frame]
     delete_btn = Button(delete_form_frame, text="Delete", width=13, command=lambda: validDeleteAssets(frames), bg="#FE5F55",
                         fg="#FFFFFF", bd=0, font=buttonA)
-    delete_btn.place(relx=.25, rely=0.850, anchor="c")
+    delete_btn.place(relx=.25, rely=0.850, anchor="center")
 
     back_btn = Button(delete_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E",
                       fg="#FFFFFF", bd=0, font=buttonB)
-    back_btn.place(relx=.15, rely=0.950, anchor="c")
-
-
-def changePassword():
-    change_pass_bg = Frame(root, bg="#DDDDDD", width=300, height=450)
-    change_pass_bg.columnconfigure(0, weight=1)
-    change_pass_bg.place(relx=.5, rely=.5, anchor="c")
-
-    displayHeader(change_pass_bg, 0.10, 0.15)
-    login_credentials.setChangePassword(change_pass_bg, field_label)
-
-    def validateChangePassword(frames):
-        if login_credentials.checkChangePassword():
-            approvedMessage(frames, "Password Updated\nSuccessfully!")
-
-    frames = [change_pass_bg]
-    change_pass_btn = Button(change_pass_bg, text="Change Password", height=1, width=15, command=lambda: validateChangePassword(frames), bg="#8C241E", fg="#FFFFFF", bd=0, font=buttonA)
-    change_pass_btn.place(relx=.5, rely=0.800, anchor="c")
-
-    back_btn = Button(change_pass_bg, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
-    back_btn.place(relx=.5, rely=0.900, anchor="c")
+    back_btn.place(relx=.15, rely=0.950, anchor="center")
 
 
 login()

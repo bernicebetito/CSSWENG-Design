@@ -15,20 +15,20 @@ class History():
         print("Filter button clicked")
 
     def displayHistory(self, history_form_frame, field_label, buttonA):
-        Label(history_form_frame, text="Filter by Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.200, anchor="c")
-        Entry(history_form_frame, textvariable=self.history_asset_name, bd=0).place(height=20, width=225, relx=.5, rely=0.250, anchor="c")
+        Label(history_form_frame, text="Filter by Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.200, anchor="center")
+        Entry(history_form_frame, textvariable=self.history_asset_name, bd=0).place(height=20, width=225, relx=.5, rely=0.250, anchor="center")
 
-        Label(history_form_frame, text="Filter by Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.325, anchor="c")
-        Entry(history_form_frame, textvariable=self.history_location, bd=0).place(height=20, width=225, relx=.5, rely=0.375, anchor="c")
+        Label(history_form_frame, text="Filter by Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.325, anchor="center")
+        Entry(history_form_frame, textvariable=self.history_location, bd=0).place(height=20, width=225, relx=.5, rely=0.375, anchor="center")
 
-        Label(history_form_frame, text="Filter by Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.450, anchor="c")
-        Entry(history_form_frame, textvariable=self.history_owner, bd=0).place(height=20, width=225, relx=.5, rely=0.500, anchor="c")
+        Label(history_form_frame, text="Filter by Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.450, anchor="center")
+        Entry(history_form_frame, textvariable=self.history_owner, bd=0).place(height=20, width=225, relx=.5, rely=0.500, anchor="center")
 
-        Label(history_form_frame, text="Filter by Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.575, anchor="c")
-        Entry(history_form_frame, textvariable=self.history_status, bd=0).place(height=20, width=225, relx=.5, rely=0.625, anchor="c")
+        Label(history_form_frame, text="Filter by Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.575, anchor="center")
+        Entry(history_form_frame, textvariable=self.history_status, bd=0).place(height=20, width=225, relx=.5, rely=0.625, anchor="center")
 
         filter_btn = Button(history_form_frame, text="Filter", width=13, command=lambda: self.filterTable(), bg="#DC5047", fg="#FFFFFF", bd=0, font=buttonA)
-        filter_btn.place(relx=.5, rely=0.725, anchor="c")
+        filter_btn.place(relx=.5, rely=0.725, anchor="center")
 
     def displayTable(self, history_table_frame):
         history_canvas = Canvas(history_table_frame, bg="#191919", width=825, height=500)

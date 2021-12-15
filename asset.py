@@ -77,50 +77,50 @@ class createAsset():
             return False
 
     def setCreate(self, create_right, field_label):
-        Label(create_right, text="Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.100, rely=0.200, anchor="c")
+        Label(create_right, text="Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.100, rely=0.200, anchor="center")
         self.create_name_field = Entry(create_right, textvariable=self.create_name, width=35, bd=0)
-        self.create_name_field.place(height=25, width=250, relx=.245, rely=0.250, anchor="c")
+        self.create_name_field.place(height=25, width=250, relx=.245, rely=0.250, anchor="center")
         self.create_fields.append(self.create_name_field)
 
-        Label(create_right, text="Company", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.590, rely=0.200, anchor="c")
+        Label(create_right, text="Company", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.590, rely=0.200, anchor="center")
         self.create_company_field = Entry(create_right, textvariable=self.create_company, width=35, bd=0)
-        self.create_company_field.place(height=25, width=250, relx=.750, rely=0.250, anchor="c")
+        self.create_company_field.place(height=25, width=250, relx=.750, rely=0.250, anchor="center")
         self.create_fields.append(self.create_company_field)
 
-        Label(create_right, text="Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.070, rely=0.350, anchor="c")
+        Label(create_right, text="Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.070, rely=0.350, anchor="center")
         self.create_status_field = Entry(create_right, textvariable=self.create_status, width=35, bd=0)
-        self.create_status_field.place(height=25, width=250, relx=.245, rely=0.400, anchor="c")
+        self.create_status_field.place(height=25, width=250, relx=.245, rely=0.400, anchor="center")
         self.create_fields.append(self.create_status_field)
 
-        Label(create_right, text="Unit Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.605, rely=0.350, anchor="c")
+        Label(create_right, text="Unit Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.605, rely=0.350, anchor="center")
         self.create_location_field = Entry(create_right, textvariable=self.create_location, width=35, bd=0)
-        self.create_location_field.place(height=25, width=250, relx=.750, rely=0.400, anchor="c")
+        self.create_location_field.place(height=25, width=250, relx=.750, rely=0.400, anchor="center")
         self.create_fields.append(self.create_location_field)
 
-        Label(create_right, text="Price", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.065, rely=0.500, anchor="c")
+        Label(create_right, text="Price", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.065, rely=0.500, anchor="center")
         self.create_price_field = Entry(create_right, textvariable=self.create_price, width=35, bd=0)
-        self.create_price_field.place(height=25, width=250, relx=.245, rely=0.550, anchor="c")
+        self.create_price_field.place(height=25, width=250, relx=.245, rely=0.550, anchor="center")
         self.create_price_field.config(validate="focusout", validatecommand=(self.reg_validDouble, '%P'), invalidcommand=(self.reg_invalidDouble,))
         self.create_fields.append(self.create_price_field)
 
-        Label(create_right, text="Quantity", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.585, rely=0.500, anchor="c")
+        Label(create_right, text="Quantity", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.585, rely=0.500, anchor="center")
         self.create_quantity_field = Entry(create_right, textvariable=self.create_quantity, width=35, bd=0)
-        self.create_quantity_field.place(height=25, width=250, relx=.750, rely=0.550, anchor="c")
+        self.create_quantity_field.place(height=25, width=250, relx=.750, rely=0.550, anchor="center")
         self.create_quantity_field.config(validate="focusout", validatecommand=(self.reg_validDouble, '%P'), invalidcommand=(self.reg_invalidDouble,))
         self.create_fields.append(self.create_quantity_field)
 
-        Label(create_right, text="Ownership", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.090, rely=0.650, anchor="c")
+        Label(create_right, text="Ownership", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.090, rely=0.650, anchor="center")
         self.create_owner_field = Entry(create_right, textvariable=self.create_ownership, width=35, bd=0)
-        self.create_owner_field.place(height=25, width=250, relx=.245, rely=0.700, anchor="c")
+        self.create_owner_field.place(height=25, width=250, relx=.245, rely=0.700, anchor="center")
         self.create_fields.append(self.create_owner_field)
 
-        Label(create_right, text="Payment Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.625, rely=0.650, anchor="c")
+        Label(create_right, text="Payment Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.625, rely=0.650, anchor="center")
         self.create_payment_field = Entry(create_right, textvariable=self.create_payment_status, width=35, bd=0)
-        self.create_payment_field.place(height=25, width=250, relx=.750, rely=0.700, anchor="c")
+        self.create_payment_field.place(height=25, width=250, relx=.750, rely=0.700, anchor="center")
         self.create_fields.append(self.create_payment_field)
 
         self.create_error_label = Label(create_right, bg="#DDDDDD", fg="#D64000", font=field_label)
-        self.create_error_label.place(relx=.5, rely=0.750, anchor="c")
+        self.create_error_label.place(relx=.5, rely=0.750, anchor="center")
 
 
 class deleteAsset():
@@ -146,21 +146,21 @@ class deleteAsset():
             return False
 
     def displayDelete(self, delete_form_frame, field_label, buttonA):
-        Label(delete_form_frame, text="Filter by Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=0.325, rely=0.200, anchor="c")
-        Entry(delete_form_frame, textvariable=self.delete_asset_name, bd=0).place(height=20, width=225, relx=.5, rely=0.250, anchor="c")
+        Label(delete_form_frame, text="Filter by Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=0.325, rely=0.200, anchor="center")
+        Entry(delete_form_frame, textvariable=self.delete_asset_name, bd=0).place(height=20, width=225, relx=.5, rely=0.250, anchor="center")
 
-        Label(delete_form_frame, text="Disposed Filter", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=0.300, rely=0.325, anchor="c")
+        Label(delete_form_frame, text="Disposed Filter", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=0.300, rely=0.325, anchor="center")
         self.delete_disposed_on = Radiobutton(delete_form_frame, text="On", bg="#DDDDDD", variable=self.delete_disposed_int, value=1)
-        self.delete_disposed_on.place(relx=.60, rely=0.325, anchor="c")
+        self.delete_disposed_on.place(relx=.60, rely=0.325, anchor="center")
 
         self.delete_disposed_off = Radiobutton(delete_form_frame, text="Off", bg="#DDDDDD", variable=self.delete_disposed_int, value=2)
-        self.delete_disposed_off.place(relx=.80, rely=0.325, anchor="c")
+        self.delete_disposed_off.place(relx=.80, rely=0.325, anchor="center")
 
         filter_btn = Button(delete_form_frame, text="Filter", width=13, command=lambda: self.filterTable(), bg="#DC5047", fg="#FFFFFF", bd=0, font=buttonA)
-        filter_btn.place(relx=.5, rely=0.425, anchor="c")
+        filter_btn.place(relx=.5, rely=0.425, anchor="center")
 
         filter_ins = Label(delete_form_frame, text="Choose Assets to Delete", bg="#DDDDDD", fg="#363636", font=field_label)
-        filter_ins.place(relx=.5, rely=0.550, anchor="c")
+        filter_ins.place(relx=.5, rely=0.550, anchor="center")
 
         current_font = tkfont.Font(filter_ins, filter_ins.cget("font"))
         current_font.configure(weight="bold", slant="italic")
@@ -198,9 +198,8 @@ class deleteAsset():
 
         self.delete_table = table.Table(delete_measurements, delete_canvas, delete_table_contents)
         self.delete_table.setScrollbars(delete_table_frame)
-        self.delete_table.checkboxTable(23, 21)
+        self.delete_table.optionsTable(23, 21, "checkbox")
         delete_canvas.configure(scrollregion=delete_canvas.bbox("all"))
-
 
 
 class receiveAsset():
@@ -216,7 +215,7 @@ class receiveAsset():
         print("Filter button clicked")
 
     def checkAssets(self):
-        self.receive_assets = self.receive_table.getSelected()
+        self.receive_assets = self.receive_table.getSelectedCheckbox()
         if len(self.receive_assets) > 0:
             for i in self.receive_assets:
                 print(i)
@@ -225,17 +224,17 @@ class receiveAsset():
             return False
 
     def displayReceive(self, receive_form_frame, field_label, buttonA):
-        Label(receive_form_frame, text="Search by Receipt Number", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.200, anchor="c")
-        Entry(receive_form_frame, textvariable=self.receive_receipt_num, bd=0).place(height=20, width=225, relx=.5, rely=0.250, anchor="c")
+        Label(receive_form_frame, text="Search by Receipt Number", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.200, anchor="center")
+        Entry(receive_form_frame, textvariable=self.receive_receipt_num, bd=0).place(height=20, width=225, relx=.5, rely=0.250, anchor="center")
 
-        Label(receive_form_frame, text="Search by Asset Number", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.325, anchor="c")
-        Entry(receive_form_frame, textvariable=self.receive_asset_name, bd=0).place(height=20, width=225, relx=.5, rely=0.375, anchor="c")
+        Label(receive_form_frame, text="Search by Asset Number", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.325, anchor="center")
+        Entry(receive_form_frame, textvariable=self.receive_asset_name, bd=0).place(height=20, width=225, relx=.5, rely=0.375, anchor="center")
 
-        Label(receive_form_frame, text="Search by Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.450, anchor="c")
-        Entry(receive_form_frame, textvariable=self.receive_owner, bd=0).place(height=20, width=225, relx=.5, rely=0.500, anchor="c")
+        Label(receive_form_frame, text="Search by Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.450, anchor="center")
+        Entry(receive_form_frame, textvariable=self.receive_owner, bd=0).place(height=20, width=225, relx=.5, rely=0.500, anchor="center")
 
         filter_btn = Button(receive_form_frame, text="Search", width=13, command=lambda: self.filterTable(), bg="#DC5047", fg="#FFFFFF", bd=0, font=buttonA)
-        filter_btn.place(relx=.5, rely=0.600, anchor="c")
+        filter_btn.place(relx=.5, rely=0.600, anchor="center")
 
     def displayTable(self, receive_table_frame):
         receive_canvas = Canvas(receive_table_frame, bg="#191919", width=825, height=500)
@@ -269,5 +268,5 @@ class receiveAsset():
 
         self.receive_table = table.Table(receive_measurements, receive_canvas, receive_table_contents)
         self.receive_table.setScrollbars(receive_table_frame)
-        self.receive_table.checkboxTable(23, 21)
+        self.receive_table.optionsTable(23, 21, "checkbox")
         receive_canvas.configure(scrollregion=receive_canvas.bbox("all"))

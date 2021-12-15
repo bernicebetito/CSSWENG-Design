@@ -13,7 +13,8 @@ class Table(object):
         self.header_font = tkfont.Font(family='Open Sans', weight='bold', size=13)
         self.data_font = tkfont.Font(family='Open Sans', size=10)
         self.images = []
-        self.selected = []
+        self.selectedCheckbox = []
+        self.selectedRadio = -1
 
 
     def setScrollbars(self, frame):
@@ -30,7 +31,7 @@ class Table(object):
 
     def createTable(self):
         self.images = []
-        col_image = 0
+
         for row in range(self.rows):
             y = row * self.cell_height
             for column in range(self.cols):
@@ -44,6 +45,8 @@ class Table(object):
                     self.canvas.create_text((x_text, y_text), text=self.contents[row][column], font=self.header_font)
                     if str(self.contents[row][column]) == "Photo":
                         col_image = column
+                    else:
+                        col_image = -1
                 else:
                     if column == col_image:
                         self.images.append(self.contents[row][column])
@@ -52,27 +55,10 @@ class Table(object):
                         self.canvas.create_text((x_text, y_text), text=self.contents[row][column], font=self.data_font)
 
 
-    def checkboxClicked(self, numA, numB):
-        curr_clicked = self.canvas.find_withtag("current")[0] - numA
-        curr_clicked /= numB
-        curr_clicked = int(curr_clicked)
-
-        if curr_clicked in self.selected:
-            self.canvas.itemconfig(self.checkboxes[int(curr_clicked + 1)], fill="#E8E8E8")
-            self.selected.remove(curr_clicked)
-        else:
-            self.canvas.itemconfig(self.checkboxes[int(curr_clicked + 1)], fill="#666666")
-            self.selected.append(curr_clicked)
-
-
-    def getSelected(self):
-        return self.selected
-
-
-    def checkboxTable(self, numA, numB):
+    def optionsTable(self, numA, numB, option):
         self.images = []
         self.checkboxes = {}
-        col_image = 0
+
         for row in range(self.rows):
             y = row * self.cell_height
             for column in range(self.cols):
@@ -86,13 +72,56 @@ class Table(object):
                     self.canvas.create_text((x_text, y_text), text=self.contents[row][column], font=self.header_font)
                     if str(self.contents[row][column]) == "Photo":
                         col_image = column
+                    else:
+                        col_image = -1
                 else:
                     if column == col_image:
                         self.images.append(self.contents[row][column])
                         self.canvas.create_image(x + 50, y + 13, image=self.contents[row][column], anchor=NW)
                     elif column == 0:
-                        self.canvas.create_rectangle(x_text - 9, y_text - 9, x_text + 9, y_text + 9, fill="#191919")
-                        self.checkboxes[row] = self.canvas.create_rectangle(x_text - 8, y_text - 8, x_text + 8, y_text + 8, fill="#E8E8E8")
-                        self.canvas.tag_bind(self.checkboxes[row], "<Button-1>", lambda e: self.checkboxClicked(numA, numB))
+                        if option == "checkbox":
+                            self.canvas.create_rectangle(x_text - 9, y_text - 9, x_text + 9, y_text + 9, fill="#191919")
+                            self.checkboxes[row] = self.canvas.create_rectangle(x_text - 8, y_text - 8, x_text + 8, y_text + 8, fill="#E8E8E8")
+                            self.canvas.tag_bind(self.checkboxes[row], "<Button-1>", lambda e: self.optionClicked(numA,
+                                                                                                                  numB,
+                                                                                                                  option))
+                        elif option == "radio":
+                            self.canvas.create_oval(x_text - 9, y_text - 9, x_text + 9, y_text + 9, fill="#191919")
+                            self.checkboxes[row] = self.canvas.create_oval(x_text - 8, y_text - 8, x_text + 8, y_text + 8, fill="#E8E8E8")
+                            self.canvas.tag_bind(self.checkboxes[row], "<Button-1>", lambda e: self.optionClicked(numA,
+                                                                                                                  numB,
+                                                                                                                  option))
                     else:
                         self.canvas.create_text((x_text, y_text), text=self.contents[row][column], font=self.data_font)
+
+
+    def optionClicked(self, numA, numB, option):
+        curr_clicked = self.canvas.find_withtag("current")[0] - numA
+        curr_clicked /= numB
+        curr_clicked = int(curr_clicked)
+
+        if option == "checkbox":
+            if curr_clicked in self.selectedCheckbox:
+                self.canvas.itemconfig(self.checkboxes[int(curr_clicked + 1)], fill="#E8E8E8")
+                self.selectedCheckbox.remove(curr_clicked)
+            else:
+                self.canvas.itemconfig(self.checkboxes[int(curr_clicked + 1)], fill="#666666")
+                self.selectedCheckbox.append(curr_clicked)
+        else:
+            if curr_clicked == self.selectedRadio:
+                self.canvas.itemconfig(self.checkboxes[int(curr_clicked + 1)], fill="#E8E8E8")
+                self.selectedRadio = -1
+            else:
+                if self.selectedRadio == -1:
+                    self.selectedRadio += 1
+                self.canvas.itemconfig(self.checkboxes[int(self.selectedRadio + 1)], fill="#E8E8E8")
+                self.canvas.itemconfig(self.checkboxes[int(curr_clicked + 1)], fill="#666666")
+                self.selectedRadio = curr_clicked
+
+
+    def getSelectedCheckbox(self):
+        return self.selectedCheckbox
+
+
+    def getSelectedRadio(self):
+        return self.selectedRadio
