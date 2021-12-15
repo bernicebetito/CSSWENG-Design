@@ -92,6 +92,11 @@ class User():
         self.change_error_label.place(relx=.5, rely=0.725, anchor="c")
 
 
+class modifyUser():
+    def __init__(self):
+        self.username = StringVar()
+
+
 class createNewUser():
     def __init__(self):
         self.create_username = StringVar()

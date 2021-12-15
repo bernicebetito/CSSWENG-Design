@@ -2,7 +2,7 @@ from tkinter import *
 import tkinter.font as tkfont
 from PIL import Image, ImageTk
 from tkinter import filedialog
-import credentials, asset, history
+import user, asset, history
 
 root = Tk()
 root.title('Prime Properties - Inventory Management System')
@@ -17,7 +17,7 @@ field_label = tkfont.Font(family='Open Sans', size=10)
 buttonA = tkfont.Font(family='Open Sans', weight="bold", size=15)
 buttonB = tkfont.Font(family='Open Sans', weight="bold", size=10)
 
-login_credentials = credentials.User()
+login_credentials = user.User()
 valid_login = True
 
 
@@ -72,8 +72,8 @@ def goToNext(currentFrames, nextFunc):
             nav()
         elif nextFunc == 3:  # Create Asset
             createAsset()
-        elif nextFunc == 4:  # Create User
-            createUser()
+        elif nextFunc == 4:  # Manage Users
+            manageUser()
         elif nextFunc == 5:  # Find
             nav()
         elif nextFunc == 6:  # History
@@ -97,7 +97,7 @@ def login():
     login_bg.place(relx=.5, rely=.5, anchor="c")
 
     displayHeader(login_bg, 0.20, 0.25)
-    login_credentials = credentials.User()
+    login_credentials = user.User()
     login_credentials.setLogin(login_bg, field_label)
 
     def checkCredentials(frames, nextFunc):
@@ -116,45 +116,42 @@ def login():
 
 def nav():
     if username == "manager":
-        nav_bg = Frame(root, bg="#DDDDDD", width=300, height=600)
+        nav_bg = Frame(root, bg="#DDDDDD", width=300, height=500)
     else:
-        nav_bg = Frame(root, bg="#DDDDDD", width=300, height=450)
+        nav_bg = Frame(root, bg="#DDDDDD", width=300, height=400)
 
     nav_bg.columnconfigure(0, weight=1)
     nav_bg.place(relx=.5, rely=.5, anchor="c")
 
     frames = [nav_bg]
     create_asset_btn = Button(nav_bg, text="Create Asset", width=15, command=lambda: goToNext(frames, 3), bg="#B8D8D8", fg="#FFFFFF", bd=0, font=buttonA)
-    create_user_btn = Button(nav_bg, text="Create User", width=15, command=lambda: goToNext(frames, 4), bg="#8EB8CF", fg="#FFFFFF", bd=0, font=buttonA)
+    manage_user_btn = Button(nav_bg, text="Manage Users", width=15, command=lambda: goToNext(frames, 4), bg="#8EB8CF", fg="#FFFFFF", bd=0, font=buttonA)
     find_btn = Button(nav_bg, text="Find", width=15, command=lambda: goToNext(frames, 5), bg="#7A9E9F", fg="#FFFFFF", bd=0, font=buttonA)
     history_btn = Button(nav_bg, text="History", width=15, command=lambda: goToNext(frames, 6), bg="#3D626D", fg="#FFFFFF", bd=0, font=buttonA)
     receive_btn = Button(nav_bg, text="Receive", width=15, command=lambda: goToNext(frames, 7), bg="#24434D", fg="#FFFFFF", bd=0, font=buttonA)
     update_btn = Button(nav_bg, text="Update", width=15, command=lambda: goToNext(frames, 8), bg="#4F6367", fg="#FFFFFF", bd=0, font=buttonA)
     delete_btn = Button(nav_bg, text="Delete", width=15, command=lambda: goToNext(frames, 9), bg="#FE5F55", fg="#FFFFFF", bd=0, font=buttonA)
-    change_btn = Button(nav_bg, text="Change Password", width=15, command=lambda: goToNext(frames, 10), bg="#8C241E", fg="#FFFFFF", bd=0, font=buttonA)
     logout_btn = Button(nav_bg, text="Logout", width=10, command=lambda: goToNext(frames, 1), bg="#363636", fg="#FFFFFF", bd=0, font=buttonB)
 
     if username == "manager":
         displayHeader(nav_bg, 0.05, 0.10)
 
         create_asset_btn.place(relx=.5, rely=0.225, anchor="c")
-        create_user_btn.place(relx=.5, rely=0.310, anchor="c")
-        find_btn.place(relx=.5, rely=0.390, anchor="c")
-        history_btn.place(relx=.5, rely=0.475, anchor="c")
-        receive_btn.place(relx=.5, rely=0.560, anchor="c")
-        update_btn.place(relx=.5, rely=0.645, anchor="c")
-        delete_btn.place(relx=.5, rely=0.730, anchor="c")
-        change_btn.place(relx=.5, rely=0.815, anchor="c")
+        manage_user_btn.place(relx=.5, rely=0.325, anchor="c")
+        find_btn.place(relx=.5, rely=0.425, anchor="c")
+        history_btn.place(relx=.5, rely=0.525, anchor="c")
+        receive_btn.place(relx=.5, rely=0.625, anchor="c")
+        update_btn.place(relx=.5, rely=0.725, anchor="c")
+        delete_btn.place(relx=.5, rely=0.825, anchor="c")
         logout_btn.place(relx=.5, rely=0.925, anchor="c")
     elif username == "clerk":
         displayHeader(nav_bg, 0.15, 0.20)
 
         create_asset_btn.place(relx=.5, rely=0.350, anchor="c")
-        find_btn.place(relx=.5, rely=0.450, anchor="c")
-        receive_btn.place(relx=.5, rely=0.550, anchor="c")
-        update_btn.place(relx=.5, rely=0.650, anchor="c")
-        change_btn.place(relx=.5, rely=0.750, anchor="c")
-        logout_btn.place(relx=.5, rely=0.900, anchor="c")
+        find_btn.place(relx=.5, rely=0.475, anchor="c")
+        receive_btn.place(relx=.5, rely=0.600, anchor="c")
+        update_btn.place(relx=.5, rely=0.725, anchor="c")
+        logout_btn.place(relx=.5, rely=0.850, anchor="c")
 
 
 def createAsset():
@@ -194,13 +191,13 @@ def createAsset():
     create_form.setButton(create_btn)
 
 
-def createUser():
+def manageUser():
     create_user_bg = Frame(root, bg="#DDDDDD", width=300, height=450)
     create_user_bg.columnconfigure(0, weight=1)
     create_user_bg.place(relx=.5, rely=.5, anchor="c")
 
     displayHeader(create_user_bg, 0.10, 0.15)
-    create_user = credentials.createNewUser()
+    create_user = user.createNewUser()
     create_user.setCreateNewUser(create_user_bg, field_label)
 
     def validateCreateUser(frames):
