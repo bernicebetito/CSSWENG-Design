@@ -232,12 +232,13 @@ def manageUser():
 
 
 def createUser():
+    global manage_page
     create_user_bg = Frame(root, bg="#DDDDDD", width=300, height=450)
     create_user_bg.columnconfigure(0, weight=1)
     create_user_bg.place(relx=.5, rely=.5, anchor="center")
 
     displayHeader(create_user_bg, 0.10, 0.15)
-    create_user = user.createNewUser()
+    create_user = manage_page
     create_user.setCreateNewUser(create_user_bg, field_label)
 
     def validateCreateUser(frames):
