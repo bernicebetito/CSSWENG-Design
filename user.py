@@ -11,14 +11,6 @@ class User():
         self.username_field = Entry()
         self.password_field = Entry()
 
-        self.curr_password = StringVar()
-        self.new_password = StringVar()
-        self.confirm_password = StringVar()
-
-        self.current_field = Entry()
-        self.new_field = Entry()
-        self.confirm_field = Entry()
-
     def getUsername(self):
         return self.username.get()
 
@@ -48,51 +40,6 @@ class User():
         self.login_error_label = Label(login_bg, text="Invalid Username and / or Password", bg="#DDDDDD", fg="#DDDDDD", font=field_label)
         self.login_error_label.place(relx=.5, rely=0.725, anchor="center")
 
-    def checkChangePassword(self):
-        self.change_error_label.config(text="")
-        self.current_field.configure(highlightthickness=0, highlightbackground="#D64000", highlightcolor="#D64000")
-        self.new_field.configure(highlightthickness=0, highlightbackground="#D64000", highlightcolor="#D64000")
-        self.confirm_field.configure(highlightthickness=0, highlightbackground="#D64000", highlightcolor="#D64000")
-
-        if len(self.curr_password.get()) > 0 and len(self.new_password.get()) > 0 and len(self.confirm_password.get()) > 0:
-            if self.curr_password.get() == self.password.get():
-                if self.curr_password.get() != self.new_password.get() and self.curr_password.get() != self.confirm_password.get():
-                    if self.new_password.get() == self.confirm_password.get():
-                        self.password = self.new_password
-                        return True
-                    else:
-                        self.change_error_label.config(text="Passwords Do Not Match")
-                        self.new_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
-                        self.confirm_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
-                else:
-                    self.change_error_label.config(text="Password Must Be New")
-                    self.new_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
-                    self.confirm_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
-            else:
-                self.change_error_label.config(text="Invalid Current Password")
-                self.current_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
-
-        return False
-
-    def setChangePassword(self, change_pass_bg, field_label):
-        change_pass_label = tkfont.Font(family='Oswald', weight="bold", size=15)
-        Label(change_pass_bg, text="CHANGE PASSWORD", bg="#DDDDDD", fg="#3E3E3E", font=change_pass_label).place(relx=.5, rely=0.275, anchor="center")
-
-        Label(change_pass_bg, text="Current Password", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.375, anchor="center")
-        self.current_field = Entry(change_pass_bg, textvariable=self.curr_password, show="*", width=35, bd=0)
-        self.current_field.place(height=20, width=225, relx=.5, rely=0.425, anchor="center")
-
-        Label(change_pass_bg, text="New Password", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.500, anchor="center")
-        self.new_field = Entry(change_pass_bg, textvariable=self.new_password, show="*", width=35, bd=0)
-        self.new_field.place(height=20, width=225, relx=.5, rely=0.550, anchor="center")
-
-        Label(change_pass_bg, text="Confirm Password", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.625, anchor="center")
-        self.confirm_field = Entry(change_pass_bg, textvariable=self.confirm_password, show="*", width=35, bd=0)
-        self.confirm_field.place(height=20, width=225, relx=.5, rely=0.675, anchor="center")
-
-        self.change_error_label = Label(change_pass_bg, bg="#DDDDDD", fg="#D64000", font=field_label)
-        self.change_error_label.place(relx=.5, rely=0.725, anchor="center")
-
 
 class manageUser():
     def __init__(self, root):
@@ -102,43 +49,19 @@ class manageUser():
         self.manage_role_clerk = Radiobutton()
         self.manage_role_int = IntVar()
         self.manage_table_contents = []
+        self.operations_btn = Button()
 
-    def filterTable(self):
-        # Where filtering would happen
-        print("Filter button clicked")
+        # Selected User
+        self.selected_user = -1
 
-    def displaySelectedUser(self, operation_frame, operation_table_frame):
-        title_label = tkfont.Font(family='Oswald', size=15)
-        Label(operation_frame, text="Chosen User", bg="#DDDDDD", fg="#363636", font=title_label).place(
-            relx=0.5, rely=0.250, anchor="center")
+        # Change Password
+        self.curr_password = StringVar()
+        self.new_password = StringVar()
+        self.confirm_password = StringVar()
 
-        selected_user = self.manage_table.getSelectedRadio()
-        operation_canvas = Canvas(operation_table_frame, bg="#191919", width=300, height=150)
-        operation_measurements = {
-            "cell_width": 150,
-            "cell_height": 75,
-            "rows": 2,
-            "columns": 2
-        }
-        operation_table_header = ["Username", "Role"]
-
-        operation_table_contents = []
-        for row in range(2):
-            curr_row = []
-            for column in range(2):
-                if row == 0:
-                    curr_row.append(operation_table_header[column])
-                else:
-                    if column == 0:
-                        curr_row.append(self.manage_table_contents[selected_user + 1][1])
-                    else:
-                        curr_row.append(self.manage_table_contents[selected_user + 1][2])
-
-            operation_table_contents.append(curr_row)
-
-        self.operation_table = table.Table(operation_measurements, operation_canvas, operation_table_contents)
-        operation_canvas.pack(expand=True, side=LEFT, fill=BOTH)
-        self.operation_table.createTable()
+        self.current_field = Entry()
+        self.new_field = Entry()
+        self.confirm_field = Entry()
 
     def displayUsers(self, manage_form_frame, field_label, buttonA):
         Label(manage_form_frame, text="Search by Username", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=0.325, rely=0.200, anchor="center")
@@ -163,13 +86,13 @@ class manageUser():
             "rows": 100,
             "columns": 3
         }
-        manage_table_header = ["Modify", "Username", "Role"]
+        manage_table_header = ["Modify", "Username", "Role", "Password"]
 
         self.manage_table_contents = []
         self.root.table_image = []
         for row in range(100):
             curr_row = []
-            for column in range(3):
+            for column in range(4):
                 if row == 0:
                     curr_row.append(manage_table_header[column])
                 else:
@@ -177,12 +100,14 @@ class manageUser():
                         curr_row.append("")
                     elif column == 1:
                         curr_row.append("user_" + str(row))
-                    else:
+                    elif column == 2:
                         rand_role = random.randint(1, 2)
                         if rand_role == 1:
                             curr_row.append("Manager")
                         else:
                             curr_row.append("Inventory Clerk")
+                    else:
+                        curr_row.append("p@s5w0rD!_" + str(row))
 
             self.manage_table_contents.append(curr_row)
 
@@ -190,6 +115,97 @@ class manageUser():
         self.manage_table.setScrollbars(manage_table_frame)
         self.manage_table.optionsTable(9, 7, "radio")
         manage_canvas.configure(scrollregion=manage_canvas.bbox("all"))
+
+    def filterTable(self):
+        # Where filtering would happen
+        print("Filter button clicked")
+
+    def getSelected(self):
+        self.selected_user = self.manage_table.getSelectedRadio()
+        if self.selected_user > -1:
+            return True
+        return False
+
+    def displaySelectedUser(self, operation_frame, operation_table_frame):
+        title_label = tkfont.Font(family='Oswald', size=15)
+        Label(operation_frame, text="Chosen User", bg="#DDDDDD", fg="#363636", font=title_label).place(
+            relx=0.5, rely=0.250, anchor="center")
+
+        operation_canvas = Canvas(operation_table_frame, bg="#191919", width=300, height=150)
+        operation_measurements = {
+            "cell_width": 150,
+            "cell_height": 75,
+            "rows": 2,
+            "columns": 2
+        }
+        operation_table_header = ["Username", "Role", "Password"]
+
+        operation_table_contents = []
+        for row in range(2):
+            curr_row = []
+            for column in range(3):
+                if row == 0:
+                    curr_row.append(operation_table_header[column])
+                else:
+                    if column == 0:
+                        curr_row.append(self.manage_table_contents[self.selected_user + 1][1])
+                    else:
+                        curr_row.append(self.manage_table_contents[self.selected_user + 1][2])
+
+            operation_table_contents.append(curr_row)
+
+        self.operation_table = table.Table(operation_measurements, operation_canvas, operation_table_contents)
+        operation_canvas.pack(expand=True, side=LEFT, fill=BOTH)
+        self.operation_table.createTable()
+
+    def checkChangePassword(self):
+        self.change_error_label.config(text="")
+        self.new_field.configure(highlightthickness=0, highlightbackground="#D64000", highlightcolor="#D64000")
+        self.confirm_field.configure(highlightthickness=0, highlightbackground="#D64000", highlightcolor="#D64000")
+
+        if len(self.new_password.get()) > 0 and len(self.confirm_password.get()) > 0:
+            if self.new_password.get() == self.confirm_password.get():
+                if self.new_password.get() != self.manage_table_contents[self.selected_user + 1][3]:
+                    # update the account
+                    return True
+                else:
+                    self.change_error_label.config(text="Password Must Be New")
+                    self.new_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
+                    self.confirm_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
+            else:
+                self.change_error_label.config(text="Passwords Do Not Match")
+                self.new_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
+                self.confirm_field.configure(highlightthickness=2, highlightbackground="#D64000",
+                                             highlightcolor="#D64000")
+
+        return False
+
+    def setChangePassword(self, change_pass_bg, field_label):
+        change_pass_label = tkfont.Font(family='Oswald', weight="bold", size=15)
+        Label(change_pass_bg, text="CHANGE PASSWORD", bg="#DDDDDD", fg="#3E3E3E", font=change_pass_label).place(relx=.5, rely=0.275, anchor="center")
+
+        Label(change_pass_bg, text="Username", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.375, anchor="center")
+        username = Label(change_pass_bg, text=self.manage_table_contents[self.selected_user + 1][1], bg="#DDDDDD", fg="#363636", font=field_label)
+        username.place(relx=.5, rely=0.425, anchor="center")
+        current_font = tkfont.Font(username, username.cget("font"))
+        current_font.configure(weight="bold", size=13)
+        username.config(font=current_font)
+
+        Label(change_pass_bg, text="New Password", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.500, anchor="center")
+        self.new_field = Entry(change_pass_bg, textvariable=self.new_password, show="*", width=35, bd=0)
+        self.new_field.place(height=20, width=225, relx=.5, rely=0.550, anchor="center")
+
+        Label(change_pass_bg, text="Confirm Password", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.625, anchor="center")
+        self.confirm_field = Entry(change_pass_bg, textvariable=self.confirm_password, show="*", width=35, bd=0)
+        self.confirm_field.place(height=20, width=225, relx=.5, rely=0.675, anchor="center")
+
+        self.change_error_label = Label(change_pass_bg, bg="#DDDDDD", fg="#D64000", font=field_label)
+        self.change_error_label.place(relx=.5, rely=0.725, anchor="center")
+
+    def deleteUser(self):
+        # Account deletion would happen here
+        print("Delete User")
+        return True
 
 
 class createNewUser():

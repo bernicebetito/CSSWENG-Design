@@ -43,7 +43,7 @@ def uploadImage(canvas, text):
 
 def approvedMessage(frames, message):
     for i in frames:
-            i.destroy()
+        i.destroy()
 
     approved_create_bg = Frame(root, bg="#DDDDDD", width=300, height=300)
     approved_create_bg.columnconfigure(0, weight=1)
@@ -215,12 +215,17 @@ def manageUser():
     manage_page.displayTable(manage_table_frame)
 
     frames = [manage_bg, manage_form_frame, manage_table_frame]
-    back_btn = Button(manage_form_frame, text="Create New User", width=15, command=lambda: goToNext(frames, 5), bg="#8EB8CF",
+
+    def performOperationsUser(frames, nextFunc):
+        if manage_page.getSelected():
+            goToNext(frames, nextFunc)
+
+    create_user_btn = Button(manage_form_frame, text="Create New User", width=15, command=lambda: goToNext(frames, 5), bg="#8EB8CF",
                       fg="#FFFFFF", bd=0, font=buttonA)
-    back_btn.place(relx=.30, rely=0.750, anchor="center")
-    back_btn = Button(manage_form_frame, text="Perform Operation", width=15, command=lambda: goToNext(frames, 6), bg="#8EB8CF",
+    create_user_btn.place(relx=.30, rely=0.750, anchor="center")
+    operation_user_btn = Button(manage_form_frame, text="Perform Operation", width=15, command=lambda: performOperationsUser(frames, 6), bg="#8EB8CF",
                       fg="#FFFFFF", bd=0, font=buttonA)
-    back_btn.place(relx=.30, rely=0.850, anchor="center")
+    operation_user_btn.place(relx=.30, rely=0.850, anchor="center")
     back_btn = Button(manage_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E",
                       fg="#FFFFFF", bd=0, font=buttonB)
     back_btn.place(relx=.15, rely=0.950, anchor="center")
@@ -262,12 +267,17 @@ def performUsers():
     manage_page.displaySelectedUser(operation_user_bg, operation_table_frame)
 
     frames = [operation_user_bg, operation_table_frame]
+
+    def deleteUser(frames):
+        if manage_page.deleteUser():
+            approvedMessage(frames, "Successfully\nDeleted\nUser!")
+
     change_pass_btn = Button(operation_user_bg, text="Change Password", height=1, width=15,
-                             command=lambda: goToNext(frames, 2), bg="#8EB8CF", fg="#FFFFFF", bd=0, font=buttonA)
+                             command=lambda: goToNext(frames, 7), bg="#8EB8CF", fg="#FFFFFF", bd=0, font=buttonA)
     change_pass_btn.place(relx=.25, rely=0.750, anchor="center")
 
     delete_btn = Button(operation_user_bg, text="Delete", height=1, width=15,
-                             command=lambda: goToNext(frames, 2), bg="#8EB8CF", fg="#FFFFFF", bd=0, font=buttonA)
+                             command=lambda: deleteUser(frames), bg="#8EB8CF", fg="#FFFFFF", bd=0, font=buttonA)
     delete_btn.place(relx=.75, rely=0.750, anchor="center")
 
     back_btn = Button(operation_user_bg, text="Back", width=10, command=lambda: goToNext(frames, 4), bg="#2D2E2E",
@@ -276,19 +286,20 @@ def performUsers():
 
 
 def changePassword():
+    global manage_page
     change_pass_bg = Frame(root, bg="#DDDDDD", width=300, height=450)
     change_pass_bg.columnconfigure(0, weight=1)
     change_pass_bg.place(relx=.5, rely=.5, anchor="center")
 
     displayHeader(change_pass_bg, 0.10, 0.15)
-    login_credentials.setChangePassword(change_pass_bg, field_label)
+    manage_page.setChangePassword(change_pass_bg, field_label)
 
     def validateChangePassword(frames):
-        if login_credentials.checkChangePassword():
+        if manage_page.checkChangePassword():
             approvedMessage(frames, "Password Updated\nSuccessfully!")
 
     frames = [change_pass_bg]
-    change_pass_btn = Button(change_pass_bg, text="Change Password", height=1, width=15, command=lambda: validateChangePassword(frames), bg="#8C241E", fg="#FFFFFF", bd=0, font=buttonA)
+    change_pass_btn = Button(change_pass_bg, text="Change Password", height=1, width=15, command=lambda: validateChangePassword(frames), bg="#8EB8CF", fg="#FFFFFF", bd=0, font=buttonA)
     change_pass_btn.place(relx=.5, rely=0.800, anchor="center")
 
     back_btn = Button(change_pass_bg, text="Back", width=10, command=lambda: goToNext(frames, 6), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
