@@ -207,16 +207,16 @@ def createAsset():
 
 def manageUser():
     global manage_page
-    manage_bg = Frame(root, bg="#DDDDDD", width=825, height=600)
+    manage_bg = Frame(root, bg="#DDDDDD", width=1000, height=600)
     manage_bg.pack()
     manage_bg.columnconfigure(0, weight=1)
     manage_bg.place(relx=.5, rely=.5, anchor="center")
 
     manage_form_frame = Frame(manage_bg, bg="#DDDDDD", width=300, height=550)
-    manage_form_frame.place(relx=.200, rely=.5, anchor="center")
+    manage_form_frame.place(relx=.175, rely=.5, anchor="center")
 
-    manage_table_frame = Frame(manage_bg, bg="#191919", width=455, height=500)
-    manage_table_frame.place(relx=.675, rely=.5, anchor="center")
+    manage_table_frame = Frame(manage_bg, bg="#191919", width=605, height=500)
+    manage_table_frame.place(relx=.665, rely=.5, anchor="center")
 
     displayHeader(manage_form_frame, 0.050, 0.100)
 
@@ -271,7 +271,7 @@ def performUsers():
     operation_user_bg.columnconfigure(0, weight=1)
     operation_user_bg.place(relx=.5, rely=.5, anchor="center")
 
-    operation_table_frame = Frame(operation_user_bg, bg="#DDDDDD", width=300, height=150)
+    operation_table_frame = Frame(operation_user_bg, bg="#DDDDDD", width=450, height=150)
     operation_table_frame.place(relx=.5, rely=.5, anchor="center")
 
     displayHeader(operation_user_bg, 0.10, 0.15)

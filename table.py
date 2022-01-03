@@ -56,7 +56,7 @@ class Table(object):
                         self.canvas.create_text((x_text, y_text), text=self.contents[row][column], font=self.data_font)
 
 
-    def optionsTable(self, numA, numB, option):
+    def optionsTable(self, num, option):
         self.images = []
         self.checkboxes = {}
 
@@ -83,22 +83,18 @@ class Table(object):
                         if option == "checkbox":
                             self.canvas.create_rectangle(x_text - 9, y_text - 9, x_text + 9, y_text + 9, fill="#191919")
                             self.checkboxes[row] = self.canvas.create_rectangle(x_text - 8, y_text - 8, x_text + 8, y_text + 8, fill="#E8E8E8")
-                            self.canvas.tag_bind(self.checkboxes[row], "<Button-1>", lambda e: self.optionClicked(numA,
-                                                                                                                  numB,
-                                                                                                                  option))
+                            self.canvas.tag_bind(self.checkboxes[row], "<Button-1>", lambda e: self.optionClicked(num,option))
                         elif option == "radio":
                             self.canvas.create_oval(x_text - 9, y_text - 9, x_text + 9, y_text + 9, fill="#191919")
                             self.checkboxes[row] = self.canvas.create_oval(x_text - 8, y_text - 8, x_text + 8, y_text + 8, fill="#E8E8E8")
-                            self.canvas.tag_bind(self.checkboxes[row], "<Button-1>", lambda e: self.optionClicked(numA,
-                                                                                                                  numB,
-                                                                                                                  option))
+                            self.canvas.tag_bind(self.checkboxes[row], "<Button-1>", lambda e: self.optionClicked(num, option))
                     else:
                         self.canvas.create_text((x_text, y_text), text=self.contents[row][column], font=self.data_font)
 
 
-    def optionClicked(self, numA, numB, option):
-        curr_clicked = self.canvas.find_withtag("current")[0] - numA
-        curr_clicked /= numB
+    def optionClicked(self, num, option):
+        curr_clicked = self.canvas.find_withtag("current")[0] - num
+        curr_clicked /= (num - 2)
         curr_clicked = int(curr_clicked)
 
         if option == "checkbox":

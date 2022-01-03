@@ -90,13 +90,13 @@ class manageUser():
         search_btn.place(relx=.5, rely=0.475, anchor="center")
 
     def displayTable(self, manage_table_frame):
-        manage_canvas = Canvas(manage_table_frame, bg="#191919", width=455, height=500)
+        manage_canvas = Canvas(manage_table_frame, bg="#191919", width=605, height=500)
 
         manage_measurements = {
             "cell_width": 150,
             "cell_height": 75,
             "rows": 100,
-            "columns": 3
+            "columns": 4
         }
         manage_table_header = ["Modify", "Username", "Role", "Password"]
 
@@ -125,7 +125,7 @@ class manageUser():
 
         self.manage_table = table.Table(manage_measurements, manage_canvas, self.manage_table_contents)
         self.manage_table.setScrollbars(manage_table_frame)
-        self.manage_table.optionsTable(9, 7, "radio")
+        self.manage_table.optionsTable(11, "radio")
         manage_canvas.configure(scrollregion=manage_canvas.bbox("all"))
 
     def filterTable(self):
@@ -183,12 +183,12 @@ class manageUser():
         Label(operation_frame, text="Chosen User", bg="#DDDDDD", fg="#363636", font=title_label).place(
             relx=0.5, rely=0.250, anchor="center")
 
-        operation_canvas = Canvas(operation_table_frame, bg="#191919", width=300, height=150)
+        operation_canvas = Canvas(operation_table_frame, bg="#191919", width=450, height=150)
         operation_measurements = {
             "cell_width": 150,
             "cell_height": 75,
             "rows": 2,
-            "columns": 2
+            "columns": 3
         }
         operation_table_header = ["Username", "Role", "Password"]
 
@@ -199,10 +199,7 @@ class manageUser():
                 if row == 0:
                     curr_row.append(operation_table_header[column])
                 else:
-                    if column == 0:
-                        curr_row.append(self.manage_table_contents[self.selected_user + 1][1])
-                    else:
-                        curr_row.append(self.manage_table_contents[self.selected_user + 1][2])
+                    curr_row.append(self.manage_table_contents[self.selected_user + 1][column + 1])
 
             operation_table_contents.append(curr_row)
 
