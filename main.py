@@ -88,7 +88,13 @@ def goToNext(currentFrames, nextFunc):
             receiveAsset()
         elif nextFunc == 11:  # Update
             nav()
-        elif nextFunc == 12:  # Delete
+        elif nextFunc == 12:  # Import & Export
+            importExport()
+        elif nextFunc == 13:  # Import
+            importOption()
+        elif nextFunc == 14:  # Export
+            importExport()
+        elif nextFunc == 15:  # Delete
             deleteAsset()
     else:
         login()
@@ -120,9 +126,9 @@ def login():
 
 def nav():
     if username == "manager":
-        nav_bg = Frame(root, bg="#DDDDDD", width=300, height=500)
+        nav_bg = Frame(root, bg="#DDDDDD", width=300, height=600)
     else:
-        nav_bg = Frame(root, bg="#DDDDDD", width=300, height=400)
+        nav_bg = Frame(root, bg="#DDDDDD", width=300, height=500)
 
     nav_bg.columnconfigure(0, weight=1)
     nav_bg.place(relx=.5, rely=.5, anchor="center")
@@ -134,27 +140,30 @@ def nav():
     history_btn = Button(nav_bg, text="History", width=15, command=lambda: goToNext(frames, 9), bg="#3D626D", fg="#FFFFFF", bd=0, font=buttonA)
     receive_btn = Button(nav_bg, text="Receive", width=15, command=lambda: goToNext(frames, 10), bg="#24434D", fg="#FFFFFF", bd=0, font=buttonA)
     update_btn = Button(nav_bg, text="Update", width=15, command=lambda: goToNext(frames, 11), bg="#4F6367", fg="#FFFFFF", bd=0, font=buttonA)
-    delete_btn = Button(nav_bg, text="Delete", width=15, command=lambda: goToNext(frames, 12), bg="#FE5F55", fg="#FFFFFF", bd=0, font=buttonA)
+    import_btn = Button(nav_bg, text="Import & Export", width=15, command=lambda: goToNext(frames, 12), bg="#3C4648", fg="#FFFFFF", bd=0, font=buttonA)
+    delete_btn = Button(nav_bg, text="Delete", width=15, command=lambda: goToNext(frames, 15), bg="#FE5F55", fg="#FFFFFF", bd=0, font=buttonA)
     logout_btn = Button(nav_bg, text="Logout", width=10, command=lambda: goToNext(frames, 1), bg="#363636", fg="#FFFFFF", bd=0, font=buttonB)
 
     if username == "manager":
         displayHeader(nav_bg, 0.05, 0.10)
 
         create_asset_btn.place(relx=.5, rely=0.225, anchor="center")
-        manage_user_btn.place(relx=.5, rely=0.325, anchor="center")
-        find_btn.place(relx=.5, rely=0.425, anchor="center")
-        history_btn.place(relx=.5, rely=0.525, anchor="center")
-        receive_btn.place(relx=.5, rely=0.625, anchor="center")
-        update_btn.place(relx=.5, rely=0.725, anchor="center")
-        delete_btn.place(relx=.5, rely=0.825, anchor="center")
-        logout_btn.place(relx=.5, rely=0.925, anchor="center")
+        manage_user_btn.place(relx=.5, rely=0.310, anchor="center")
+        find_btn.place(relx=.5, rely=0.395, anchor="center")
+        history_btn.place(relx=.5, rely=0.480, anchor="center")
+        receive_btn.place(relx=.5, rely=0.565, anchor="center")
+        update_btn.place(relx=.5, rely=0.650, anchor="center")
+        import_btn.place(relx=.5, rely=0.735, anchor="center")
+        delete_btn.place(relx=.5, rely=0.820, anchor="center")
+        logout_btn.place(relx=.5, rely=0.905, anchor="center")
     elif username == "clerk":
         displayHeader(nav_bg, 0.15, 0.20)
 
         create_asset_btn.place(relx=.5, rely=0.350, anchor="center")
-        find_btn.place(relx=.5, rely=0.475, anchor="center")
-        receive_btn.place(relx=.5, rely=0.600, anchor="center")
-        update_btn.place(relx=.5, rely=0.725, anchor="center")
+        find_btn.place(relx=.5, rely=0.450, anchor="center")
+        receive_btn.place(relx=.5, rely=0.550, anchor="center")
+        update_btn.place(relx=.5, rely=0.650, anchor="center")
+        import_btn.place(relx=.5, rely=0.750, anchor="center")
         logout_btn.place(relx=.5, rely=0.850, anchor="center")
 
 
@@ -364,6 +373,46 @@ def receiveAsset():
                       fg="#FFFFFF", bd=0, font=buttonB)
     back_btn.place(relx=.15, rely=0.950, anchor="center")
 
+
+def importExport():
+    import_bg = Frame(root, bg="#DDDDDD", width=300, height=300)
+    import_bg.columnconfigure(0, weight=1)
+    import_bg.place(relx=.5, rely=.5, anchor="center")
+
+    displayHeader(import_bg, 0.15, 0.25)
+
+    import_btn = Button(import_bg, text="Import", width=15, command=lambda: goToNext(frames, 13), bg="#3C4648", fg="#FFFFFF", bd=0, font=buttonA)
+    import_btn.place(relx=.5, rely=0.450, anchor="center")
+
+    export_btn = Button(import_bg, text="Export", width=15, command=lambda: goToNext(frames, 14), bg="#3C4648", fg="#FFFFFF", bd=0, font=buttonA)
+    export_btn.place(relx=.5, rely=0.650, anchor="center")
+
+    frames = [import_bg]
+    back_btn = Button(import_bg, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E",
+                      fg="#FFFFFF", bd=0, font=buttonB)
+    back_btn.place(relx=.5, rely=0.850, anchor="center")
+
+
+def importOption():
+    import_bg = Frame(root, bg="#DDDDDD", width=300, height=400)
+    import_bg.columnconfigure(0, weight=1)
+    import_bg.place(relx=.5, rely=.5, anchor="center")
+
+    displayHeader(import_bg, 0.15, 0.25)
+    frames = [import_bg]
+    import_user = user.ImportExport()
+    import_user.displayImport(import_bg, sub)
+
+    def importFile(frames):
+        if import_user.importFile():
+            approvedMessage(frames, "Successfully\nImported File!")
+
+    import_btn = Button(import_bg, text="Import", width=15, command=lambda: importFile(frames), bg="#3C4648", fg="#FFFFFF", bd=0, font=buttonA)
+    import_btn.place(relx=.5, rely=0.725, anchor="center")
+
+    back_btn = Button(import_bg, text="Back", width=10, command=lambda: goToNext(frames, 12), bg="#2D2E2E",
+                      fg="#FFFFFF", bd=0, font=buttonB)
+    back_btn.place(relx=.5, rely=0.850, anchor="center")
 
 def deleteAsset():
     delete_bg = Frame(root, bg="#DDDDDD", width=1200, height=600)

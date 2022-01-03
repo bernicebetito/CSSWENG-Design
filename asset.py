@@ -137,7 +137,7 @@ class deleteAsset():
         print("Filter button clicked")
 
     def checkAssets(self):
-        self.delete_assets = self.delete_table.getSelected()
+        self.delete_assets = self.delete_table.getSelectedCheckbox()
         if len(self.delete_assets) > 0:
             for i in self.delete_assets:
                 print(i)
