@@ -268,5 +268,5 @@ class receiveAsset():
 
         self.receive_table = table.Table(receive_measurements, receive_canvas, receive_table_contents)
         self.receive_table.setScrollbars(receive_table_frame)
-        self.receive_table.optionsTable(23, "checkbox")
+        self.receive_table.optionsTable(25, "checkbox")
         receive_canvas.configure(scrollregion=receive_canvas.bbox("all"))

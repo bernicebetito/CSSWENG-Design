@@ -59,7 +59,7 @@ def approvedMessage(frames, message):
     approved_btn = Button(approved_bg, text="Back to Home", height=1, width=15,
                                  command=lambda: goToNext(approved_frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0,
                                  font=buttonB)
-    approved_btn.place(relx=.5, rely=0.8, anchor="center")
+    approved_btn.place(relx=.5, rely=0.850, anchor="center")
 
 
 def goToNext(currentFrames, nextFunc):
