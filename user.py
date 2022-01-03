@@ -264,7 +264,7 @@ class manageUser():
 class ImportExport():
     def __init__(self):
         self.import_filename = ""
-        self.export_filename = ""
+        self.export_filename = "prime_properties_export.txt"
 
     def uploadFile(self):
         fileTypes = [('All Files', '*.*')]
@@ -277,6 +277,12 @@ class ImportExport():
         if len(self.import_filename) > 0:
             return True
         return False
+
+    def exportFile(self):
+        return True
+
+    def openExport(self):
+        print(self.export_filename)
 
     def displayImport(self, import_bg, sub):
         self.choose_header = Label(import_bg, text="Choose a File to Import", bg="#DDDDDD", fg="#6A6A6A", font=sub)

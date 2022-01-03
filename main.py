@@ -45,20 +45,21 @@ def approvedMessage(frames, message):
     for i in frames:
         i.destroy()
 
-    approved_create_bg = Frame(root, bg="#DDDDDD", width=300, height=300)
-    approved_create_bg.columnconfigure(0, weight=1)
-    approved_create_bg.place(relx=.5, rely=.5, anchor="center")
+    approved_bg = Frame(root, bg="#DDDDDD", width=300, height=300)
+    approved_bg.columnconfigure(0, weight=1)
+    approved_bg.place(relx=.5, rely=.5, anchor="center")
 
-    displayHeader(approved_create_bg, 0.15, 0.25)
+    displayHeader(approved_bg, 0.15, 0.25)
 
-    approved_create_label = tkfont.Font(family='Oswald', weight="bold", size=25)
-    Label(approved_create_bg, text=message, bg="#DDDDDD", fg="#6B9A39", font=approved_create_label).place(relx=.5, rely=0.5, anchor="center")
+    approved_font = tkfont.Font(family='Oswald', weight="bold", size=25)
+    approved_label = Label(approved_bg, text=message, bg="#DDDDDD", fg="#6B9A39", font=approved_font)
+    approved_label.place(relx=.5, rely=0.5, anchor="center")
 
-    approved_frames = [approved_create_bg]
-    approved_create_btn = Button(approved_create_bg, text="Back to Home", height=1, width=15,
+    approved_frames = [approved_bg]
+    approved_btn = Button(approved_bg, text="Back to Home", height=1, width=15,
                                  command=lambda: goToNext(approved_frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0,
-                                 font=buttonA)
-    approved_create_btn.place(relx=.5, rely=0.8, anchor="center")
+                                 font=buttonB)
+    approved_btn.place(relx=.5, rely=0.8, anchor="center")
 
 
 def goToNext(currentFrames, nextFunc):
@@ -93,7 +94,7 @@ def goToNext(currentFrames, nextFunc):
         elif nextFunc == 13:  # Import
             importOption()
         elif nextFunc == 14:  # Export
-            importExport()
+            exportOption()
         elif nextFunc == 15:  # Delete
             deleteAsset()
     else:
@@ -379,6 +380,7 @@ def importExport():
     import_bg.columnconfigure(0, weight=1)
     import_bg.place(relx=.5, rely=.5, anchor="center")
 
+    frames = [import_bg]
     displayHeader(import_bg, 0.15, 0.25)
 
     import_btn = Button(import_bg, text="Import", width=15, command=lambda: goToNext(frames, 13), bg="#3C4648", fg="#FFFFFF", bd=0, font=buttonA)
@@ -387,7 +389,6 @@ def importExport():
     export_btn = Button(import_bg, text="Export", width=15, command=lambda: goToNext(frames, 14), bg="#3C4648", fg="#FFFFFF", bd=0, font=buttonA)
     export_btn.place(relx=.5, rely=0.650, anchor="center")
 
-    frames = [import_bg]
     back_btn = Button(import_bg, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E",
                       fg="#FFFFFF", bd=0, font=buttonB)
     back_btn.place(relx=.5, rely=0.850, anchor="center")
@@ -413,6 +414,35 @@ def importOption():
     back_btn = Button(import_bg, text="Back", width=10, command=lambda: goToNext(frames, 12), bg="#2D2E2E",
                       fg="#FFFFFF", bd=0, font=buttonB)
     back_btn.place(relx=.5, rely=0.850, anchor="center")
+
+
+def exportOption():
+    export_bg = Frame(root, bg="#DDDDDD", width=300, height=400)
+    export_bg.columnconfigure(0, weight=1)
+    export_bg.place(relx=.5, rely=.5, anchor="center")
+
+    export_frames = [export_bg]
+    displayHeader(export_bg, 0.15, 0.25)
+    export_user = user.ImportExport()
+
+    export_font = tkfont.Font(family='Oswald', weight="bold", size=25)
+    export_label = Label(export_bg, text="Successfully\nExported!", bg="#DDDDDD", fg="#6B9A39", font=export_font)
+    open_btn = Button(export_bg, text="Open File", height=1, width=15,
+                      command=export_user.openExport, bg="#3C4648", fg="#FFFFFF", bd=0,
+                      font=buttonA)
+
+    if not export_user.exportFile():
+        export_label.config(text="Error in\nExporting!", fg="#DC5047")
+        open_btn.config(state="disabled")
+
+    export_label.place(relx=.5, rely=0.475, anchor="center")
+    open_btn.place(relx=.5, rely=0.725, anchor="center")
+
+    back_btn = Button(export_bg, text="Back to Home", height=1, width=15,
+                                 command=lambda: goToNext(export_frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0,
+                                 font=buttonB)
+    back_btn.place(relx=.5, rely=0.850, anchor="center")
+
 
 def deleteAsset():
     delete_bg = Frame(root, bg="#DDDDDD", width=1200, height=600)
