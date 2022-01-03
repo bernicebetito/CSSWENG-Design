@@ -2,7 +2,7 @@ from tkinter import *
 import tkinter.font as tkfont
 from PIL import Image, ImageTk
 from tkinter import filedialog
-import user, asset, history
+import user, asset, history, table
 
 root = Tk()
 root.title('Prime Properties - Inventory Management System')
@@ -401,7 +401,7 @@ def importOption():
 
     displayHeader(import_bg, 0.15, 0.25)
     frames = [import_bg]
-    import_user = user.ImportExport()
+    import_user = table.ImportExport()
     import_user.displayImport(import_bg, sub)
 
     def importFile(frames):
@@ -423,7 +423,7 @@ def exportOption():
 
     export_frames = [export_bg]
     displayHeader(export_bg, 0.15, 0.25)
-    export_user = user.ImportExport()
+    export_user = table.ImportExport()
 
     export_font = tkfont.Font(family='Oswald', weight="bold", size=25)
     export_label = Label(export_bg, text="Successfully\nExported!", bg="#DDDDDD", fg="#6B9A39", font=export_font)

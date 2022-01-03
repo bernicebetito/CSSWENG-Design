@@ -2,7 +2,6 @@ from tkinter import *
 import tkinter.font as tkfont
 import random
 import table
-from tkinter import filedialog
 
 class User():
     def __init__(self):
@@ -259,39 +258,3 @@ class manageUser():
         # Account deletion would happen here
         print("Delete User")
         return True
-
-
-class ImportExport():
-    def __init__(self):
-        self.import_filename = ""
-        self.export_filename = "prime_properties_export.txt"
-
-    def uploadFile(self):
-        fileTypes = [('All Files', '*.*')]
-        self.import_filename = filedialog.askopenfilename(filetypes=fileTypes)
-        if len(self.import_filename) > 0:
-            display_name = self.import_filename.split('/')[len(self.import_filename.split('/')) - 1]
-            self.chosen_header.configure(text=display_name)
-
-    def importFile(self):
-        if len(self.import_filename) > 0:
-            return True
-        return False
-
-    def exportFile(self):
-        return True
-
-    def openExport(self):
-        print(self.export_filename)
-
-    def displayImport(self, import_bg, sub):
-        self.choose_header = Label(import_bg, text="Choose a File to Import", bg="#DDDDDD", fg="#6A6A6A", font=sub)
-        self.choose_header.place(relx=.5, rely=0.375, anchor="center")
-
-        self.chosen_header = Label(import_bg, text="No File Chosen", width=25, bg="#EAEAEA", fg="#191919", font=sub)
-        self.chosen_header.place(relx=.5, rely=0.450, anchor="center")
-
-        btn_font = tkfont.Font(family='Open Sans', weight="bold", size=13)
-        self.choose_btn = Button(import_bg, text="Choose File", width=15, command=lambda: self.uploadFile(),
-                            bg="#667275", fg="#FFFFFF", bd=0, font=btn_font)
-        self.choose_btn.place(relx=.5, rely=0.550, anchor="center")
