@@ -40,18 +40,8 @@ class History():
     def displayTable(self, history_table_frame):
         self.history_canvas = Canvas(history_table_frame, bg="#191919", width=825, height=500)
 
-        history_measurements = {
-            "cell_width": 150,
-            "cell_height": 75,
-            "rows": 0,
-            "columns": 9
-        }
-
-        history = self.database.viewTable(1, ["", "", "", "", ""])
-        if type(history) == list:
-            history_measurements["rows"] = len(history) + 1
-            self.getContent(["", "", "", "", ""])
-
+        history_measurements = {"cell_width": 150, "cell_height": 75, "rows": self.getContent(["", "", "", "", "", ""]),
+                                "columns": 9}
         self.history_table = table.Table(history_measurements, self.history_canvas, self.history_table_contents)
         self.history_table.setScrollbars(history_table_frame)
         self.history_table.createTable()
@@ -102,14 +92,14 @@ class History():
                 status = "Paid"
             elif self.history_status.get() == 2:
                 status = "Unpaid"
-            history_filter = [self.history_asset_name.get(), self.history_company.get(), self.history_owner.get(), self.history_location.get(), status]
+            history_filter = [self.history_asset_name.get(), self.history_company.get(), self.history_owner.get(), self.history_location.get(), status, ""]
             self.history_asset_name.set("")
             self.history_company.set("")
             self.history_owner.set("")
             self.history_location.set("")
             self.history_status.set(0)
         else:
-            history_filter = ["", "", "", "", ""]
+            history_filter = ["", "", "", "", "", ""]
 
         self.history_table.rows = self.getContent(history_filter)
         self.history_table.contents = self.history_table_contents

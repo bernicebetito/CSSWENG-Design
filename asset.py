@@ -148,81 +148,131 @@ class createAsset():
 
 class deleteAsset():
     def __init__(self, root):
+        self.database = db.Database()
         self.root = root
         self.delete_asset_name = StringVar()
-        self.delete_disposed_on = Radiobutton()
-        self.delete_disposed_off = Radiobutton()
         self.delete_disposed_int = IntVar()
         self.delete_assets = []
 
-    def filterTable(self):
-        # Where filtering would happen
-        print("Filter button clicked")
-
-    def checkAssets(self):
-        self.delete_assets = self.delete_table.getSelectedCheckbox()
-        if len(self.delete_assets) > 0:
-            for i in self.delete_assets:
-                print(i)
-            return True
-        else:
-            return False
-
-    def displayDelete(self, delete_form_frame, field_label, buttonA):
+    def displayDelete(self, delete_form_frame, field_label, buttonA, buttonB):
         Label(delete_form_frame, text="Filter by Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=0.325, rely=0.200, anchor="center")
         Entry(delete_form_frame, textvariable=self.delete_asset_name, bd=0).place(height=20, width=225, relx=.5, rely=0.250, anchor="center")
 
         Label(delete_form_frame, text="Disposed Filter", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=0.300, rely=0.325, anchor="center")
-        self.delete_disposed_on = Radiobutton(delete_form_frame, text="On", bg="#DDDDDD", variable=self.delete_disposed_int, value=1)
-        self.delete_disposed_on.place(relx=.60, rely=0.325, anchor="center")
+        delete_disposed_on = Radiobutton(delete_form_frame, text="On", bg="#DDDDDD", variable=self.delete_disposed_int, value=1)
+        delete_disposed_on.place(relx=.60, rely=0.325, anchor="center")
 
-        self.delete_disposed_off = Radiobutton(delete_form_frame, text="Off", bg="#DDDDDD", variable=self.delete_disposed_int, value=2)
-        self.delete_disposed_off.place(relx=.80, rely=0.325, anchor="center")
+        delete_disposed_off = Radiobutton(delete_form_frame, text="Off", bg="#DDDDDD", variable=self.delete_disposed_int, value=2)
+        delete_disposed_off.place(relx=.80, rely=0.325, anchor="center")
 
         filter_btn = Button(delete_form_frame, text="Filter", width=13, command=lambda: self.filterTable(), bg="#DC5047", fg="#FFFFFF", bd=0, font=buttonA)
         filter_btn.place(relx=.5, rely=0.425, anchor="center")
 
+        clear_btn = Button(delete_form_frame, text="Clear Filter", width=13, command=lambda: self.filterTable(), bg="#404040", fg="#FFFFFF", bd=0, font=buttonB)
+        clear_btn.place(relx=.5, rely=0.515, anchor="center")
+
         filter_ins = Label(delete_form_frame, text="Choose Assets to Delete", bg="#DDDDDD", fg="#363636", font=field_label)
-        filter_ins.place(relx=.5, rely=0.550, anchor="center")
+        filter_ins.place(relx=.5, rely=0.575, anchor="center")
 
         current_font = tkfont.Font(filter_ins, filter_ins.cget("font"))
         current_font.configure(weight="bold", slant="italic")
         filter_ins.config(font=current_font)
 
     def displayTable(self, delete_table_frame):
-        delete_canvas = Canvas(delete_table_frame, bg="#191919", width=825, height=500)
+        self.delete_canvas = Canvas(delete_table_frame, bg="#191919", width=825, height=500)
 
-        delete_measurements = {
-            "cell_width": 150,
-            "cell_height": 75,
-            "rows": 100,
-            "columns": 10
-        }
+        delete_measurements = {"cell_width": 150, "cell_height": 75, "rows": self.getContent(["", "", "", "", "", ""]),
+                               "columns": 10}
+        self.delete_table = table.Table(delete_measurements, self.delete_canvas, self.delete_table_contents)
+        self.delete_table.setScrollbars(delete_table_frame)
+        self.delete_table.optionsTable(23, "checkbox")
+        self.delete_canvas.configure(scrollregion=self.delete_canvas.bbox("all"))
+
+    def getContent(self, filter_val):
         delete_table_header = ["Delete?", "Photo", "Asset Name", "Company", "Owner", "Location",
-                                "Price", "Payment Status", "Amount", "Status"]
+                               "Price", "Payment Status", "Amount", "Status"]
+        self.delete_table_contents = []
+        curr_row = []
+        for column in delete_table_header:
+            curr_row.append(column)
+        self.delete_table_contents.append(curr_row)
 
-        delete_table_contents = []
         self.root.table_image = []
-        for row in range(100):
-            curr_row = []
-            for column in range(10):
-                if row == 0:
-                    curr_row.append(delete_table_header[column])
-                else:
-                    if column == 1:
-                        image = Image.open(os.getcwd() + r'\assets\img\sample_photo.png')
+        delete = self.database.viewTable(1, filter_val)
+        if type(delete) == list:
+            for row in range(len(delete)):
+                curr_row = []
+
+                for column in range(len(delete[row])):
+                    if column == 0:
+                        curr_row.append("")
+                    elif column == 1:
+                        filepath = self.database.readBLOB(delete[row][0])
+                        image = Image.open(filepath)
                         resized_img = image.resize((50, 50), Image.ANTIALIAS)
                         table_image = ImageTk.PhotoImage(resized_img)
                         self.root.table_image.append(table_image)
                         curr_row.append(table_image)
                     else:
-                        curr_row.append("Testing Text")
-            delete_table_contents.append(curr_row)
+                        curr_row.append(delete[row][column])
+                curr_row.append(delete[row][0])
+                self.delete_table_contents.append(curr_row)
+            return len(delete) + 1
+        return 0
 
-        self.delete_table = table.Table(delete_measurements, delete_canvas, delete_table_contents)
-        self.delete_table.setScrollbars(delete_table_frame)
-        self.delete_table.optionsTable(23, "checkbox")
-        delete_canvas.configure(scrollregion=delete_canvas.bbox("all"))
+    def filterTable(self):
+        self.delete_canvas.delete("all")
+
+        if len(self.delete_asset_name.get()) > 0 or self.delete_disposed_int.get() > 0:
+            status = ""
+            if self.delete_disposed_int.get() == 1:
+                status = "Disposed"
+            delete_filter = [self.delete_asset_name.get(), "", "", "", "", status]
+            self.delete_asset_name.set("")
+            self.delete_disposed_int.set(0)
+        else:
+            delete_filter = ["", "", "", "", "", ""]
+
+        self.delete_table.rows = self.getContent(delete_filter)
+        self.delete_table.contents = self.delete_table_contents
+        self.delete_table.optionsTable(11, "radio")
+        self.delete_canvas.configure(scrollregion=self.delete_canvas.bbox("all"))
+
+    def getSelected(self):
+        self.delete_assets = self.delete_table.getSelectedCheckbox()
+        if len(self.delete_assets) > 0:
+            self.delete_canvas.delete("all")
+
+            for current in range(len(self.delete_assets)):
+                self.delete_assets[current] += 1
+
+            for keep_asset in range(len(self.delete_table_contents) - 1, -1, -1):
+                if keep_asset not in self.delete_assets and keep_asset != 0:
+                    del self.delete_table_contents[keep_asset]
+                else:
+                    del self.delete_table_contents[keep_asset][0]
+
+            self.delete_table.rows = len(self.delete_assets) + 1
+            self.delete_table.cols = len(self.delete_table_contents[0])
+            self.delete_table.contents = self.delete_table_contents
+            self.delete_table.createTable()
+            self.delete_canvas.configure(scrollregion=self.delete_canvas.bbox("all"))
+            return True
+        return False
+
+    def deleteAssets(self):
+        self.delete_assets = self.delete_table.getSelectedCheckbox()
+        if len(self.delete_assets) > 0:
+            del self.delete_table_contents[0]
+
+            delete_assets = []
+            for del_asset in self.delete_table_contents:
+                delete_assets.append(del_asset[len(del_asset) - 1])
+
+            self.database.delAsset(delete_assets)
+            return True
+        else:
+            return False
 
 
 class receiveAsset():

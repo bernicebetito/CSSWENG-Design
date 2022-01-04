@@ -174,7 +174,8 @@ class Database():
 				company = filter_val[1]
 				owner = filter_val[2]
 				location = filter_val[3]
-				status = filter_val[4]
+				pay_status = filter_val[4]
+				status = filter_val[5]
 
 				command = "SELECT id, image, name, company, owner, unit_loc, price, amount, payment_stat, status FROM assets"
 				filters = " WHERE "
@@ -192,10 +193,14 @@ class Database():
 					if filters != " WHERE ":
 						filters += " AND "
 					filters += "unit_loc = '" + str(location) + "'"
+				if len(pay_status) > 0:
+					if filters != " WHERE ":
+						filters += " AND "
+					filters += "payment_stat = '" + str(pay_status) + "'"
 				if len(status) > 0:
 					if filters != " WHERE ":
 						filters += " AND "
-					filters += "payment_stat = '" + str(status) + "'"
+					filters += "status = '" + str(status) + "'"
 				if filters != " WHERE ":
 					command += filters
 
@@ -274,47 +279,20 @@ class Database():
 		else:
 			print("Invalid Input")
 
-	def filterAsset(self, filter_type):
-		print("\nASSETS TABLE\n")
-		if filter_type == 1:
-			self.viewTable(1,"None")
-		elif filter_type == 2:
-			filter_val = input("Input Asset Name: ")
-			self.viewTable(2, filter_val)
-		elif filter_type == 3:
-			filter_val = input("Input Location: ")
-			self.viewTable(3, filter_val)
-		elif filter_type == 4:
-			filter_val = input("Input Owner: ")
-			self.viewTable(4, filter_val)
-		elif filter_type == 5:
-			print("\n[1] Available\n[2] Sold\n[3] Disposed\n[4] Borrowed\n[5] Lent")
-			filter_val = int(input("Choose Status: "))
-			if filter_val == 1:
-				self.viewTable(5, "Available")
-			elif filter_val == 2:
-				self.viewTable(5, "Sold")
-			elif filter_val == 3:
-				self.viewTable(5, "Disposed")
-			elif filter_val == 4:
-				self.viewTable(5, "Borrowed")
-			elif filter_val == 5:
-				self.viewTable(5, "Lent")
-			else:
-				print("Invalid Input")
-		else:
-			print("Invalid Input")
-
-	def filterUser(self):
-		print("\nUSERS TABLE\n")
-		self.viewTable(0,"None")
-
 	def delAsset(self, asset_ID):
 		try:
-			del_query = "DELETE FROM assets WHERE ID = '" + asset_ID + "'"
+			del_query = "DELETE FROM assets "
+			ids = "WHERE ID = '"
+			for i in asset_ID:
+				if ids != "WHERE ID = '":
+					ids += " OR ID = '" + str(i) + "'"
+				else:
+					ids += str(i) + "'"
+			del_query += ids
+
 			self.cursor.execute(del_query)
 			self.db.commit()
-			print("Successfully Deleted Asset!")
+			print("Successfully Deleted Assets!")
 		except Error:
 			print("Asset Deletion Failed")
 

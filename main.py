@@ -474,17 +474,36 @@ def deleteAsset():
     displayHeader(delete_form_frame, 0.050, 0.100)
 
     delete_page = asset.deleteAsset(root)
-    delete_page.displayDelete(delete_form_frame, field_label, buttonA)
+    delete_page.displayDelete(delete_form_frame, field_label, buttonA, buttonB)
     delete_page.displayTable(delete_table_frame)
 
+    def confirmDelete(frames):
+        if delete_page.getSelected():
+            for widget in delete_form_frame.winfo_children():
+                widget.destroy()
+
+            displayHeader(delete_form_frame, 0.050, 0.100)
+            filter_ins = Label(delete_form_frame, text="Confirm Assets to Delete", bg="#DDDDDD", fg="#363636", font=header)
+            filter_ins.place(relx=.5, rely=.5, anchor="center")
+            current_font = tkfont.Font(filter_ins, filter_ins.cget("font"))
+            current_font.configure(size=18, slant="italic")
+            filter_ins.config(font=current_font)
+
+            back_btn = Button(delete_form_frame, text="Confirm", width=13, command=lambda: validDeleteAssets(frames), bg="#FE5F55",
+                              fg="#FFFFFF", bd=0, font=buttonA)
+            back_btn.place(relx=.20, rely=0.850, anchor="center")
+            back_btn = Button(delete_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 15), bg="#2D2E2E",
+                              fg="#FFFFFF", bd=0, font=buttonB)
+            back_btn.place(relx=.15, rely=0.950, anchor="center")
+
     def validDeleteAssets(frames):
-        if delete_page.checkAssets():
+        if delete_page.deleteAssets():
             approvedMessage(frames, "Assets Deleted\nSuccessfully!", True)
         else:
             approvedMessage(frames, "Error Deleting\nAssets!", False)
 
     frames = [delete_bg, delete_form_frame, delete_table_frame]
-    delete_btn = Button(delete_form_frame, text="Delete", width=13, command=lambda: validDeleteAssets(frames), bg="#FE5F55",
+    delete_btn = Button(delete_form_frame, text="Delete", width=13, command=lambda: confirmDelete(frames), bg="#FE5F55",
                         fg="#FFFFFF", bd=0, font=buttonA)
     delete_btn.place(relx=.25, rely=0.850, anchor="center")
 

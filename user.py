@@ -105,22 +105,11 @@ class manageUser():
 
     def displayTable(self, manage_table_frame):
         self.manage_canvas = Canvas(manage_table_frame, bg="#191919", width=605, height=500)
-        self.manage_table_frame = manage_table_frame
+        manage_table_frame = manage_table_frame
 
-        manage_measurements = {
-            "cell_width": 150,
-            "cell_height": 75,
-            "rows": 0,
-            "columns": 4
-        }
-
-        users = self.database.viewTable(0, ["", ""])
-        if type(users) == list:
-            manage_measurements["rows"] = len(users) + 1
-            self.getContent(["", ""])
-
+        manage_measurements = {"cell_width": 150, "cell_height": 75, "rows": self.getContent(["", ""]), "columns": 4}
         self.manage_table = table.Table(manage_measurements, self.manage_canvas, self.manage_table_contents)
-        self.manage_table.setScrollbars(self.manage_table_frame)
+        self.manage_table.setScrollbars(manage_table_frame)
         self.manage_table.optionsTable(11, "radio")
         self.manage_canvas.configure(scrollregion=self.manage_canvas.bbox("all"))
 
