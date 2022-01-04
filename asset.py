@@ -2,10 +2,14 @@ from tkinter import *
 from PIL import Image, ImageTk
 import tkinter.font as tkfont
 import os, table
+import db
 
 
 class createAsset():
     def __init__(self, root):
+        self.database = db.Database()
+
+        self.create_photo = ""
         self.create_name = StringVar()
         self.create_company = StringVar()
         self.create_status = StringVar()
@@ -14,6 +18,7 @@ class createAsset():
         self.create_quantity = DoubleVar()
         self.create_ownership = StringVar()
         self.create_payment_status = StringVar()
+        self.create_payment_status_int = IntVar()
 
         self.create_name_field = Entry()
         self.create_company_field = Entry()
@@ -22,7 +27,7 @@ class createAsset():
         self.create_price_field = Entry()
         self.create_quantity_field = Entry()
         self.create_owner_field = Entry()
-        self.create_payment_field = Entry()
+        self.create_payment_field = Radiobutton()
 
         self.create_fields = []
         self.create_error_label = Label()
@@ -55,13 +60,31 @@ class createAsset():
             self.create_price_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
             self.create_quantity_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
 
+    def setImage(self, filepath):
+        self.create_photo = self.database.convertToBinaryData(filepath)
+        if self.create_photo == False:
+            return False
+        return True
+
     def submitForm(self):
-        # checking, validation, and inserting in the DB would happen here
         valid_first = len(self.create_name.get()) > 1 and len(self.create_company.get()) > 1
-        valid_second = len(self.create_status.get()) > 1 and len(self.create_location.get()) > 1
-        valid_third = self.create_price.get() > 0 and self.create_quantity.get() > 0
-        valid_fourth = len(self.create_ownership.get()) > 1 and len(self.create_payment_status.get()) > 1
-        if valid_first and valid_second and valid_third and valid_fourth:
+        valid_second = len(self.create_location.get()) > 1 and len(self.create_ownership.get()) > 1
+        valid_third = self.create_price.get() > 0 and self.create_quantity.get() > 0 and self.create_payment_status_int.get() > 0
+        if valid_first and valid_second and valid_third:
+            name = self.create_name.get()
+            company = self.create_company.get()
+            owner = self.create_ownership.get()
+            status = "Available"
+            unit_loc = self.create_location.get()
+            price = self.create_price.get()
+            quantity = self.create_quantity.get()
+            if self.create_payment_status_int.get() == 1:
+                payment_stat = "Paid"
+            else:
+                payment_stat = "Unpaid"
+            image = self.create_photo
+
+            self.database.createAsset("assets", name, company, owner, status, unit_loc, price, quantity, payment_stat, image)
             return True
         else:
             if self.create_price.get() <= 0 or self.create_quantity.get() <= 0:
@@ -88,9 +111,8 @@ class createAsset():
         self.create_fields.append(self.create_company_field)
 
         Label(create_right, text="Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.070, rely=0.350, anchor="center")
-        self.create_status_field = Entry(create_right, textvariable=self.create_status, width=35, bd=0)
+        self.create_status_field = Label(create_right, text="Available", width=35, bg="#FFFFFF", fg="#000000")
         self.create_status_field.place(height=25, width=250, relx=.245, rely=0.400, anchor="center")
-        self.create_fields.append(self.create_status_field)
 
         Label(create_right, text="Unit Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.605, rely=0.350, anchor="center")
         self.create_location_field = Entry(create_right, textvariable=self.create_location, width=35, bd=0)
@@ -115,9 +137,10 @@ class createAsset():
         self.create_fields.append(self.create_owner_field)
 
         Label(create_right, text="Payment Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.625, rely=0.650, anchor="center")
-        self.create_payment_field = Entry(create_right, textvariable=self.create_payment_status, width=35, bd=0)
-        self.create_payment_field.place(height=25, width=250, relx=.750, rely=0.700, anchor="center")
-        self.create_fields.append(self.create_payment_field)
+        self.create_payment_paid = Radiobutton(create_right, text="Paid", bg="#DDDDDD", variable=self.create_payment_status_int, value=1)
+        self.create_payment_paid.place(relx=.650, rely=0.700, anchor="center")
+        self.create_payment_paid = Radiobutton(create_right, text="Unpaid", bg="#DDDDDD", variable=self.create_payment_status_int, value=2)
+        self.create_payment_paid.place(relx=.850, rely=0.700, anchor="center")
 
         self.create_error_label = Label(create_right, bg="#DDDDDD", fg="#D64000", font=field_label)
         self.create_error_label.place(relx=.5, rely=0.750, anchor="center")

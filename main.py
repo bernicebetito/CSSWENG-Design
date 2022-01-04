@@ -41,7 +41,7 @@ def uploadImage(canvas, text):
         canvas.delete(text)
 
 
-def approvedMessage(frames, message):
+def approvedMessage(frames, message, success):
     for i in frames:
         i.destroy()
 
@@ -54,6 +54,9 @@ def approvedMessage(frames, message):
     approved_font = tkfont.Font(family='Oswald', weight="bold", size=25)
     approved_label = Label(approved_bg, text=message, bg="#DDDDDD", fg="#6B9A39", font=approved_font)
     approved_label.place(relx=.5, rely=0.5, anchor="center")
+
+    if not success:
+        approved_label.config(fg="#DC5047")
 
     approved_frames = [approved_bg]
     approved_btn = Button(approved_bg, text="Back to Home", height=1, width=15,
@@ -169,6 +172,7 @@ def nav():
 
 
 def createAsset():
+    global photo_filename
     create_bg = Frame(root, bg="#DDDDDD", width=950, height=600)
     create_bg.columnconfigure(0, weight=1)
     create_bg.place(relx=.5, rely=.5, anchor="center")
@@ -196,8 +200,9 @@ def createAsset():
     create_form.setCreate(create_right, field_label)
 
     def checkCreateAsset(frames, form):
-        if form.submitForm():
-            approvedMessage(frames, "Asset Created\nSuccessfully!")
+        if form.setImage(photo_filename):
+            if form.submitForm():
+                approvedMessage(frames, "Asset Created\nSuccessfully!", True)
 
     create_btn = Button(create_right, text="Create", width=15, command=lambda: checkCreateAsset(frames, create_form),
                         bg="#B8D8D8", fg="#FFFFFF", bd=0, font=buttonA)
@@ -253,7 +258,9 @@ def createUser():
 
     def validateCreateUser(frames):
         if create_user.checkNewUser():
-            approvedMessage(frames, "User Created\nSuccessfully!")
+            approvedMessage(frames, "User Created\nSuccessfully!", True)
+        else:
+            approvedMessage(frames, "Error\nCreating User!", False)
 
     frames = [create_user_bg]
     change_pass_btn = Button(create_user_bg, text="Create User", height=1, width=15,
@@ -281,7 +288,9 @@ def performUsers():
 
     def deleteUser(frames):
         if manage_page.deleteUser():
-            approvedMessage(frames, "Successfully\nDeleted\nUser!")
+            approvedMessage(frames, "Successfully\nDeleted\nUser!", True)
+        else:
+            approvedMessage(frames, "Error\nDeleting User!", False)
 
     change_pass_btn = Button(operation_user_bg, text="Change Password", height=1, width=15,
                              command=lambda: goToNext(frames, 7), bg="#8EB8CF", fg="#FFFFFF", bd=0, font=buttonA)
@@ -307,7 +316,9 @@ def changePassword():
 
     def validateChangePassword(frames):
         if manage_page.checkChangePassword():
-            approvedMessage(frames, "Password Updated\nSuccessfully!")
+            approvedMessage(frames, "Password Updated\nSuccessfully!", True)
+        else:
+            approvedMessage(frames, "Error Updating\nPassword!", False)
 
     frames = [change_pass_bg]
     change_pass_btn = Button(change_pass_bg, text="Change Password", height=1, width=15, command=lambda: validateChangePassword(frames), bg="#8EB8CF", fg="#FFFFFF", bd=0, font=buttonA)
@@ -332,7 +343,7 @@ def historyPage():
     displayHeader(history_form_frame, 0.050, 0.100)
 
     history_page = history.History(root)
-    history_page.displayHistory(history_form_frame, field_label, buttonA)
+    history_page.displayHistory(history_form_frame, field_label, buttonA, buttonB)
     history_page.displayTable(history_table_frame)
 
     frames = [history_bg, history_form_frame, history_table_frame]
@@ -360,7 +371,9 @@ def receiveAsset():
 
     def validReceiveAssets(frames):
         if receive_page.checkAssets():
-            approvedMessage(frames, "Assets Received!")
+            approvedMessage(frames, "Assets Received!", True)
+        else:
+            approvedMessage(frames, "Error\nReceiving Assets!", False)
 
     frames = [receive_bg, receive_form_frame, receive_table_frame]
     receive_btn = Button(receive_form_frame, text="Receive", width=13, command=lambda: validReceiveAssets(frames), bg="#24434D",
@@ -406,7 +419,9 @@ def importOption():
 
     def importFile(frames):
         if import_user.importFile():
-            approvedMessage(frames, "Successfully\nImported File!")
+            approvedMessage(frames, "Successfully\nImported File!", True)
+        else:
+            approvedMessage(frames, "Error Importing\nFile!", False)
 
     import_btn = Button(import_bg, text="Import", width=15, command=lambda: importFile(frames), bg="#3C4648", fg="#FFFFFF", bd=0, font=buttonA)
     import_btn.place(relx=.5, rely=0.725, anchor="center")
@@ -464,7 +479,9 @@ def deleteAsset():
 
     def validDeleteAssets(frames):
         if delete_page.checkAssets():
-            approvedMessage(frames, "Assets Deleted\nSuccessfully!")
+            approvedMessage(frames, "Assets Deleted\nSuccessfully!", True)
+        else:
+            approvedMessage(frames, "Error Deleting\nAssets!", False)
 
     frames = [delete_bg, delete_form_frame, delete_table_frame]
     delete_btn = Button(delete_form_frame, text="Delete", width=13, command=lambda: validDeleteAssets(frames), bg="#FE5F55",

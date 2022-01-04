@@ -155,7 +155,7 @@ class Database():
 
 	def viewTable(self, filter, filter_val):
 		try:
-			if filter == 0:
+			if filter == 0: # Users
 				if len(filter_val) > 0:
 					username = filter_val[0]
 					role = filter_val[1]
@@ -169,24 +169,38 @@ class Database():
 					else:
 						self.cursor.execute("SELECT username, role, password FROM users")
 				return self.cursor.fetchall()
-			elif filter == 1:
-				self.cursor.execute("SELECT image, name, company, owner, unit_loc, price, payment_stat, status FROM assets")
+			elif filter == 1: # Assets
+				name = filter_val[0]
+				company = filter_val[1]
+				owner = filter_val[2]
+				location = filter_val[3]
+				status = filter_val[4]
+
+				command = "SELECT id, image, name, company, owner, unit_loc, price, amount, payment_stat, status FROM assets"
+				filters = " WHERE "
+				if len(name) > 0:
+					filters += "name = '" + str(name) + "'"
+				if len(company) > 0:
+					if filters != " WHERE ":
+						filters += " AND "
+					filters += "company = '" + str(company) + "'"
+				if len(owner) > 0:
+					if filters != " WHERE ":
+						filters += " AND "
+					filters += "owner = '" + str(owner) + "'"
+				if len(location) > 0:
+					if filters != " WHERE ":
+						filters += " AND "
+					filters += "unit_loc = '" + str(location) + "'"
+				if len(status) > 0:
+					if filters != " WHERE ":
+						filters += " AND "
+					filters += "payment_stat = '" + str(status) + "'"
+				if filters != " WHERE ":
+					command += filters
+
+				self.cursor.execute(command)
 				return self.cursor.fetchall()
-			elif filter == 2:
-				self.cursor.execute("SELECT image, name, company, owner, unit_loc, price, payment_stat FROM assets WHERE name = '" + str(filter_val) + "'")
-				return self.cursor.fetchall()
-			elif filter == 3:
-				self.cursor.execute(
-					"SELECT image, name, company, owner, unit_loc, price, payment_stat FROM assets WHERE unit_loc = '" + str(filter_val) + "'")
-				return self.cursor.fetchall()
-			elif filter == 4:
-				self.cursor.execute("SELECT image, name, company, owner, unit_loc, price, payment_stat FROM assets WHERE owner = '" + str(filter_val) + "'")
-				return self.cursor.fetchall()
-			elif filter == 5:
-				self.cursor.execute("SELECT image, name, company, owner, unit_loc, price, payment_stat FROM assets WHERE status = '" + str(filter_val) + "'")
-				return self.cursor.fetchall()
-			else:
-				print("Unrecognized Filter")
 		except Error:
 			print("Failed to retrieve record/s")
 
@@ -334,60 +348,7 @@ class Database():
 			file.write(result)
 			file.close()
 
-	def inputAsset(self):
-		name = input("Asset Name: ")
-		company = input("Company: ")
-		owner = input("Ownership: ")
-		status = "Available"  # default
-
-		unit_loc = input("Unit Location: ")
-
-		# for checking if input is float/decimal
-		while True:
-			try:
-				price = float(input("Price: "))
-				if isinstance(price, float):
-					break
-			except:
-				print("Invalid format for price")
-				pass
-
-		while True:
-			try:
-				amount = float(input("Amount: "))
-				if isinstance(amount, float):
-					break
-			except:
-				print("Invalid format for amount")
-				pass
-
-		while 1:
-			print("Payment Status (Choose among the options)")
-			print("[1] Paid \n[2] Unpaid \nOption: ")
-			pstat_option = int(input())
-
-			if pstat_option == 1:
-				payment_stat = "Paid"
-				break
-			elif pstat_option == 2:
-				payment_stat = "Unpaid"
-				break
-			else:
-				print("Invalid option")
-
-		while 1:
-			print("Upload image of asset")
-			temp_image = input("Enter filepath of image (example: C:\\Users\\Desktop\\image.jpg): ")
-			if self.convertToBinaryData(temp_image) != False:
-				image = self.convertToBinaryData(temp_image)
-				break
-			else:
-				print("Image not found. Please try again")
-
-		try:
-			self.createAsset("assets", name, company, owner, status, unit_loc, price, amount, payment_stat, image)
-		except Error as error:
-			print("Failed to create asset: {}".format(error))
+		return storage_filepath
 
 	def getAssetfield(self, column, asset_ID):
 		query = "SELECT " + column + " FROM assets WHERE id = '" + str(asset_ID) + "'"
