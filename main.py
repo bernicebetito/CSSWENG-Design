@@ -2,7 +2,7 @@ from tkinter import *
 import tkinter.font as tkfont
 from PIL import Image, ImageTk
 from tkinter import filedialog
-import user, asset, history, table
+import user, asset, history, table, db
 
 root = Tk()
 root.title('Prime Properties - Inventory Management System')
@@ -112,9 +112,9 @@ def login():
     login_credentials.setLogin(login_bg, field_label)
 
     def checkCredentials(frames, nextFunc):
-        global valid_login, username
+        global valid_login, role
         if login_credentials.checkLoginCredentials():
-            username = login_credentials.getUsername()
+            role = login_credentials.getRole()
             valid_login = True
             goToNext(frames, nextFunc)
         else:
@@ -126,7 +126,7 @@ def login():
 
 
 def nav():
-    if username == "manager":
+    if role == "manager":
         nav_bg = Frame(root, bg="#DDDDDD", width=300, height=600)
     else:
         nav_bg = Frame(root, bg="#DDDDDD", width=300, height=500)
@@ -145,7 +145,7 @@ def nav():
     delete_btn = Button(nav_bg, text="Delete", width=15, command=lambda: goToNext(frames, 15), bg="#FE5F55", fg="#FFFFFF", bd=0, font=buttonA)
     logout_btn = Button(nav_bg, text="Logout", width=10, command=lambda: goToNext(frames, 1), bg="#363636", fg="#FFFFFF", bd=0, font=buttonB)
 
-    if username == "manager":
+    if role == "manager":
         displayHeader(nav_bg, 0.05, 0.10)
 
         create_asset_btn.place(relx=.5, rely=0.225, anchor="center")
@@ -157,7 +157,7 @@ def nav():
         import_btn.place(relx=.5, rely=0.735, anchor="center")
         delete_btn.place(relx=.5, rely=0.820, anchor="center")
         logout_btn.place(relx=.5, rely=0.905, anchor="center")
-    elif username == "clerk":
+    elif role == "clerk":
         displayHeader(nav_bg, 0.15, 0.20)
 
         create_asset_btn.place(relx=.5, rely=0.350, anchor="center")

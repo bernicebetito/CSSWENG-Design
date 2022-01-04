@@ -1,23 +1,32 @@
 from tkinter import *
 import tkinter.font as tkfont
 import random
-import table
+import table, db
 
 class User():
     def __init__(self):
+        self.user = tuple()
         self.username = StringVar()
         self.password = StringVar()
+        self.role = ""
 
         self.username_field = Entry()
         self.password_field = Entry()
 
-    def getUsername(self):
-        return self.username.get()
+    def getRole(self):
+        if len(self.user) > 0:
+            return self.user[2]
+        return "None"
 
     def checkLoginCredentials(self):
         if len(self.username.get()) > 0 and len(self.password.get()) > 0:
-            if self.username.get().lower() == "manager" or self.username.get().lower() == "clerk":
-                return True
+            database = db.Database()
+            self.user = database.getUser(self.username.get(), self.password.get())
+            if type(self.user) == tuple:
+                if len(self.user) > 0:
+                    return True
+            else:
+                self.user = tuple()
 
         self.username_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
         self.password_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
