@@ -156,7 +156,18 @@ class Database():
 	def viewTable(self, filter, filter_val):
 		try:
 			if filter == 0:
-				self.cursor.execute("SELECT username, role, password FROM users")
+				if len(filter_val) > 0:
+					username = filter_val[0]
+					role = filter_val[1]
+
+					if len(username) > 0 and len(role) > 0:
+						self.cursor.execute("SELECT username, role, password FROM users WHERE username = '" + str(username) + "' AND role = '" + str(role) + "'")
+					elif len(username) > 0 and len(role) == 0:
+						self.cursor.execute("SELECT username, role, password FROM users WHERE username = '" + str(username) + "'")
+					elif len(username) == 0 and len(role) > 0:
+						self.cursor.execute("SELECT username, role, password FROM users WHERE role = '" + str(role) + "'")
+					else:
+						self.cursor.execute("SELECT username, role, password FROM users")
 				return self.cursor.fetchall()
 			elif filter == 1:
 				self.cursor.execute("SELECT image, name, company, owner, unit_loc, price, payment_stat, status FROM assets")

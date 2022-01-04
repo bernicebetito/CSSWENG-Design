@@ -86,7 +86,7 @@ class manageUser():
         self.new_field = Entry()
         self.confirm_field = Entry()
 
-    def displayUsers(self, manage_form_frame, field_label, buttonA):
+    def displayUsers(self, manage_form_frame, field_label, buttonA, buttonB):
         Label(manage_form_frame, text="Search by Username", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=0.325, rely=0.200, anchor="center")
         Entry(manage_form_frame, textvariable=self.manage_username, bd=0).place(height=20, width=225, relx=.5, rely=0.250, anchor="center")
 
@@ -100,8 +100,12 @@ class manageUser():
         search_btn = Button(manage_form_frame, text="Search", width=13, command=lambda: self.filterTable(), bg="#DC5047", fg="#FFFFFF", bd=0, font=buttonA)
         search_btn.place(relx=.5, rely=0.475, anchor="center")
 
+        clear_btn = Button(manage_form_frame, text="Clear Filter", width=13, command=lambda: self.filterTable(), bg="#404040", fg="#FFFFFF", bd=0, font=buttonB)
+        clear_btn.place(relx=.5, rely=0.555, anchor="center")
+
     def displayTable(self, manage_table_frame):
-        manage_canvas = Canvas(manage_table_frame, bg="#191919", width=605, height=500)
+        self.manage_canvas = Canvas(manage_table_frame, bg="#191919", width=605, height=500)
+        self.manage_table_frame = manage_table_frame
 
         manage_measurements = {
             "cell_width": 150,
@@ -109,34 +113,57 @@ class manageUser():
             "rows": 0,
             "columns": 4
         }
-        manage_table_header = ["Modify", "Username", "Role", "Password"]
-        self.manage_table_contents = []
 
-        users = self.database.viewTable(0, "")
-
+        users = self.database.viewTable(0, ["", ""])
         if type(users) == list:
             manage_measurements["rows"] = len(users) + 1
-            for row in range(-1, len(users)):
-                curr_row = []
-                if row > -1:
-                    for column in range(-1, len(users[row])):
-                        if column == -1:
-                            curr_row.append("")
-                        else:
-                            curr_row.append(users[row][column])
-                else:
-                    for column in manage_table_header:
-                        curr_row.append(column)
-                self.manage_table_contents.append(curr_row)
+            self.getContent(["", ""])
 
-        self.manage_table = table.Table(manage_measurements, manage_canvas, self.manage_table_contents)
-        self.manage_table.setScrollbars(manage_table_frame)
+        self.manage_table = table.Table(manage_measurements, self.manage_canvas, self.manage_table_contents)
+        self.manage_table.setScrollbars(self.manage_table_frame)
         self.manage_table.optionsTable(11, "radio")
-        manage_canvas.configure(scrollregion=manage_canvas.bbox("all"))
+        self.manage_canvas.configure(scrollregion=self.manage_canvas.bbox("all"))
+
+    def getContent(self, filter_val):
+        self.manage_table_contents = []
+        manage_table_header = ["Modify", "Username", "Role", "Password"]
+        curr_row = []
+        for column in manage_table_header:
+            curr_row.append(column)
+        self.manage_table_contents.append(curr_row)
+
+        users = self.database.viewTable(0, filter_val)
+        if type(users) == list:
+            for row in range(len(users)):
+                curr_row = []
+                for column in range(-1, len(users[row])):
+                    if column == -1:
+                        curr_row.append("")
+                    else:
+                        curr_row.append(users[row][column])
+                self.manage_table_contents.append(curr_row)
+            return len(users) + 1
+        return 0
 
     def filterTable(self):
-        # Where filtering would happen
-        print("Filter button clicked")
+        self.manage_canvas.delete("all")
+
+        if len(self.manage_username.get()) > 0 or self.manage_role_int.get() > 0:
+            role = ""
+            if self.manage_role_int.get() == 1:
+                role = "manager"
+            elif self.manage_role_int.get() == 2:
+                role = "clerk"
+            manage_filter = [self.manage_username.get(), role]
+            self.manage_username.set("")
+            self.manage_role_int.set(0)
+        else:
+            manage_filter = ["", ""]
+
+        self.manage_table.rows = self.getContent(manage_filter)
+        self.manage_table.contents = self.manage_table_contents
+        self.manage_table.optionsTable(11, "radio")
+        self.manage_canvas.configure(scrollregion=self.manage_canvas.bbox("all"))
 
     def getSelected(self):
         self.selected_user = self.manage_table.getSelectedRadio()
