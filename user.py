@@ -1,6 +1,5 @@
 from tkinter import *
 import tkinter.font as tkfont
-import random
 import table, db
 
 class User():
@@ -60,6 +59,9 @@ class manageUser():
         self.manage_table_contents = []
         self.operations_btn = Button()
 
+        # Database
+        self.database = db.Database()
+
         # Create New User
         self.create_username = StringVar()
         self.create_password = StringVar()
@@ -104,33 +106,28 @@ class manageUser():
         manage_measurements = {
             "cell_width": 150,
             "cell_height": 75,
-            "rows": 100,
+            "rows": 0,
             "columns": 4
         }
         manage_table_header = ["Modify", "Username", "Role", "Password"]
-
         self.manage_table_contents = []
-        self.root.table_image = []
-        for row in range(100):
-            curr_row = []
-            for column in range(4):
-                if row == 0:
-                    curr_row.append(manage_table_header[column])
-                else:
-                    if column == 0:
-                        curr_row.append("")
-                    elif column == 1:
-                        curr_row.append("user_" + str(row))
-                    elif column == 2:
-                        rand_role = random.randint(1, 2)
-                        if rand_role == 1:
-                            curr_row.append("Manager")
-                        else:
-                            curr_row.append("Inventory Clerk")
-                    else:
-                        curr_row.append("p@s5w0rD!_" + str(row))
 
-            self.manage_table_contents.append(curr_row)
+        users = self.database.viewTable(0, "")
+
+        if type(users) == list:
+            manage_measurements["rows"] = len(users) + 1
+            for row in range(-1, len(users)):
+                curr_row = []
+                if row > -1:
+                    for column in range(-1, len(users[row])):
+                        if column == -1:
+                            curr_row.append("")
+                        else:
+                            curr_row.append(users[row][column])
+                else:
+                    for column in manage_table_header:
+                        curr_row.append(column)
+                self.manage_table_contents.append(curr_row)
 
         self.manage_table = table.Table(manage_measurements, manage_canvas, self.manage_table_contents)
         self.manage_table.setScrollbars(manage_table_frame)
@@ -153,15 +150,17 @@ class manageUser():
                 self.create_user_role = "manager"
             else:
                 self.create_user_role = "clerk"
-            return True
-        else:
-            self.user_error_label.config(text="Please Fill Up All Fields")
-            current_font = tkfont.Font(self.create_role_label, self.create_role_label.cget("font"))
-            current_font.configure(underline=True)
-            self.create_role_label.config(font=current_font)
-            self.create_role_label.config(fg="#D64000")
-            self.create_username_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
-            self.create_password_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
+
+            if self.database.createUser(self.create_username.get(), self.create_password.get(), self.create_user_role):
+                return True
+
+        self.user_error_label.config(text="Please Fill Up All Fields")
+        current_font = tkfont.Font(self.create_role_label, self.create_role_label.cget("font"))
+        current_font.configure(underline=True)
+        self.create_role_label.config(font=current_font)
+        self.create_role_label.config(fg="#D64000")
+        self.create_username_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
+        self.create_password_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
         return False
 
     def setCreateNewUser(self, create_user_bg, field_label):
@@ -224,8 +223,12 @@ class manageUser():
         if len(self.new_password.get()) > 0 and len(self.confirm_password.get()) > 0:
             if self.new_password.get() == self.confirm_password.get():
                 if self.new_password.get() != self.manage_table_contents[self.selected_user + 1][3]:
-                    # update the account
-                    return True
+                    if self.database.changePassword(self.manage_table_contents[self.selected_user + 1][1], self.confirm_password.get()):
+                        return True
+                    else:
+                        self.change_error_label.config(text="Error Updating Password")
+                        self.new_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
+                        self.confirm_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
                 else:
                     self.change_error_label.config(text="Password Must Be New")
                     self.new_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
@@ -233,8 +236,7 @@ class manageUser():
             else:
                 self.change_error_label.config(text="Passwords Do Not Match")
                 self.new_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
-                self.confirm_field.configure(highlightthickness=2, highlightbackground="#D64000",
-                                             highlightcolor="#D64000")
+                self.confirm_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
 
         return False
 
@@ -261,6 +263,4 @@ class manageUser():
         self.change_error_label.place(relx=.5, rely=0.725, anchor="center")
 
     def deleteUser(self):
-        # Account deletion would happen here
-        print("Delete User")
-        return True
+        return self.database.delUser(self.manage_table_contents[self.selected_user + 1][1])

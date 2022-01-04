@@ -45,7 +45,7 @@ class Database():
 		# Cursor class instance for executing SQL commands in python
 		self.cursor = self.db.cursor()
 
-	### DATABASE ACCESS
+	#------------------ DATABASE ACCESS ------------------#
 
 	def exportToExcel(self):
 		# connect the mysql with the python
@@ -73,14 +73,11 @@ class Database():
 		# export the data into the excel sheet
 		df.to_excel('assets.xlsx')
 
-
 	def createDatabase(self, db_name):
 		self.cursor.execute("CREATE DATABASE IF NOT EXISTS " + db_name)
 
-
 	def deleteDatabase(self, db_name):
 		self.cursor.execute("DROP DATABASE " + db_name)
-
 
 	def createTables(self):
 		# Users Table: username, password, role
@@ -92,10 +89,8 @@ class Database():
 		# Operations Table: operation ID, receipt no., operation type, username, asset_id, company, ownership, new location, amount, payment_stat, approval status, operation timestamp
 		self.cursor.execute("CREATE TABLE IF NOT EXISTS operations (id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, receipt_no VARCHAR(255), op_type VARCHAR(255), username VARCHAR(255), authorized_by VARCHAR(255), asset_id INT(11), asset_name VARCHAR(255), recipient VARCHAR(255), company VARCHAR(255), owner VARCHAR(255), unit_loc VARCHAR(255), amount FLOAT(53,2), payment_stat VARCHAR(255), image LONGBLOB, approval_stat VARCHAR(255), op_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
 
-
 	def deleteTable(self, tb_name):
 		self.cursor.execute("DROP TABLE " + tb_name)
-
 
 	#------------------ APPLICATION FUNCTIONALITIES ------------------#
 	def createUser(self, username, password, role):
@@ -104,10 +99,9 @@ class Database():
 			values = (username, password, role)
 			self.cursor.execute(query, values)
 			self.db.commit()
-			print("Successfully Created a User!")
+			return True
 		except Error:
-			print("User Creation Failed")
-
+			return False
 
 	def getUser(self, username, password):
 		try:
@@ -118,16 +112,14 @@ class Database():
 		except Error:
 			print("Invalid Credentials. Please Try Again")
 
-
 	def delUser(self, username):
 		try:
 			query = "DELETE FROM users WHERE username = '" + str(username) + "'"
 			self.cursor.execute(query)
 			self.db.commit()
-			print("Successfully Deleted User!")
+			return True
 		except Error:
-			print("User Deletion Failed")
-
+			return False
 
 	def createAsset(self, tb_name, name, company, owner, status, unit_loc, price, amount, payment_stat, image):
 		query = "INSERT INTO " + tb_name + " (name, company, owner, status, unit_loc, price, amount, payment_stat, image) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
@@ -136,14 +128,12 @@ class Database():
 		self.db.commit()
 		print("Successfully Created Asset!")
 
-
 	def createReceipt(self, receipt_no, op_type, username, auth, asset_id, name, recipient, company, owner, unit_loc, amount, payment_stat, image, approval_stat):
 		query = "INSERT INTO operations (receipt_no, op_type, username, authorized_by, asset_id, asset_name, recipient, company, owner, unit_loc, amount, payment_stat, image, approval_stat) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 		values = (receipt_no, op_type, username, auth, asset_id, name, recipient, company, owner, unit_loc, amount, payment_stat, image, approval_stat)
 		self.cursor.execute(query, values)
 		self.db.commit()
 		print("Successfully Created Receipt!")
-
 
 	def checkReceiptNo(self, receipt_no):
 		query = "SELECT receipt_no FROM operations WHERE receipt_no = '" + str(receipt_no) + "'"
@@ -154,7 +144,6 @@ class Database():
 		else:
 			return None
 
-
 	def getAsset(self, asset_ID):
 		try:
 			query = "SELECT * FROM assets WHERE ID = " + str(asset_ID)
@@ -164,51 +153,31 @@ class Database():
 		except Error as    error:
 			print("Cannot retrieve asset: {}".format(error))
 
-
 	def viewTable(self, filter, filter_val):
 		try:
 			if filter == 0:
-				self.cursor.execute("SELECT username, role FROM users")
-				records = self.cursor.fetchall()
-
-				for record in records:
-					print(record)
+				self.cursor.execute("SELECT username, role, password FROM users")
+				return self.cursor.fetchall()
 			elif filter == 1:
 				self.cursor.execute("SELECT image, name, company, owner, unit_loc, price, payment_stat, status FROM assets")
-				records = self.cursor.fetchall()
-
-				for record in records:
-					print(record)
+				return self.cursor.fetchall()
 			elif filter == 2:
 				self.cursor.execute("SELECT image, name, company, owner, unit_loc, price, payment_stat FROM assets WHERE name = '" + str(filter_val) + "'")
-				records = self.cursor.fetchall()
-
-				for record in records:
-					print(record)
+				return self.cursor.fetchall()
 			elif filter == 3:
 				self.cursor.execute(
 					"SELECT image, name, company, owner, unit_loc, price, payment_stat FROM assets WHERE unit_loc = '" + str(filter_val) + "'")
-				records = self.cursor.fetchall()
-
-				for record in records:
-					print(record)
+				return self.cursor.fetchall()
 			elif filter == 4:
 				self.cursor.execute("SELECT image, name, company, owner, unit_loc, price, payment_stat FROM assets WHERE owner = '" + str(filter_val) + "'")
-				records = self.cursor.fetchall()
-
-				for record in records:
-					print(record)
+				return self.cursor.fetchall()
 			elif filter == 5:
 				self.cursor.execute("SELECT image, name, company, owner, unit_loc, price, payment_stat FROM assets WHERE status = '" + str(filter_val) + "'")
-				records = self.cursor.fetchall()
-
-				for record in records:
-					print(record)
+				return self.cursor.fetchall()
 			else:
 				print("Unrecognized Filter")
 		except Error:
 			print("Failed to retrieve record/s")
-
 
 	def viewOperations(self, filter, filter_val):
 		try:
@@ -255,7 +224,6 @@ class Database():
 		except Error as error:
 			print(error)
 
-
 	def filterOperations(self, filter_type):
 		print("\nHISTORY TABLE\n")
 		if filter_type == 1:
@@ -280,7 +248,6 @@ class Database():
 				print("Invalid Input")
 		else:
 			print("Invalid Input")
-
 
 	def filterAsset(self, filter_type):
 		print("\nASSETS TABLE\n")
@@ -313,11 +280,9 @@ class Database():
 		else:
 			print("Invalid Input")
 
-
 	def filterUser(self):
 		print("\nUSERS TABLE\n")
 		self.viewTable(0,"None")
-
 
 	def delAsset(self, asset_ID):
 		try:
@@ -328,7 +293,6 @@ class Database():
 		except Error:
 			print("Asset Deletion Failed")
 
-
 	def convertToBinaryData(self, filepath):
 		file_exists = os.path.exists(filepath)
 		if file_exists is True:
@@ -337,7 +301,6 @@ class Database():
 			return binary_data
 		else:
 			return False
-
 
 	def readBLOB(self, asset_ID):		# function for reading/viewing image; can be used in the future, for now just for checking
 		query = "SELECT image FROM assets WHERE id = '{0}'"
@@ -359,7 +322,6 @@ class Database():
 		with open(storage_filepath, 'wb') as file:
 			file.write(result)
 			file.close()
-
 
 	def inputAsset(self):
 		name = input("Asset Name: ")
@@ -416,19 +378,16 @@ class Database():
 		except Error as error:
 			print("Failed to create asset: {}".format(error))
 
-
 	def getAssetfield(self, column, asset_ID):
 		query = "SELECT " + column + " FROM assets WHERE id = '" + str(asset_ID) + "'"
 		self.cursor.execute(query)
 		field = str(self.cursor.fetchone()[0])
 		return field
 
-
 	def setdefaultImage(self, receipt_no, asset_ID):
 		query = "UPDATE operations SET operations.image = (SELECT assets.image FROM assets WHERE assets.id = '"+ str(asset_ID) +"') WHERE receipt_no = '" + str(receipt_no) + "'"
 		self.cursor.execute(query)
 		self.db.commit()
-
 
 	def delOperation(self, op_id):
 		try:
@@ -438,7 +397,6 @@ class Database():
 		except Error:
 			print("Operation Deletion Failed")
 
-
 	def approveStat(self, op_id):
 		try:
 			app_query = "UPDATE operations SET approval_stat = 'Approved' WHERE ID= '" + str(op_id) + "'"
@@ -447,7 +405,6 @@ class Database():
 			print("Operation successfully approved!")
 		except Error:
 			print("Operation Deletion Failed")
-
 
 	def authorize_asset(self, receipt_no):
 		try:
@@ -511,7 +468,6 @@ class Database():
 		except Error as    error:
 			print("Failed to authorize: {}".format(error))
 
-
 	def getInTransit(self):
 		self.cursor.execute("SELECT id, name, company, owner, unit_loc, price, payment_stat, status FROM assets WHERE status LIKE 'In Transit%'")
 		records = self.cursor.fetchall()
@@ -520,7 +476,6 @@ class Database():
 				print(record)
 		else:
 			print("No assets in transit")
-
 
 	def receiveAsset(self, asset_ID):
 		self.cursor.execute("SELECT status FROM assets WHERE ID = '" + str(asset_ID) + "'")
@@ -542,7 +497,6 @@ class Database():
 		record = self.cursor.fetchone()
 		print("Updated Status: " + str(record))
 
-
 	def checkInTransit(self, asset_ID):
 		self.cursor.execute("SELECT * FROM assets WHERE ID = '" + str(asset_ID) + "' AND status LIKE 'In Transit%'")
 		record = self.cursor.fetchone()
@@ -552,16 +506,14 @@ class Database():
 		else:
 			print("This asset is not in transit.")
 
-
 	def changePassword(self, username, new_pass):
 		try:
 			self.cursor.execute("UPDATE users SET password = '" + str(new_pass) + "' WHERE username = '" + str(username) + "'")
 			self.db.commit()
-			print("Successfully changed password!")
+			return True
 		except Error:
-			print("Password change unsuccessful")
+			return False
 
-	# ------------------------------------------------------ #
 
 
 ''' Database Initializations'''
