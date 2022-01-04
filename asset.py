@@ -277,15 +277,12 @@ class deleteAsset():
 
 class receiveAsset():
     def __init__(self, root):
+        self.database = db.Database()
         self.root = root
         self.receive_receipt_num = IntVar()
         self.receive_asset_name = StringVar()
         self.receive_owner = StringVar()
         self.receive_assets = []
-
-    def filterTable(self):
-        # Where filtering would happen
-        print("Filter button clicked")
 
     def checkAssets(self):
         self.receive_assets = self.receive_table.getSelectedCheckbox()
@@ -310,22 +307,30 @@ class receiveAsset():
         filter_btn.place(relx=.5, rely=0.600, anchor="center")
 
     def displayTable(self, receive_table_frame):
-        receive_canvas = Canvas(receive_table_frame, bg="#191919", width=825, height=500)
+        self.receive_canvas = Canvas(receive_table_frame, bg="#191919", width=825, height=500)
 
-        receive_measurements = {
-            "cell_width": 150,
-            "cell_height": 75,
-            "rows": 100,
-            "columns": 11
-        }
+        receive_measurements = {"cell_width": 150, "cell_height": 75, "rows": self.getContent(["", "", "", "", "", ""]),
+                                "columns": 11}
+
+        self.receive_table = table.Table(receive_measurements, self.receive_canvas, self.receive_table_contents)
+        self.receive_table.setScrollbars(receive_table_frame)
+        self.receive_table.optionsTable(25, "checkbox")
+        self.receive_canvas.configure(scrollregion=self.receive_canvas.bbox("all"))
+
+    def getContent(self, filter_val):
         receive_table_header = ["Receive", "Receipt #", "Photo", "Asset Name", "Company", "Owner", "Location",
                                 "Price", "Payment Status", "Amount", "Status"]
+        curr_row = []
+        self.receive_table_contents = []
+        for column in receive_table_header:
+            curr_row.append(column)
+        self.receive_table_contents.append(curr_row)
 
-        receive_table_contents = []
         self.root.table_image = []
-        for row in range(100):
+        receive = self.database.viewTable(1, filter_val)
+        for row in range(len(receive)):
             curr_row = []
-            for column in range(11):
+            for column in range(len(receive[row])):
                 if row == 0:
                     curr_row.append(receive_table_header[column])
                 else:
@@ -337,9 +342,7 @@ class receiveAsset():
                         curr_row.append(table_image)
                     else:
                         curr_row.append("Testing Text")
-            receive_table_contents.append(curr_row)
+            self.receive_table_contents.append(curr_row)
 
-        self.receive_table = table.Table(receive_measurements, receive_canvas, receive_table_contents)
-        self.receive_table.setScrollbars(receive_table_frame)
-        self.receive_table.optionsTable(25, "checkbox")
-        receive_canvas.configure(scrollregion=receive_canvas.bbox("all"))
+    def filterTable(self):
+        print()

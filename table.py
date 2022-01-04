@@ -1,6 +1,7 @@
 from tkinter import *
 import tkinter.font as tkfont
 from tkinter import filedialog
+import webbrowser, os, db
 
 
 class Table(object):
@@ -118,8 +119,8 @@ class Table(object):
 
 class ImportExport():
     def __init__(self):
+        self.database = db.Database()
         self.import_filename = ""
-        self.export_filename = "prime_properties_export.txt"
 
     def uploadFile(self):
         fileTypes = [('All Files', '*.*')]
@@ -134,10 +135,11 @@ class ImportExport():
         return False
 
     def exportFile(self):
+        self.database.exportToExcel()
         return True
 
     def openExport(self):
-        print(self.export_filename)
+        webbrowser.open(os.getcwd())
 
     def displayImport(self, import_bg, sub):
         self.choose_header = Label(import_bg, text="Choose a File to Import", bg="#DDDDDD", fg="#6A6A6A", font=sub)

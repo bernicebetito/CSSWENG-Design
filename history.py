@@ -48,13 +48,6 @@ class History():
         self.history_canvas.configure(scrollregion=self.history_canvas.bbox("all"))
 
     def getContent(self, filter_val):
-        self.manage_table_contents = []
-        history_measurements = {
-            "cell_width": 150,
-            "cell_height": 75,
-            "rows": 0,
-            "columns": 9
-        }
         history_table_header = ["Photo", "Asset Name", "Company", "Owner", "Location",
                                 "Price", "Amount", "Payment Status", "Status"]
         curr_row = []
@@ -66,7 +59,6 @@ class History():
         self.root.table_image = []
         history = self.database.viewTable(1, filter_val)
         if type(history) == list:
-            history_measurements["rows"] = len(history) + 1
             for row in range(len(history)):
                 curr_row = []
                 for column in range(1, len(history[row])):

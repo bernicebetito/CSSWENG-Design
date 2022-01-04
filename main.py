@@ -442,7 +442,7 @@ def exportOption():
 
     export_font = tkfont.Font(family='Oswald', weight="bold", size=25)
     export_label = Label(export_bg, text="Successfully\nExported!", bg="#DDDDDD", fg="#6B9A39", font=export_font)
-    open_btn = Button(export_bg, text="Open File", height=1, width=15,
+    open_btn = Button(export_bg, text="Open Folder", height=1, width=15,
                       command=export_user.openExport, bg="#3C4648", fg="#FFFFFF", bd=0,
                       font=buttonA)
 

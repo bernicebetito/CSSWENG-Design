@@ -8,6 +8,7 @@ from pymysql import*
 import xlwt
 import xlrd
 import pandas.io.sql as sql
+import openpyxl
 
 
 class Database():
@@ -48,15 +49,8 @@ class Database():
 	#------------------ DATABASE ACCESS ------------------#
 
 	def exportToExcel(self):
-		# connect the mysql with the python
-		con=connect(
-			host = "localhost",
-			port=3310, #edited
-			user = "root",
-			passwd = "12345", #edited
-			database = "prime_properties")
 		# read the data
-		df=sql.read_sql('select * from operations',con)
+		df=sql.read_sql('select * from operations', self.db)
 
 		# # print the data for checkking
 		# print(df)
@@ -65,7 +59,7 @@ class Database():
 		df.to_excel('operations.xlsx')
 
 		# read the data
-		df=sql.read_sql('select * from assets',con)
+		df=sql.read_sql('select * from assets', self.db)
 
 		# # print the data for checking
 		# print(df)
@@ -420,12 +414,7 @@ class Database():
 
 	def getInTransit(self):
 		self.cursor.execute("SELECT id, name, company, owner, unit_loc, price, payment_stat, status FROM assets WHERE status LIKE 'In Transit%'")
-		records = self.cursor.fetchall()
-		if records != None:
-			for record in records:
-				print(record)
-		else:
-			print("No assets in transit")
+		return self.cursor.fetchall()
 
 	def receiveAsset(self, asset_ID):
 		self.cursor.execute("SELECT status FROM assets WHERE ID = '" + str(asset_ID) + "'")
