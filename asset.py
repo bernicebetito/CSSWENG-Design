@@ -181,7 +181,8 @@ class deleteAsset():
     def displayTable(self, delete_table_frame):
         self.delete_canvas = Canvas(delete_table_frame, bg="#191919", width=825, height=500)
 
-        delete_measurements = {"cell_width": 150, "cell_height": 75, "rows": self.getContent(["", "", "", "", "", ""]),
+        delete_filter = {"asset_name": "", "company": "", "owner": "", "location": "", "pay_status": "", "status": ""}
+        delete_measurements = {"cell_width": 150, "cell_height": 75, "rows": self.getContent(delete_filter),
                                "columns": 10}
         self.delete_table = table.Table(delete_measurements, self.delete_canvas, self.delete_table_contents)
         self.delete_table.setScrollbars(delete_table_frame)
@@ -227,11 +228,12 @@ class deleteAsset():
             status = ""
             if self.delete_disposed_int.get() == 1:
                 status = "Disposed"
-            delete_filter = [self.delete_asset_name.get(), "", "", "", "", status]
+            delete_filter = {"asset_name": self.delete_asset_name.get(), "company": "", "owner": "",
+                             "location": "", "pay_status": "", "status": status}
             self.delete_asset_name.set("")
             self.delete_disposed_int.set(0)
         else:
-            delete_filter = ["", "", "", "", "", ""]
+            delete_filter = {"asset_name": "", "company": "", "owner": "", "location": "", "pay_status": "", "status": ""}
 
         self.delete_table.rows = self.getContent(delete_filter)
         self.delete_table.contents = self.delete_table_contents
@@ -279,7 +281,7 @@ class receiveAsset():
     def __init__(self, root):
         self.database = db.Database()
         self.root = root
-        self.receive_receipt_num = IntVar()
+        self.receive_receipt_num = StringVar()
         self.receive_asset_name = StringVar()
         self.receive_owner = StringVar()
         self.receive_assets = []
@@ -297,7 +299,7 @@ class receiveAsset():
         Label(receive_form_frame, text="Search by Receipt Number", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.200, anchor="center")
         Entry(receive_form_frame, textvariable=self.receive_receipt_num, bd=0).place(height=20, width=225, relx=.5, rely=0.250, anchor="center")
 
-        Label(receive_form_frame, text="Search by Asset Number", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.325, anchor="center")
+        Label(receive_form_frame, text="Search by Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.325, anchor="center")
         Entry(receive_form_frame, textvariable=self.receive_asset_name, bd=0).place(height=20, width=225, relx=.5, rely=0.375, anchor="center")
 
         Label(receive_form_frame, text="Search by Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.450, anchor="center")
@@ -309,8 +311,9 @@ class receiveAsset():
     def displayTable(self, receive_table_frame):
         self.receive_canvas = Canvas(receive_table_frame, bg="#191919", width=825, height=500)
 
-        receive_measurements = {"cell_width": 150, "cell_height": 75, "rows": self.getContent(["", "", "", "", "", ""]),
-                                "columns": 11}
+        receive_filter = {"receipt_num": "", "recipient": "", "asset_name": "", "owner": "", "location": "", "op_type": ""}
+        receive_measurements = {"cell_width": 150, "cell_height": 75, "rows": self.getContent(receive_filter),
+                                "columns": 12}
 
         self.receive_table = table.Table(receive_measurements, self.receive_canvas, self.receive_table_contents)
         self.receive_table.setScrollbars(receive_table_frame)
@@ -318,8 +321,8 @@ class receiveAsset():
         self.receive_canvas.configure(scrollregion=self.receive_canvas.bbox("all"))
 
     def getContent(self, filter_val):
-        receive_table_header = ["Receive", "Receipt #", "Photo", "Asset Name", "Company", "Owner", "Location",
-                                "Price", "Payment Status", "Amount", "Status"]
+        receive_table_header = ["Receive", "Receipt #", "Operation", "Username", "Photo", "Asset Name",
+                                "Recipient", "Company", "Owner", "Location", "Amount", "Payment Status"]
         curr_row = []
         self.receive_table_contents = []
         for column in receive_table_header:
@@ -327,22 +330,36 @@ class receiveAsset():
         self.receive_table_contents.append(curr_row)
 
         self.root.table_image = []
-        receive = self.database.viewTable(1, filter_val)
-        for row in range(len(receive)):
-            curr_row = []
-            for column in range(len(receive[row])):
-                if row == 0:
-                    curr_row.append(receive_table_header[column])
-                else:
+        receive = self.database.viewTable(2, filter_val)
+        if type(receive) == list:
+            for row in range(len(receive)):
+                curr_row = []
+                for column in range(len(receive[row]) - 1):
                     if column == 2:
                         image = Image.open(os.getcwd() + r'\assets\img\sample_photo.png')
                         resized_img = image.resize((50, 50), Image.ANTIALIAS)
                         table_image = ImageTk.PhotoImage(resized_img)
                         self.root.table_image.append(table_image)
                         curr_row.append(table_image)
-                    else:
-                        curr_row.append("Testing Text")
-            self.receive_table_contents.append(curr_row)
+                    elif column < 4 or column > 5:
+                        curr_row.append(receive[row][column])
+                self.receive_table_contents.append(curr_row)
+            return len(receive) + 1
+        return 0
 
     def filterTable(self):
-        print()
+        self.receive_canvas.delete("all")
+
+        if len(self.receive_receipt_num.get()) > 0 or len(self.receive_asset_name.get()) > 0 or len(self.receive_owner.get()) > 0:
+            receive_filter = {"receipt_num": self.receive_receipt_num.get(), "asset_name": self.receive_asset_name.get(),
+                              "owner": self.receive_owner.get(), "location": "", "op_type": ""}
+            self.receive_receipt_num.set("")
+            self.receive_asset_name.set("")
+            self.receive_owner.set("")
+        else:
+            receive_filter = {"receipt_num": "", "asset_name": "", "owner": "", "location": "", "op_type": ""}
+
+        self.receive_table.rows = self.getContent(receive_filter)
+        self.receive_table.contents = self.receive_table_contents
+        self.receive_table.optionsTable(11, "radio")
+        self.receive_canvas.configure(scrollregion=self.receive_canvas.bbox("all"))

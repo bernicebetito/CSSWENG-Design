@@ -107,7 +107,8 @@ class manageUser():
         self.manage_canvas = Canvas(manage_table_frame, bg="#191919", width=605, height=500)
         manage_table_frame = manage_table_frame
 
-        manage_measurements = {"cell_width": 150, "cell_height": 75, "rows": self.getContent(["", ""]), "columns": 4}
+        manage_filter = {"username": "", "role": ""}
+        manage_measurements = {"cell_width": 150, "cell_height": 75, "rows": self.getContent(manage_filter), "columns": 4}
         self.manage_table = table.Table(manage_measurements, self.manage_canvas, self.manage_table_contents)
         self.manage_table.setScrollbars(manage_table_frame)
         self.manage_table.optionsTable(11, "radio")
@@ -143,11 +144,11 @@ class manageUser():
                 role = "manager"
             elif self.manage_role_int.get() == 2:
                 role = "clerk"
-            manage_filter = [self.manage_username.get(), role]
+            manage_filter = {"username": self.manage_username.get(), "role": role}
             self.manage_username.set("")
             self.manage_role_int.set(0)
         else:
-            manage_filter = ["", ""]
+            manage_filter = {"username": "", "role": ""}
 
         self.manage_table.rows = self.getContent(manage_filter)
         self.manage_table.contents = self.manage_table_contents

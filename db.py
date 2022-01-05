@@ -151,8 +151,8 @@ class Database():
 		try:
 			if filter == 0: # Users
 				if len(filter_val) > 0:
-					username = filter_val[0]
-					role = filter_val[1]
+					username = filter_val["username"]
+					role = filter_val["role"]
 
 					if len(username) > 0 and len(role) > 0:
 						self.cursor.execute("SELECT username, role, password FROM users WHERE username = '" + str(username) + "' AND role = '" + str(role) + "'")
@@ -164,12 +164,12 @@ class Database():
 						self.cursor.execute("SELECT username, role, password FROM users")
 				return self.cursor.fetchall()
 			elif filter == 1: # Assets
-				name = filter_val[0]
-				company = filter_val[1]
-				owner = filter_val[2]
-				location = filter_val[3]
-				pay_status = filter_val[4]
-				status = filter_val[5]
+				name = filter_val["asset_name"]
+				company = filter_val["company"]
+				owner = filter_val["owner"]
+				location = filter_val["location"]
+				pay_status = filter_val["pay_status"]
+				status = filter_val["status"]
 
 				command = "SELECT id, image, name, company, owner, unit_loc, price, amount, payment_stat, status FROM assets"
 				filters = " WHERE "
@@ -195,6 +195,38 @@ class Database():
 					if filters != " WHERE ":
 						filters += " AND "
 					filters += "status = '" + str(status) + "'"
+				if filters != " WHERE ":
+					command += filters
+
+				self.cursor.execute(command)
+				return self.cursor.fetchall()
+			elif filter == 2: # Operations
+				receipt_num = filter_val["receipt_num"]
+				name = filter_val["asset_name"]
+				owner = filter_val["owner"]
+				location = filter_val["location"]
+				op_type = filter_val["op_type"]
+
+				command = "SELECT id, receipt_no, op_type, username, authorized_by, asset_id, image, asset_name, recipient, company, owner, unit_loc, amount, payment_stat, approval_stat FROM operations"
+				filters = " WHERE "
+				if len(receipt_num) > 0:
+					filters += "name = '" + str(receipt_num) + "'"
+				if len(name) > 0:
+					if filters != " WHERE ":
+						filters += " AND "
+					filters += "name = '" + str(name) + "'"
+				if len(owner) > 0:
+					if filters != " WHERE ":
+						filters += " AND "
+					filters += "owner = '" + str(owner) + "'"
+				if len(location) > 0:
+					if filters != " WHERE ":
+						filters += " AND "
+					filters += "unit_loc = '" + str(location) + "'"
+				if len(op_type) > 0:
+					if filters != " WHERE ":
+						filters += " AND "
+					filters += "op_type = '" + str(op_type) + "'"
 				if filters != " WHERE ":
 					command += filters
 
