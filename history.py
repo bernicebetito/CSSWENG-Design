@@ -35,7 +35,7 @@ class History():
     def displayTable(self, history_table_frame):
         self.history_canvas = Canvas(history_table_frame, bg="#191919", width=825, height=500)
 
-        history_filter = {"receipt_num": "", "asset_name": "", "owner": "", "location": "", "op_type": ""}
+        history_filter = {"receipt_num": "", "asset_name": "", "owner": "", "location": "", "op_type": "", "in_transit": False}
         history_measurements = {"cell_width": 150, "cell_height": 75, "rows": self.getContent(history_filter),
                                 "columns": 8}
         self.history_table = table.Table(history_measurements, self.history_canvas, self.history_table_contents)
@@ -83,7 +83,7 @@ class History():
             self.history_location.set("")
             self.history_status.set("")
         else:
-            history_filter = {"receipt_num": "", "asset_name": "", "owner": "", "location": "", "op_type": ""}
+            history_filter = {"receipt_num": "", "asset_name": "", "owner": "", "location": "", "op_type": "", "in_transit": False}
 
         self.history_table.rows = self.getContent(history_filter)
         self.history_table.contents = self.history_table_contents

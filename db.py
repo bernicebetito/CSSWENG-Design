@@ -46,7 +46,7 @@ class Database():
 		# Cursor class instance for executing SQL commands in python
 		self.cursor = self.db.cursor()
 
-	#------------------ DATABASE ACCESS ------------------#
+	# ------------------ DATABASE ACCESS ------------------ #
 
 	def exportToExcel(self):
 		# read the data
@@ -86,7 +86,7 @@ class Database():
 	def deleteTable(self, tb_name):
 		self.cursor.execute("DROP TABLE " + tb_name)
 
-	#------------------ APPLICATION FUNCTIONALITIES ------------------#
+	# ------------------ APPLICATION FUNCTIONALITIES ------------------ #
 	def createUser(self, username, password, role):
 		try:
 			query = "INSERT INTO users (username, password, role) VALUES (%s, %s, %s)"
@@ -235,6 +235,7 @@ class Database():
 				owner = filter_val["owner"]
 				location = filter_val["location"]
 				op_type = filter_val["op_type"]
+				in_transit = filter["in_transit"]
 
 				command = "SELECT id, receipt_no, op_type, username, authorized_by, asset_id, image, asset_name, recipient, company, owner, unit_loc, amount, payment_stat, approval_stat FROM operations"
 				filters = " WHERE "
@@ -256,6 +257,10 @@ class Database():
 					if filters != " WHERE ":
 						filters += " AND "
 					filters += "op_type = '" + str(op_type) + "'"
+				if in_transit:
+					if filters != " WHERE ":
+						filters += " AND "
+					filters += " EXISTS (SELECT 1 FROM assets WHERE status = 'In Transit%')"
 				if filters != " WHERE ":
 					command += filters
 
@@ -386,25 +391,13 @@ class Database():
 		except Error as    error:
 			print("Failed to authorize: {}".format(error))
 
-	def getInTransit(self):
-		self.cursor.execute("SELECT id, name, company, owner, unit_loc, price, payment_stat, status FROM assets WHERE status LIKE 'In Transit%'")
-		return self.cursor.fetchall()
-
 	def receiveAsset(self, asset_ID):
 		self.cursor.execute("SELECT status FROM assets WHERE ID = '" + str(asset_ID) + "'")
 		record = self.cursor.fetchone()
-		if record[0] == "In Transit - Sold":
-			self.cursor.execute("UPDATE assets SET status = 'Sold' WHERE ID = '" + str(asset_ID) + "' AND status LIKE 'In Transit%'")
-			self.db.commit()
-		elif record[0] == "In Transit - Disposed":
-			self.cursor.execute("UPDATE assets SET status = 'Disposed' WHERE ID = '" + str(asset_ID) + "' AND status LIKE 'In Transit%'")
-			self.db.commit()
-		elif record[0] == "In Transit - Borrowed":
-			self.cursor.execute("UPDATE assets SET status = 'Borrowed' WHERE ID = '" + str(asset_ID) + "' AND status LIKE 'In Transit%'")
-			self.db.commit()
-		elif record[0] == "In Transit - Lent":
-			self.cursor.execute("UPDATE assets SET status = 'Lent' WHERE ID = '" + str(asset_ID) + "' AND status LIKE 'In Transit%'")
-			self.db.commit()
+
+		status = record[0].replace("In Transit - ", "")
+		self.cursor.execute("UPDATE assets SET status = '" + str(status) + "' WHERE ID = '" + str(asset_ID) + "' AND status LIKE 'In Transit%'")
+		self.db.commit()
 
 		self.cursor.execute("SELECT id, name, company, owner, unit_loc, price, payment_stat, status FROM assets WHERE ID = '" + str(asset_ID) + "'")
 		record = self.cursor.fetchone()
