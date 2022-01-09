@@ -139,6 +139,12 @@ class Database():
 		except Error as error:
 			print("Cannot retrieve asset: {}".format(error))
 
+	def getAssetfield(self, column, asset_ID):
+		query = "SELECT " + column + " FROM assets WHERE id = '" + str(asset_ID) + "'"
+		self.cursor.execute(query)
+		field = str(self.cursor.fetchone()[0])
+		return field
+
 	def delAsset(self, asset_ID):
 		try:
 			del_query = "DELETE FROM assets "
@@ -259,7 +265,10 @@ class Database():
 				if len(op_type) > 0:
 					if filters != " WHERE " and filters != " AND ":
 						filters += " AND "
-					filters += "operations.op_type = '" + str(op_type) + "'"
+					if op_type == "Cancelled":
+						filters += "operations.op_type LIKE '" + str(op_type) + "%'"
+					else:
+						filters += "operations.op_type = '" + str(op_type) + "'"
 				if filters != " WHERE " and filters != " AND ":
 					command += filters
 
@@ -300,24 +309,10 @@ class Database():
 
 		return storage_filepath
 
-	def getAssetfield(self, column, asset_ID):
-		query = "SELECT " + column + " FROM assets WHERE id = '" + str(asset_ID) + "'"
-		self.cursor.execute(query)
-		field = str(self.cursor.fetchone()[0])
-		return field
-
 	def setdefaultImage(self, receipt_no, asset_ID):
 		query = "UPDATE operations SET operations.image = (SELECT assets.image FROM assets WHERE assets.id = '"+ str(asset_ID) +"') WHERE receipt_no = '" + str(receipt_no) + "'"
 		self.cursor.execute(query)
 		self.db.commit()
-
-	def delOperation(self, op_id):
-		try:
-			del_query = "DELETE FROM operations WHERE ID = '" + str(op_id) + "'"
-			self.cursor.execute(del_query)
-			self.db.commit()
-		except Error:
-			print("Operation Deletion Failed")
 
 	def approveStat(self, op_id):
 		try:
@@ -390,18 +385,35 @@ class Database():
 		except Error as    error:
 			print("Failed to authorize: {}".format(error))
 
-	def receiveAsset(self, asset_ID):
-		self.cursor.execute("UPDATE assets SET status = REPLACE(status, 'In Transit - ', '') WHERE ID = '" + str(asset_ID) + "' AND status LIKE 'In Transit%'")
+	def receiveAsset(self, op_id, asset_ID):
+		self.cursor.execute("SELECT asset_name, company, owner, unit_loc, amount, payment_stat FROM operations WHERE id = '" + str(op_id) + "'")
+		record = self.cursor.fetchone()
+
+		name = "name = '" + str(record[0]) + "', "
+		company = "company = '" + str(record[1]) + "', "
+		owner = "owner = '" + str(record[2]) + "', "
+		unit_loc = "unit_loc = '" + str(record[3]) + "', "
+		amount = "amount = '" + str(record[4]) + "', "
+		payment_stat = "payment_stat = '" + str(record[5]) + "', "
+		status = "status = REPLACE(status, 'In Transit - ', '')"
+
+		command = name + company + owner + unit_loc + amount + payment_stat + status
+		self.cursor.execute("UPDATE assets SET " + command + " WHERE ID = '" + str(asset_ID) + "'")
 		self.db.commit()
 
-	def checkInTransit(self, asset_ID):
-		self.cursor.execute("SELECT * FROM assets WHERE ID = '" + str(asset_ID) + "' AND status LIKE 'In Transit%'")
-		record = self.cursor.fetchone()
-		if record != None:
-			print("Receiving asset...")
-			self.receiveAsset(asset_ID)
-		else:
-			print("This asset is not in transit.")
+	def delOperation(self, op_id):
+		try:
+			del_query = "UPDATE operations SET op_type = CONCAT('Cancelled - ', op_type) WHERE ID = '" + str(op_id) + "'"
+			self.cursor.execute(del_query)
+			self.db.commit()
+
+			self.cursor.execute("SELECT asset_id FROM operations WHERE id = '" + str(op_id) + "'")
+			record = self.cursor.fetchone()
+			upd_query = "UPDATE assets SET status = 'Available' WHERE ID = '" + str(record[0]) + "'"
+			self.cursor.execute(upd_query)
+			self.db.commit()
+		except Error:
+			print("Operation Deletion Failed")
 
 
 ''' Database Initializations'''

@@ -22,7 +22,7 @@ class History():
         Entry(history_form_frame, textvariable=self.history_location, bd=0).place(height=20, width=225, relx=.5, rely=0.425, anchor="center")
 
         Label(history_form_frame, text="Filter by Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.475, anchor="center")
-        status_choices = ["Sold", "Disposed", "Borrowed", "Lent"]
+        status_choices = ["Sold", "Disposed", "Borrowed", "Lent", "Cancelled"]
         status_menu = OptionMenu(history_form_frame, self.history_status, *status_choices)
         status_menu.place(height=20, width=110, relx=.5, rely=0.525, anchor="center")
 

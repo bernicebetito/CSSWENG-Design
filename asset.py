@@ -253,7 +253,7 @@ class receiveAsset():
         try:
             self.receive_table_contents.pop(0)
             for asset in self.receive_table_contents:
-                self.database.receiveAsset(asset[len(self.receive_table_contents[0]) - 1][1])
+                self.database.receiveAsset(asset[len(asset) - 1][0], asset[len(asset) - 1][1])
             return True
         except:
             return False
