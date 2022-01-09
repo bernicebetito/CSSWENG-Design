@@ -164,7 +164,7 @@ class receiveAsset():
         else:
             return False
 
-    def displayReceive(self, receive_form_frame, field_label, buttonA):
+    def displayReceive(self, receive_form_frame, field_label, buttonA, buttonB):
         Label(receive_form_frame, text="Search by Receipt Number", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.200, anchor="center")
         Entry(receive_form_frame, textvariable=self.receive_receipt_num, bd=0).place(height=20, width=225, relx=.5, rely=0.250, anchor="center")
 
@@ -176,6 +176,9 @@ class receiveAsset():
 
         filter_btn = Button(receive_form_frame, text="Search", width=13, command=lambda: self.filterTable(), bg="#DC5047", fg="#FFFFFF", bd=0, font=buttonA)
         filter_btn.place(relx=.5, rely=0.600, anchor="center")
+
+        clear_btn = Button(receive_form_frame, text="Clear Filter", width=13, command=lambda: self.filterTable(), bg="#404040", fg="#FFFFFF", bd=0, font=buttonB)
+        clear_btn.place(relx=.5, rely=0.665, anchor="center")
 
     def displayTable(self, receive_table_frame):
         self.receive_canvas = Canvas(receive_table_frame, bg="#191919", width=825, height=500)
@@ -203,25 +206,26 @@ class receiveAsset():
         if type(receive) == list:
             for row in range(len(receive)):
                 curr_row = []
-                for column in range(len(receive[row]) - 1):
-                    if column == 2:
+                for column in range(1, len(receive[row]) - 1):
+                    if column == 6:
                         image = Image.open(os.getcwd() + r'\assets\img\sample_photo.png')
                         resized_img = image.resize((50, 50), Image.ANTIALIAS)
                         table_image = ImageTk.PhotoImage(resized_img)
                         self.root.table_image.append(table_image)
                         curr_row.append(table_image)
-                    elif column < 4 or column > 5:
+                    elif column < 4 or column > 6:
                         curr_row.append(receive[row][column])
+                curr_row.insert(0, receive[row][5])
                 self.receive_table_contents.append(curr_row)
             return len(receive) + 1
-        return 0
+        return 1
 
     def filterTable(self):
         self.receive_canvas.delete("all")
 
         if len(self.receive_receipt_num.get()) > 0 or len(self.receive_asset_name.get()) > 0 or len(self.receive_owner.get()) > 0:
             receive_filter = {"receipt_num": self.receive_receipt_num.get(), "asset_name": self.receive_asset_name.get(),
-                              "owner": self.receive_owner.get(), "location": "", "op_type": ""}
+                              "owner": self.receive_owner.get(), "location": "", "op_type": "", "in_transit": True}
             self.receive_receipt_num.set("")
             self.receive_asset_name.set("")
             self.receive_owner.set("")
@@ -230,7 +234,7 @@ class receiveAsset():
 
         self.receive_table.rows = self.getContent(receive_filter)
         self.receive_table.contents = self.receive_table_contents
-        self.receive_table.optionsTable(11, "radio")
+        self.receive_table.optionsTable(25, "checkbox")
         self.receive_canvas.configure(scrollregion=self.receive_canvas.bbox("all"))
 
 
@@ -307,7 +311,7 @@ class deleteAsset():
                 curr_row.append(delete[row][0])
                 self.delete_table_contents.append(curr_row)
             return len(delete) + 1
-        return 0
+        return 1
 
     def filterTable(self):
         self.delete_canvas.delete("all")

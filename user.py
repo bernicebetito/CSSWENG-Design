@@ -133,7 +133,7 @@ class manageUser():
                         curr_row.append(users[row][column])
                 self.manage_table_contents.append(curr_row)
             return len(users) + 1
-        return 0
+        return 1
 
     def filterTable(self):
         self.manage_canvas.delete("all")

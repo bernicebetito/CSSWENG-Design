@@ -69,7 +69,7 @@ class History():
                 curr_row.append(history[row][2])
                 self.history_table_contents.append(curr_row)
             return len(history) + 1
-        return 0
+        return 1
 
     def filterTable(self):
         self.history_canvas.delete("all")

@@ -235,16 +235,16 @@ class Database():
 				owner = filter_val["owner"]
 				location = filter_val["location"]
 				op_type = filter_val["op_type"]
-				in_transit = filter["in_transit"]
+				in_transit = filter_val["in_transit"]
 
 				command = "SELECT id, receipt_no, op_type, username, authorized_by, asset_id, image, asset_name, recipient, company, owner, unit_loc, amount, payment_stat, approval_stat FROM operations"
 				filters = " WHERE "
 				if len(receipt_num) > 0:
-					filters += "name = '" + str(receipt_num) + "'"
+					filters += "receipt_no = '" + str(receipt_num) + "'"
 				if len(name) > 0:
 					if filters != " WHERE ":
 						filters += " AND "
-					filters += "name = '" + str(name) + "'"
+					filters += "asset_name = '" + str(name) + "'"
 				if len(owner) > 0:
 					if filters != " WHERE ":
 						filters += " AND "
@@ -260,7 +260,7 @@ class Database():
 				if in_transit:
 					if filters != " WHERE ":
 						filters += " AND "
-					filters += " EXISTS (SELECT 1 FROM assets WHERE status = 'In Transit%')"
+					filters += "EXISTS (SELECT 1 FROM assets WHERE status LIKE 'In Transit%')"
 				if filters != " WHERE ":
 					command += filters
 

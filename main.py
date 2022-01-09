@@ -366,7 +366,7 @@ def receiveAsset():
     displayHeader(receive_form_frame, 0.050, 0.100)
 
     receive_page = asset.receiveAsset(root)
-    receive_page.displayReceive(receive_form_frame, field_label, buttonA)
+    receive_page.displayReceive(receive_form_frame, field_label, buttonA, buttonB)
     receive_page.displayTable(receive_table_frame)
 
     def validReceiveAssets(frames):
