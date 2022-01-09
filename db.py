@@ -123,11 +123,23 @@ class Database():
 		except Error:
 			return False
 
-	def createAsset(self, tb_name, name, company, owner, status, unit_loc, price, amount, payment_stat, image):
-		query = "INSERT INTO " + tb_name + " (name, company, owner, status, unit_loc, price, amount, payment_stat, image) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-		values = (name, company, owner, status, unit_loc, price, amount, payment_stat, image)
-		self.cursor.execute(query, values)
+	def createAsset(self, tb_name, username, name, company, owner, status, unit_loc, price, amount, payment_stat, image):
+		asset_query = "INSERT INTO " + tb_name + " (name, company, owner, status, unit_loc, price, amount, payment_stat, image) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+		asset_values = (name, company, owner, status, unit_loc, price, amount, payment_stat, image)
+		self.cursor.execute(asset_query, asset_values)
 		self.db.commit()
+
+		self.cursor.execute("SELECT MAX(receipt_no) FROM operations")
+		ops_record = self.cursor.fetchone()
+
+		self.cursor.execute("SELECT id FROM assets WHERE name = '" + str(name) + "'")
+		asset_record = self.cursor.fetchone()
+
+		receipt_no = int(ops_record[0]) + 1
+		op_type = "Create"
+		username = username
+		asset_id = asset_record[0]
+		self.createReceipt(receipt_no, op_type, username, None, asset_id, name, None, company, owner, unit_loc, amount, payment_stat, image, None)
 		print("Successfully Created Asset!")
 
 	def getAsset(self, asset_ID):

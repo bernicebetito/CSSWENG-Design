@@ -66,7 +66,7 @@ class createAsset():
             return False
         return True
 
-    def submitForm(self):
+    def submitForm(self, username):
         valid_first = len(self.create_name.get()) > 1 and len(self.create_company.get()) > 1
         valid_second = len(self.create_location.get()) > 1 and len(self.create_ownership.get()) > 1
         valid_third = self.create_price.get() > 0 and self.create_quantity.get() > 0 and self.create_payment_status_int.get() > 0
@@ -84,7 +84,7 @@ class createAsset():
                 payment_stat = "Unpaid"
             image = self.create_photo
 
-            self.database.createAsset("assets", name, company, owner, status, unit_loc, price, quantity, payment_stat, image)
+            self.database.createAsset("assets", username, name, company, owner, status, unit_loc, price, quantity, payment_stat, image)
             return True
         else:
             if self.create_price.get() <= 0 or self.create_quantity.get() <= 0:

@@ -201,8 +201,10 @@ def createAsset():
 
     def checkCreateAsset(frames, form):
         if form.setImage(photo_filename):
-            if form.submitForm():
+            if form.submitForm(login_credentials.username.get()):
                 approvedMessage(frames, "Asset Created\nSuccessfully!", True)
+            else:
+                approvedMessage(frames, "Error Creating\nAsset!", False)
 
     create_btn = Button(create_right, text="Create", width=15, command=lambda: checkCreateAsset(frames, create_form),
                         bg="#B8D8D8", fg="#FFFFFF", bd=0, font=buttonA)
