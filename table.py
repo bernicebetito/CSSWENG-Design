@@ -16,7 +16,7 @@ class Table(object):
         self.data_font = tkfont.Font(family='Open Sans', size=10)
         self.images = []
         self.selectedCheckbox = []
-        self.selectedRadio = -1
+        self.selectedRadio = ""
 
     def setScrollbars(self, frame):
         self.vertical_scroll = Scrollbar(frame, orient=VERTICAL)
@@ -80,10 +80,16 @@ class Table(object):
                             self.canvas.create_rectangle(x_text - 9, y_text - 9, x_text + 9, y_text + 9, fill="#191919")
                             self.checkboxes[row] = self.canvas.create_rectangle(x_text - 8, y_text - 8, x_text + 8, y_text + 8, fill="#E8E8E8")
                             self.canvas.tag_bind(self.checkboxes[row], "<Button-1>", lambda e: self.optionClicked(num,option))
+
+                            if self.contents[row][0] in self.selectedCheckbox:
+                                self.canvas.itemconfig(self.checkboxes[row], fill="#666666")
                         elif option == "radio":
                             self.canvas.create_oval(x_text - 9, y_text - 9, x_text + 9, y_text + 9, fill="#191919")
                             self.checkboxes[row] = self.canvas.create_oval(x_text - 8, y_text - 8, x_text + 8, y_text + 8, fill="#E8E8E8")
                             self.canvas.tag_bind(self.checkboxes[row], "<Button-1>", lambda e: self.optionClicked(num, option))
+
+                            if self.contents[row][0] == self.selectedRadio:
+                                self.canvas.itemconfig(self.checkboxes[row], fill="#666666")
                     else:
                         self.canvas.create_text((x_text, y_text), text=self.contents[row][column], font=self.data_font)
 
@@ -92,23 +98,25 @@ class Table(object):
         curr_clicked /= (num - 2)
         curr_clicked = int(curr_clicked)
 
-        if option == "checkbox":
-            if curr_clicked in self.selectedCheckbox:
-                self.canvas.itemconfig(self.checkboxes[int(curr_clicked + 1)], fill="#E8E8E8")
-                self.selectedCheckbox.remove(curr_clicked)
+        try:
+            if option == "checkbox":
+                if self.contents[int(curr_clicked + 1)][0] in self.selectedCheckbox:
+                    self.canvas.itemconfig(self.checkboxes[int(curr_clicked + 1)], fill="#E8E8E8")
+                    self.selectedCheckbox.remove(self.contents[int(curr_clicked + 1)][0])
+                else:
+                    self.canvas.itemconfig(self.checkboxes[int(curr_clicked + 1)], fill="#666666")
+                    self.selectedCheckbox.append(self.contents[int(curr_clicked + 1)][0])
             else:
-                self.canvas.itemconfig(self.checkboxes[int(curr_clicked + 1)], fill="#666666")
-                self.selectedCheckbox.append(curr_clicked)
-        else:
-            if curr_clicked == self.selectedRadio:
-                self.canvas.itemconfig(self.checkboxes[int(curr_clicked + 1)], fill="#E8E8E8")
-                self.selectedRadio = -1
-            else:
-                if self.selectedRadio == -1:
-                    self.selectedRadio += 1
-                self.canvas.itemconfig(self.checkboxes[int(self.selectedRadio + 1)], fill="#E8E8E8")
-                self.canvas.itemconfig(self.checkboxes[int(curr_clicked + 1)], fill="#666666")
-                self.selectedRadio = curr_clicked
+                for radio in range(len(self.checkboxes)):
+                    self.canvas.itemconfig(self.checkboxes[int(radio + 1)], fill="#E8E8E8")
+
+                if self.contents[int(curr_clicked + 1)][0] == self.selectedRadio:
+                    self.selectedRadio = ""
+                else:
+                    self.canvas.itemconfig(self.checkboxes[int(curr_clicked + 1)], fill="#666666")
+                    self.selectedRadio = self.contents[int(curr_clicked + 1)][0]
+        except:
+            pass
 
     def getSelectedCheckbox(self):
         return self.selectedCheckbox

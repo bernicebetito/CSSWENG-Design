@@ -200,7 +200,7 @@ class Database():
 				pay_status = filter_val["pay_status"]
 				status = filter_val["status"]
 
-				command = "SELECT id, image, name, company, owner, unit_loc, price, amount, payment_stat, status FROM assets"
+				command = "SELECT id, name, company, owner, unit_loc, price, amount, payment_stat, status, image FROM assets"
 				filters = " WHERE "
 				if len(name) > 0:
 					filters += "name = '" + str(name) + "'"
@@ -239,29 +239,28 @@ class Database():
 
 				command = "SELECT id, receipt_no, op_type, username, authorized_by, asset_id, image, asset_name, recipient, company, owner, unit_loc, amount, payment_stat, approval_stat FROM operations"
 				filters = " WHERE "
-				if len(receipt_num) > 0:
-					filters += "receipt_no = '" + str(receipt_num) + "'"
-				if len(name) > 0:
-					if filters != " WHERE ":
-						filters += " AND "
-					filters += "asset_name = '" + str(name) + "'"
-				if len(owner) > 0:
-					if filters != " WHERE ":
-						filters += " AND "
-					filters += "owner = '" + str(owner) + "'"
-				if len(location) > 0:
-					if filters != " WHERE ":
-						filters += " AND "
-					filters += "unit_loc = '" + str(location) + "'"
-				if len(op_type) > 0:
-					if filters != " WHERE ":
-						filters += " AND "
-					filters += "op_type = '" + str(op_type) + "'"
 				if in_transit:
-					if filters != " WHERE ":
+					command = "SELECT operations.id, operations.receipt_no, operations.op_type, operations.username, operations.authorized_by, operations.asset_id, operations.image, operations.asset_name, operations.recipient, operations.company, operations.owner, operations.unit_loc, operations.amount, operations.payment_stat, operations.approval_stat FROM operations INNER JOIN assets ON assets.status LIKE 'In Transit%' AND assets.id = operations.asset_id"
+					filters = " AND "
+				if len(receipt_num) > 0:
+					filters += "operations.receipt_no = '" + str(receipt_num) + "'"
+				if len(name) > 0:
+					if filters != " WHERE " and filters != " AND ":
 						filters += " AND "
-					filters += "EXISTS (SELECT 1 FROM assets WHERE status LIKE 'In Transit%')"
-				if filters != " WHERE ":
+					filters += "operations.asset_name = '" + str(name) + "'"
+				if len(owner) > 0:
+					if filters != " WHERE " and filters != " AND ":
+						filters += " AND "
+					filters += "operations.owner = '" + str(owner) + "'"
+				if len(location) > 0:
+					if filters != " WHERE " and filters != " AND ":
+						filters += " AND "
+					filters += "operations.unit_loc = '" + str(location) + "'"
+				if len(op_type) > 0:
+					if filters != " WHERE " and filters != " AND ":
+						filters += " AND "
+					filters += "operations.op_type = '" + str(op_type) + "'"
+				if filters != " WHERE " and filters != " AND ":
 					command += filters
 
 				self.cursor.execute(command)
@@ -392,16 +391,8 @@ class Database():
 			print("Failed to authorize: {}".format(error))
 
 	def receiveAsset(self, asset_ID):
-		self.cursor.execute("SELECT status FROM assets WHERE ID = '" + str(asset_ID) + "'")
-		record = self.cursor.fetchone()
-
-		status = record[0].replace("In Transit - ", "")
-		self.cursor.execute("UPDATE assets SET status = '" + str(status) + "' WHERE ID = '" + str(asset_ID) + "' AND status LIKE 'In Transit%'")
+		self.cursor.execute("UPDATE assets SET status = REPLACE(status, 'In Transit - ', '') WHERE ID = '" + str(asset_ID) + "' AND status LIKE 'In Transit%'")
 		self.db.commit()
-
-		self.cursor.execute("SELECT id, name, company, owner, unit_loc, price, payment_stat, status FROM assets WHERE ID = '" + str(asset_ID) + "'")
-		record = self.cursor.fetchone()
-		print("Updated Status: " + str(record))
 
 	def checkInTransit(self, asset_ID):
 		self.cursor.execute("SELECT * FROM assets WHERE ID = '" + str(asset_ID) + "' AND status LIKE 'In Transit%'")

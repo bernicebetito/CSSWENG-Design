@@ -56,15 +56,15 @@ class History():
         if type(history) == list:
             for row in range(len(history)):
                 curr_row = []
-                for column in range(6, len(history[row])):
-                    if column == 6:
-                        filepath = self.database.readBLOB(history[row][0])
+                for column in range(6, len(history[row]) - 1):
+                    if type(history[row][column]) == bytes:
+                        filepath = self.database.readBLOB(history[row][5])
                         image = Image.open(filepath)
                         resized_img = image.resize((50, 50), Image.ANTIALIAS)
                         table_image = ImageTk.PhotoImage(resized_img)
                         self.root.table_image.append(table_image)
                         curr_row.append(table_image)
-                    elif column != 8 and column != 14:
+                    elif column != 8:
                         curr_row.append(history[row][column])
                 curr_row.append(history[row][2])
                 self.history_table_contents.append(curr_row)
@@ -77,7 +77,7 @@ class History():
         if len(self.history_asset_name.get()) > 0 or len(self.history_owner.get()) > 0 or len(self.history_location.get()) > 0 or len(self.history_status.get()) > 0:
             history_filter = {"receipt_num": "", "asset_name": self.history_asset_name.get(),
                               "owner": self.history_owner.get(), "location": self.history_location.get(),
-                              "op_type": self.history_status.get()}
+                              "op_type": self.history_status.get(), "in_transit": False}
             self.history_asset_name.set("")
             self.history_owner.set("")
             self.history_location.set("")

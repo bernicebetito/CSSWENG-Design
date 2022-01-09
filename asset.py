@@ -155,15 +155,6 @@ class receiveAsset():
         self.receive_owner = StringVar()
         self.receive_assets = []
 
-    def checkAssets(self):
-        self.receive_assets = self.receive_table.getSelectedCheckbox()
-        if len(self.receive_assets) > 0:
-            for i in self.receive_assets:
-                print(i)
-            return True
-        else:
-            return False
-
     def displayReceive(self, receive_form_frame, field_label, buttonA, buttonB):
         Label(receive_form_frame, text="Search by Receipt Number", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.200, anchor="center")
         Entry(receive_form_frame, textvariable=self.receive_receipt_num, bd=0).place(height=20, width=225, relx=.5, rely=0.250, anchor="center")
@@ -207,15 +198,16 @@ class receiveAsset():
             for row in range(len(receive)):
                 curr_row = []
                 for column in range(1, len(receive[row]) - 1):
-                    if column == 6:
-                        image = Image.open(os.getcwd() + r'\assets\img\sample_photo.png')
+                    if type(receive[row][column]) == bytes:
+                        filepath = self.database.readBLOB(receive[row][5])
+                        image = Image.open(filepath)
                         resized_img = image.resize((50, 50), Image.ANTIALIAS)
                         table_image = ImageTk.PhotoImage(resized_img)
                         self.root.table_image.append(table_image)
                         curr_row.append(table_image)
                     elif column < 4 or column > 6:
                         curr_row.append(receive[row][column])
-                curr_row.insert(0, receive[row][5])
+                curr_row.insert(0, [receive[row][0], receive[row][5]])
                 self.receive_table_contents.append(curr_row)
             return len(receive) + 1
         return 1
@@ -236,6 +228,44 @@ class receiveAsset():
         self.receive_table.contents = self.receive_table_contents
         self.receive_table.optionsTable(25, "checkbox")
         self.receive_canvas.configure(scrollregion=self.receive_canvas.bbox("all"))
+
+    def checkAssets(self):
+        self.receive_assets = self.receive_table.getSelectedCheckbox()
+        if len(self.receive_assets) > 0:
+            self.receive_canvas.delete("all")
+
+            for keep_asset in range(len(self.receive_table_contents) - 1, -1, -1):
+                if self.receive_table_contents[keep_asset][0] not in self.receive_assets and keep_asset != 0:
+                    del self.receive_table_contents[keep_asset]
+                else:
+                    self.receive_table_contents[keep_asset].append(self.receive_table_contents[keep_asset][0])
+                    del self.receive_table_contents[keep_asset][0]
+
+            self.receive_table.rows = len(self.receive_table_contents)
+            self.receive_table.cols = len(self.receive_table_contents[0]) - 1
+            self.receive_table.contents = self.receive_table_contents
+            self.receive_table.createTable()
+            self.receive_canvas.configure(scrollregion=self.receive_canvas.bbox("all"))
+            return True
+        return False
+
+    def receiveAssets(self):
+        try:
+            self.receive_table_contents.pop(0)
+            for asset in self.receive_table_contents:
+                self.database.receiveAsset(asset[len(self.receive_table_contents[0]) - 1][1])
+            return True
+        except:
+            return False
+
+    def cancelAssets(self):
+        try:
+            self.receive_table_contents.pop(0)
+            for asset in self.receive_table_contents:
+                self.database.delOperation(asset[len(self.receive_table_contents[0]) - 1][0])
+            return True
+        except:
+            return False
 
 
 class deleteAsset():
@@ -270,20 +300,23 @@ class deleteAsset():
         current_font.configure(weight="bold", slant="italic")
         filter_ins.config(font=current_font)
 
-    def displayTable(self, delete_table_frame):
-        self.delete_canvas = Canvas(delete_table_frame, bg="#191919", width=825, height=500)
+    def displayTable(self, delete_bg):
+        self.delete_bg = delete_bg
+        self.delete_table_frame = Frame(delete_bg, bg="#191919", width=825, height=500)
+        self.delete_table_frame.place(relx=.625, rely=.5, anchor="center")
+        self.delete_canvas = Canvas(self.delete_table_frame, bg="#191919", width=825, height=500)
 
         delete_filter = {"asset_name": "", "company": "", "owner": "", "location": "", "pay_status": "", "status": ""}
         delete_measurements = {"cell_width": 150, "cell_height": 75, "rows": self.getContent(delete_filter),
                                "columns": 10}
         self.delete_table = table.Table(delete_measurements, self.delete_canvas, self.delete_table_contents)
-        self.delete_table.setScrollbars(delete_table_frame)
+        self.delete_table.setScrollbars(self.delete_table_frame)
         self.delete_table.optionsTable(23, "checkbox")
         self.delete_canvas.configure(scrollregion=self.delete_canvas.bbox("all"))
 
     def getContent(self, filter_val):
         delete_table_header = ["Delete?", "Photo", "Asset Name", "Company", "Owner", "Location",
-                               "Price", "Payment Status", "Amount", "Status"]
+                               "Price", "Amount", "Payment Status", "Status"]
         self.delete_table_contents = []
         curr_row = []
         for column in delete_table_header:
@@ -291,30 +324,30 @@ class deleteAsset():
         self.delete_table_contents.append(curr_row)
 
         self.root.table_image = []
+
         delete = self.database.viewTable(1, filter_val)
         if type(delete) == list:
             for row in range(len(delete)):
                 curr_row = []
-
                 for column in range(len(delete[row])):
-                    if column == 0:
-                        curr_row.append("")
-                    elif column == 1:
+                    if type(delete[row][column]) == bytes:
                         filepath = self.database.readBLOB(delete[row][0])
                         image = Image.open(filepath)
                         resized_img = image.resize((50, 50), Image.ANTIALIAS)
                         table_image = ImageTk.PhotoImage(resized_img)
                         self.root.table_image.append(table_image)
-                        curr_row.append(table_image)
+                        curr_row.insert(1, table_image)
                     else:
                         curr_row.append(delete[row][column])
-                curr_row.append(delete[row][0])
                 self.delete_table_contents.append(curr_row)
             return len(delete) + 1
         return 1
 
     def filterTable(self):
-        self.delete_canvas.delete("all")
+        self.delete_table_frame.destroy()
+        self.delete_table_frame = Frame(self.delete_bg, bg="#191919", width=825, height=500)
+        self.delete_table_frame.place(relx=.625, rely=.5, anchor="center")
+        self.delete_canvas = Canvas(self.delete_table_frame, bg="#191919", width=825, height=500)
 
         if len(self.delete_asset_name.get()) > 0 or self.delete_disposed_int.get() > 0:
             status = ""
@@ -327,9 +360,11 @@ class deleteAsset():
         else:
             delete_filter = {"asset_name": "", "company": "", "owner": "", "location": "", "pay_status": "", "status": ""}
 
+        self.delete_table.canvas = self.delete_canvas
         self.delete_table.rows = self.getContent(delete_filter)
         self.delete_table.contents = self.delete_table_contents
-        self.delete_table.optionsTable(11, "radio")
+        self.delete_table.setScrollbars(self.delete_table_frame)
+        self.delete_table.optionsTable(23, "checkbox")
         self.delete_canvas.configure(scrollregion=self.delete_canvas.bbox("all"))
 
     def getSelected(self):
@@ -337,17 +372,15 @@ class deleteAsset():
         if len(self.delete_assets) > 0:
             self.delete_canvas.delete("all")
 
-            for current in range(len(self.delete_assets)):
-                self.delete_assets[current] += 1
-
             for keep_asset in range(len(self.delete_table_contents) - 1, -1, -1):
-                if keep_asset not in self.delete_assets and keep_asset != 0:
+                if self.delete_table_contents[keep_asset][0] not in self.delete_assets and keep_asset != 0:
                     del self.delete_table_contents[keep_asset]
                 else:
+                    self.delete_table_contents[keep_asset].append(self.delete_table_contents[keep_asset][0])
                     del self.delete_table_contents[keep_asset][0]
 
-            self.delete_table.rows = len(self.delete_assets) + 1
-            self.delete_table.cols = len(self.delete_table_contents[0])
+            self.delete_table.rows = len(self.delete_table_contents)
+            self.delete_table.cols = len(self.delete_table_contents[0]) - 1
             self.delete_table.contents = self.delete_table_contents
             self.delete_table.createTable()
             self.delete_canvas.configure(scrollregion=self.delete_canvas.bbox("all"))
@@ -355,15 +388,9 @@ class deleteAsset():
         return False
 
     def deleteAssets(self):
-        self.delete_assets = self.delete_table.getSelectedCheckbox()
-        if len(self.delete_assets) > 0:
-            del self.delete_table_contents[0]
+        delete_assets = []
+        for assets in range(1, len(self.delete_table_contents)):
+            delete_assets.append(self.delete_table_contents[assets][len(self.delete_table_contents[assets]) - 1])
 
-            delete_assets = []
-            for del_asset in self.delete_table_contents:
-                delete_assets.append(del_asset[len(del_asset) - 1])
-
-            self.database.delAsset(delete_assets)
-            return True
-        else:
-            return False
+        self.database.delAsset(delete_assets)
+        return True

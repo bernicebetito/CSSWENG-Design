@@ -369,17 +369,46 @@ def receiveAsset():
     receive_page.displayReceive(receive_form_frame, field_label, buttonA, buttonB)
     receive_page.displayTable(receive_table_frame)
 
-    def validReceiveAssets(frames):
+    def confirmSelected(frames, operation):
         if receive_page.checkAssets():
+            for widget in receive_form_frame.winfo_children():
+                widget.destroy()
+
+            displayHeader(receive_form_frame, 0.050, 0.100)
+            filter_ins = Label(receive_form_frame, text="Confirm Assets to " + operation, bg="#DDDDDD", fg="#363636", font=header)
+            filter_ins.place(relx=.5, rely=.5, anchor="center")
+            current_font = tkfont.Font(filter_ins, filter_ins.cget("font"))
+            current_font.configure(size=18, slant="italic")
+            filter_ins.config(font=current_font)
+
+            back_btn = Button(receive_form_frame, text="Confirm", width=13, command=lambda: validReceiveAssets(frames), bg="#FE5F55",
+                              fg="#FFFFFF", bd=0, font=buttonA)
+            back_btn.place(relx=.20, rely=0.850, anchor="center")
+
+            if operation.lower() == "cancel":
+                back_btn.config(command=lambda: validCancelAssets(frames))
+
+            back_btn = Button(receive_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 10), bg="#2D2E2E",
+                              fg="#FFFFFF", bd=0, font=buttonB)
+            back_btn.place(relx=.15, rely=0.950, anchor="center")
+
+    def validReceiveAssets(frames):
+        if receive_page.receiveAssets():
             approvedMessage(frames, "Assets Received!", True)
         else:
             approvedMessage(frames, "Error\nReceiving Assets!", False)
 
+    def validCancelAssets(frames):
+        if receive_page.cancelAssets():
+            approvedMessage(frames, "Assets Cancelled!", True)
+        else:
+            approvedMessage(frames, "Error\nCancelling Assets!", False)
+
     frames = [receive_bg, receive_form_frame, receive_table_frame]
-    receive_btn = Button(receive_form_frame, text="Receive", width=13, command=lambda: validReceiveAssets(frames), bg="#24434D",
+    receive_btn = Button(receive_form_frame, text="Receive", width=13, command=lambda: confirmSelected(frames, "Receive"), bg="#24434D",
                         fg="#FFFFFF", bd=0, font=buttonA)
     receive_btn.place(relx=.25, rely=0.750, anchor="center")
-    cancel_btn = Button(receive_form_frame, text="Cancel", width=13, command=lambda: validReceiveAssets(frames), bg="#FFFFFF",
+    cancel_btn = Button(receive_form_frame, text="Cancel", width=13, command=lambda: confirmSelected(frames, "Cancel"), bg="#FFFFFF",
                          fg="#24434D", bd=0, font=buttonA)
     cancel_btn.place(relx=.25, rely=0.850, anchor="center")
 
@@ -468,14 +497,11 @@ def deleteAsset():
     delete_form_frame = Frame(delete_bg, bg="#DDDDDD", width=300, height=550)
     delete_form_frame.place(relx=.135, rely=.5, anchor="center")
 
-    delete_table_frame = Frame(delete_bg, bg="#191919", width=825, height=500)
-    delete_table_frame.place(relx=.625, rely=.5, anchor="center")
-
     displayHeader(delete_form_frame, 0.050, 0.100)
 
     delete_page = asset.deleteAsset(root)
     delete_page.displayDelete(delete_form_frame, field_label, buttonA, buttonB)
-    delete_page.displayTable(delete_table_frame)
+    delete_page.displayTable(delete_bg)
 
     def confirmDelete(frames):
         if delete_page.getSelected():
@@ -502,7 +528,7 @@ def deleteAsset():
         else:
             approvedMessage(frames, "Error Deleting\nAssets!", False)
 
-    frames = [delete_bg, delete_form_frame, delete_table_frame]
+    frames = [delete_bg, delete_form_frame, delete_page.delete_table_frame]
     delete_btn = Button(delete_form_frame, text="Delete", width=13, command=lambda: confirmDelete(frames), bg="#FE5F55",
                         fg="#FFFFFF", bd=0, font=buttonA)
     delete_btn.place(relx=.25, rely=0.850, anchor="center")

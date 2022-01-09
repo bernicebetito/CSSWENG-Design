@@ -126,11 +126,9 @@ class manageUser():
         if type(users) == list:
             for row in range(len(users)):
                 curr_row = []
-                for column in range(-1, len(users[row])):
-                    if column == -1:
-                        curr_row.append("")
-                    else:
-                        curr_row.append(users[row][column])
+                for column in range(len(users[row])):
+                    curr_row.append(users[row][column])
+                curr_row.insert(0, users[row][0])
                 self.manage_table_contents.append(curr_row)
             return len(users) + 1
         return 1
@@ -157,7 +155,12 @@ class manageUser():
 
     def getSelected(self):
         self.selected_user = self.manage_table.getSelectedRadio()
-        if self.selected_user > -1:
+        self.selected_index = -1
+        for row in range(len(self.manage_table_contents)):
+            if self.selected_user == self.manage_table_contents[row][0]:
+                self.selected_index = row
+
+        if len(self.selected_user) > 0:
             return True
         return False
 
@@ -224,7 +227,7 @@ class manageUser():
                 if row == 0:
                     curr_row.append(operation_table_header[column])
                 else:
-                    curr_row.append(self.manage_table_contents[self.selected_user + 1][column + 1])
+                    curr_row.append(self.manage_table_contents[self.selected_index][column + 1])
 
             operation_table_contents.append(curr_row)
 
@@ -262,7 +265,7 @@ class manageUser():
         Label(change_pass_bg, text="CHANGE PASSWORD", bg="#DDDDDD", fg="#3E3E3E", font=change_pass_label).place(relx=.5, rely=0.275, anchor="center")
 
         Label(change_pass_bg, text="Username", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.375, anchor="center")
-        username = Label(change_pass_bg, text=self.manage_table_contents[self.selected_user + 1][1], bg="#DDDDDD", fg="#363636", font=field_label)
+        username = Label(change_pass_bg, text=self.manage_table_contents[self.selected_index][1], bg="#DDDDDD", fg="#363636", font=field_label)
         username.place(relx=.5, rely=0.425, anchor="center")
         current_font = tkfont.Font(username, username.cget("font"))
         current_font.configure(weight="bold", size=13)
@@ -280,4 +283,4 @@ class manageUser():
         self.change_error_label.place(relx=.5, rely=0.725, anchor="center")
 
     def deleteUser(self):
-        return self.database.delUser(self.manage_table_contents[self.selected_user + 1][1])
+        return self.database.delUser(self.manage_table_contents[self.selected_index][1])
