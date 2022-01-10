@@ -128,18 +128,52 @@ class Table(object):
 class ImportExport():
     def __init__(self):
         self.database = db.Database()
-        self.import_filename = ""
+        self.import_operations = ""
+        self.import_assets = ""
 
-    def uploadFile(self):
-        fileTypes = [('All Files', '*.*')]
-        self.import_filename = filedialog.askopenfilename(filetypes=fileTypes)
-        if len(self.import_filename) > 0:
-            display_name = self.import_filename.split('/')[len(self.import_filename.split('/')) - 1]
-            self.chosen_header.configure(text=display_name)
+    def displayImport(self, import_bg, sub):
+        self.choose_header = Label(import_bg, text="Choose Files to Import", bg="#DDDDDD", fg="#6A6A6A", font=sub)
+        self.choose_header.place(relx=.5, rely=0.275, anchor="center")
 
-    def importFile(self):
-        if len(self.import_filename) > 0:
-            return True
+        self.chosen_operations_header = Label(import_bg, text="No Operations File Chosen", width=25, bg="#EAEAEA", fg="#191919", font=sub)
+        self.chosen_operations_header.place(relx=.5, rely=0.350, anchor="center")
+
+        btn_font = tkfont.Font(family='Open Sans', weight="bold", size=13)
+        self.choose_ops_btn = Button(import_bg, text="Choose File", width=15, command=lambda: self.uploadOperationsFile(),
+                                     bg="#667275", fg="#FFFFFF", bd=0, font=btn_font)
+        self.choose_ops_btn.place(relx=.5, rely=0.425, anchor="center")
+
+        self.chosen_assets_header = Label(import_bg, text="No Assets File Chosen", width=25, bg="#EAEAEA", fg="#191919", font=sub)
+        self.chosen_assets_header.place(relx=.5, rely=0.560, anchor="center")
+
+        btn_font = tkfont.Font(family='Open Sans', weight="bold", size=13)
+        self.choose_asset_btn = Button(import_bg, text="Choose File", width=15, command=lambda: self.uploadAssetsFile(),
+                                     bg="#667275", fg="#FFFFFF", bd=0, font=btn_font)
+        self.choose_asset_btn.place(relx=.5, rely=0.635, anchor="center")
+
+    def uploadOperationsFile(self):
+        fileTypes = [('Excel Workbook', '*.xlsx'),
+                     ('Excel 97-2003 Workbook', '*.xls')]
+        self.import_operations = filedialog.askopenfilename(filetypes=fileTypes)
+        if len(self.import_operations) > 0:
+            display_name = self.import_operations.split('/')[len(self.import_operations.split('/')) - 1]
+            self.chosen_operations_header.configure(text=display_name)
+
+    def uploadAssetsFile(self):
+        fileTypes = [('Excel Workbook', '*.xlsx'),
+                     ('Excel 97-2003 Workbook', '*.xls')]
+        self.import_assets = filedialog.askopenfilename(filetypes=fileTypes)
+        if len(self.import_assets) > 0:
+            display_name = self.import_assets.split('/')[len(self.import_assets.split('/')) - 1]
+            self.chosen_assets_header.configure(text=display_name)
+
+    def importFile(self, username):
+        if len(self.import_operations) > 0 and len(self.import_assets) > 0:
+            try:
+                self.database.importToExcel(self.import_assets, self.import_operations, username)
+                return True
+            except:
+                return False
         return False
 
     def exportFile(self):
@@ -148,15 +182,3 @@ class ImportExport():
 
     def openExport(self):
         webbrowser.open(os.getcwd())
-
-    def displayImport(self, import_bg, sub):
-        self.choose_header = Label(import_bg, text="Choose a File to Import", bg="#DDDDDD", fg="#6A6A6A", font=sub)
-        self.choose_header.place(relx=.5, rely=0.375, anchor="center")
-
-        self.chosen_header = Label(import_bg, text="No File Chosen", width=25, bg="#EAEAEA", fg="#191919", font=sub)
-        self.chosen_header.place(relx=.5, rely=0.450, anchor="center")
-
-        btn_font = tkfont.Font(family='Open Sans', weight="bold", size=13)
-        self.choose_btn = Button(import_bg, text="Choose File", width=15, command=lambda: self.uploadFile(),
-                            bg="#667275", fg="#FFFFFF", bd=0, font=btn_font)
-        self.choose_btn.place(relx=.5, rely=0.550, anchor="center")

@@ -1,15 +1,16 @@
 from tkinter import *
 from PIL import Image, ImageTk
 import tkinter.font as tkfont
+from tkinter import filedialog
 import os, table
 import db
 
 
 class createAsset():
     def __init__(self, root):
+        self.root = root
         self.database = db.Database()
 
-        self.create_photo = ""
         self.create_name = StringVar()
         self.create_company = StringVar()
         self.create_status = StringVar()
@@ -19,22 +20,83 @@ class createAsset():
         self.create_ownership = StringVar()
         self.create_payment_status = StringVar()
         self.create_payment_status_int = IntVar()
-
-        self.create_name_field = Entry()
-        self.create_company_field = Entry()
-        self.create_status_field = Entry()
-        self.create_location_field = Entry()
-        self.create_price_field = Entry()
-        self.create_quantity_field = Entry()
-        self.create_owner_field = Entry()
-        self.create_payment_field = Radiobutton()
+        self.create_photo_filename = ""
 
         self.create_fields = []
-        self.create_error_label = Label()
         self.create_all_invalid = False
 
         self.reg_validDouble = root.register(self.validDouble)
         self.reg_invalidDouble = root.register(self.invalidDouble)
+
+    def displayUploadImage(self, create_left, buttonA, field_label):
+        self.create_photo_preview = Canvas(create_left, bg="#FFFFFF", width=250, height=250)
+        self.create_photo_preview.place(relx=.5, rely=0.450, anchor="center")
+        self.create_photo_text = self.create_photo_preview.create_text((125, 125), text="No Photo Uploaded", font=field_label)
+
+        upload_btn = Button(create_left, text="Upload", width=13, command=lambda: self.uploadImage(), bg="#B3D687",
+                            fg="#FFFFFF", bd=0, font=buttonA)
+        upload_btn.place(relx=.5, rely=0.725, anchor="center")
+
+    def displayCreate(self, create_right, field_label):
+        Label(create_right, text="Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.100,
+                                                                                                   rely=0.200,
+                                                                                                   anchor="center")
+        self.create_name_field = Entry(create_right, textvariable=self.create_name, width=35, bd=0)
+        self.create_name_field.place(height=25, width=250, relx=.245, rely=0.250, anchor="center")
+        self.create_fields.append(self.create_name_field)
+
+        Label(create_right, text="Company", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.590, rely=0.200,
+                                                                                                anchor="center")
+        self.create_company_field = Entry(create_right, textvariable=self.create_company, width=35, bd=0)
+        self.create_company_field.place(height=25, width=250, relx=.750, rely=0.250, anchor="center")
+        self.create_fields.append(self.create_company_field)
+
+        Label(create_right, text="Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.070, rely=0.350,
+                                                                                               anchor="center")
+        self.create_status_field = Label(create_right, text="Available", width=35, bg="#FFFFFF", fg="#000000")
+        self.create_status_field.place(height=25, width=250, relx=.245, rely=0.400, anchor="center")
+
+        Label(create_right, text="Unit Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.605,
+                                                                                                      rely=0.350,
+                                                                                                      anchor="center")
+        self.create_location_field = Entry(create_right, textvariable=self.create_location, width=35, bd=0)
+        self.create_location_field.place(height=25, width=250, relx=.750, rely=0.400, anchor="center")
+        self.create_fields.append(self.create_location_field)
+
+        Label(create_right, text="Price", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.065, rely=0.500,
+                                                                                              anchor="center")
+        self.create_price_field = Entry(create_right, textvariable=self.create_price, width=35, bd=0)
+        self.create_price_field.place(height=25, width=250, relx=.245, rely=0.550, anchor="center")
+        self.create_price_field.config(validate="focusout", validatecommand=(self.reg_validDouble, '%P'),
+                                       invalidcommand=(self.reg_invalidDouble,))
+        self.create_fields.append(self.create_price_field)
+
+        Label(create_right, text="Quantity", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.585, rely=0.500,
+                                                                                                 anchor="center")
+        self.create_quantity_field = Entry(create_right, textvariable=self.create_quantity, width=35, bd=0)
+        self.create_quantity_field.place(height=25, width=250, relx=.750, rely=0.550, anchor="center")
+        self.create_quantity_field.config(validate="focusout", validatecommand=(self.reg_validDouble, '%P'),
+                                          invalidcommand=(self.reg_invalidDouble,))
+        self.create_fields.append(self.create_quantity_field)
+
+        Label(create_right, text="Ownership", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.090, rely=0.650,
+                                                                                                  anchor="center")
+        self.create_owner_field = Entry(create_right, textvariable=self.create_ownership, width=35, bd=0)
+        self.create_owner_field.place(height=25, width=250, relx=.245, rely=0.700, anchor="center")
+        self.create_fields.append(self.create_owner_field)
+
+        Label(create_right, text="Payment Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.625,
+                                                                                                       rely=0.650,
+                                                                                                       anchor="center")
+        self.create_payment_paid = Radiobutton(create_right, text="Paid", bg="#DDDDDD",
+                                               variable=self.create_payment_status_int, value=1)
+        self.create_payment_paid.place(relx=.650, rely=0.700, anchor="center")
+        self.create_payment_paid = Radiobutton(create_right, text="Unpaid", bg="#DDDDDD",
+                                               variable=self.create_payment_status_int, value=2)
+        self.create_payment_paid.place(relx=.850, rely=0.700, anchor="center")
+
+        self.create_error_label = Label(create_right, bg="#DDDDDD", fg="#D64000", font=field_label)
+        self.create_error_label.place(relx=.5, rely=0.750, anchor="center")
 
     def setButton(self, create_button):
         self.create_button = create_button
@@ -60,15 +122,23 @@ class createAsset():
             self.create_price_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
             self.create_quantity_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
 
-    def setImage(self, filepath):
-        self.create_photo = self.database.convertToBinaryData(filepath)
-        if self.create_photo == False:
-            return False
-        return True
+    def uploadImage(self):
+        fileTypes = [('JPG Files', '*.jpg'),
+                     ('JPEG Files', '*.jpeg'),
+                     ('PNG Files', '*.png')]
+        self.create_photo_filename = filedialog.askopenfilename(filetypes=fileTypes)
+        if len(self.create_photo_filename) > 0:
+            image = Image.open(self.create_photo_filename)
+            resized_img = image.resize((250, 250), Image.ANTIALIAS)
+            upload_img = ImageTk.PhotoImage(resized_img)
+            self.root.create_photo = upload_img
+
+            self.create_photo_preview.create_image(0, 0, image=upload_img, anchor=NW)
+            self.create_photo_preview.delete(self.create_photo_text)
 
     def submitForm(self, username):
         valid_first = len(self.create_name.get()) > 1 and len(self.create_company.get()) > 1
-        valid_second = len(self.create_location.get()) > 1 and len(self.create_ownership.get()) > 1
+        valid_second = len(self.create_location.get()) > 1 and len(self.create_ownership.get()) > 1 and len(self.create_photo_filename) > 0
         valid_third = self.create_price.get() > 0 and self.create_quantity.get() > 0 and self.create_payment_status_int.get() > 0
         if valid_first and valid_second and valid_third:
             name = self.create_name.get()
@@ -82,7 +152,9 @@ class createAsset():
                 payment_stat = "Paid"
             else:
                 payment_stat = "Unpaid"
-            image = self.create_photo
+            image = self.database.convertToBinaryData(self.create_photo_filename)
+            if not image:
+                return False
 
             self.database.createAsset("assets", username, name, company, owner, status, unit_loc, price, quantity, payment_stat, image)
             return True
@@ -98,52 +170,6 @@ class createAsset():
                     i.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
                 self.create_error_label.config(text="Please Fill Up All Fields")
             return False
-
-    def setCreate(self, create_right, field_label):
-        Label(create_right, text="Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.100, rely=0.200, anchor="center")
-        self.create_name_field = Entry(create_right, textvariable=self.create_name, width=35, bd=0)
-        self.create_name_field.place(height=25, width=250, relx=.245, rely=0.250, anchor="center")
-        self.create_fields.append(self.create_name_field)
-
-        Label(create_right, text="Company", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.590, rely=0.200, anchor="center")
-        self.create_company_field = Entry(create_right, textvariable=self.create_company, width=35, bd=0)
-        self.create_company_field.place(height=25, width=250, relx=.750, rely=0.250, anchor="center")
-        self.create_fields.append(self.create_company_field)
-
-        Label(create_right, text="Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.070, rely=0.350, anchor="center")
-        self.create_status_field = Label(create_right, text="Available", width=35, bg="#FFFFFF", fg="#000000")
-        self.create_status_field.place(height=25, width=250, relx=.245, rely=0.400, anchor="center")
-
-        Label(create_right, text="Unit Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.605, rely=0.350, anchor="center")
-        self.create_location_field = Entry(create_right, textvariable=self.create_location, width=35, bd=0)
-        self.create_location_field.place(height=25, width=250, relx=.750, rely=0.400, anchor="center")
-        self.create_fields.append(self.create_location_field)
-
-        Label(create_right, text="Price", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.065, rely=0.500, anchor="center")
-        self.create_price_field = Entry(create_right, textvariable=self.create_price, width=35, bd=0)
-        self.create_price_field.place(height=25, width=250, relx=.245, rely=0.550, anchor="center")
-        self.create_price_field.config(validate="focusout", validatecommand=(self.reg_validDouble, '%P'), invalidcommand=(self.reg_invalidDouble,))
-        self.create_fields.append(self.create_price_field)
-
-        Label(create_right, text="Quantity", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.585, rely=0.500, anchor="center")
-        self.create_quantity_field = Entry(create_right, textvariable=self.create_quantity, width=35, bd=0)
-        self.create_quantity_field.place(height=25, width=250, relx=.750, rely=0.550, anchor="center")
-        self.create_quantity_field.config(validate="focusout", validatecommand=(self.reg_validDouble, '%P'), invalidcommand=(self.reg_invalidDouble,))
-        self.create_fields.append(self.create_quantity_field)
-
-        Label(create_right, text="Ownership", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.090, rely=0.650, anchor="center")
-        self.create_owner_field = Entry(create_right, textvariable=self.create_ownership, width=35, bd=0)
-        self.create_owner_field.place(height=25, width=250, relx=.245, rely=0.700, anchor="center")
-        self.create_fields.append(self.create_owner_field)
-
-        Label(create_right, text="Payment Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.625, rely=0.650, anchor="center")
-        self.create_payment_paid = Radiobutton(create_right, text="Paid", bg="#DDDDDD", variable=self.create_payment_status_int, value=1)
-        self.create_payment_paid.place(relx=.650, rely=0.700, anchor="center")
-        self.create_payment_paid = Radiobutton(create_right, text="Unpaid", bg="#DDDDDD", variable=self.create_payment_status_int, value=2)
-        self.create_payment_paid.place(relx=.850, rely=0.700, anchor="center")
-
-        self.create_error_label = Label(create_right, bg="#DDDDDD", fg="#D64000", font=field_label)
-        self.create_error_label.place(relx=.5, rely=0.750, anchor="center")
 
 
 class receiveAsset():

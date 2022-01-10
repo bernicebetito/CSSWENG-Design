@@ -48,25 +48,6 @@ class Database():
 
 	# ------------------ DATABASE ACCESS ------------------ #
 
-	def exportToExcel(self):
-		# read the data
-		df=sql.read_sql('select * from operations', self.db)
-
-		# # print the data for checkking
-		# print(df)
-
-		# export the data into the excel sheet
-		df.to_excel('operations.xlsx')
-
-		# read the data
-		df=sql.read_sql('select * from assets', self.db)
-
-		# # print the data for checking
-		# print(df)
-
-		# export the data into the excel sheet
-		df.to_excel('assets.xlsx')
-
 	def createDatabase(self, db_name):
 		self.cursor.execute("CREATE DATABASE IF NOT EXISTS " + db_name)
 
@@ -304,7 +285,7 @@ class Database():
 		result = self.cursor.fetchone()[0]
 
 		curr_path = os.getcwd()
-		path = curr_path + "/AssetImages"
+		path = curr_path + r"\AssetImages"
 
 		isdir = os.path.isdir(path)
 
@@ -314,7 +295,8 @@ class Database():
 			except OSError:
 				print("Creation of the directory %s failed" % path)
 
-		storage_filepath = path + "/asset_{0}.jpeg".format(str(asset_ID))  # saves to AssetImages folder
+		storage_filepath = path + r"\asset_{0}.jpeg".format(str(asset_ID))  # saves to AssetImages folder
+		print(storage_filepath)
 		with open(storage_filepath, 'wb') as file:
 			file.write(result)
 			file.close()
@@ -412,6 +394,58 @@ class Database():
 		command = name + company + owner + unit_loc + amount + payment_stat + status
 		self.cursor.execute("UPDATE assets SET " + command + " WHERE ID = '" + str(asset_ID) + "'")
 		self.db.commit()
+
+	def importToExcel(self, assets_filepath, ops_filepath, username):
+		self.deleteTable("assets")
+		self.deleteTable("operations")
+
+		# Assets Table: asset ID, asset name, company, owner, status, unit_loc, price, amount, payment_stat, image, modification date&time
+		self.cursor.execute("CREATE TABLE IF NOT EXISTS assets (id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), company VARCHAR(255), owner VARCHAR(255), status VARCHAR(255), unit_loc VARCHAR(255), price FLOAT(53,2), amount FLOAT(53,2), payment_stat VARCHAR(255), image LONGBLOB, mod_ts TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)")
+
+		# Operations Table: operation ID, receipt no., operation type, username, asset_id, company, ownership, new location, amount, payment_stat, approval status, operation timestamp
+		self.cursor.execute("CREATE TABLE IF NOT EXISTS operations (id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, receipt_no VARCHAR(255), op_type VARCHAR(255), username VARCHAR(255), authorized_by VARCHAR(255), asset_id INT(11), asset_name VARCHAR(255), recipient VARCHAR(255), company VARCHAR(255), owner VARCHAR(255), unit_loc VARCHAR(255), amount FLOAT(53,2), payment_stat VARCHAR(255), image LONGBLOB, approval_stat VARCHAR(255), op_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
+
+		# Import Operations
+		wb = xlrd.open_workbook(ops_filepath)
+		sheet = wb.sheet_by_index(0)
+		for i in range(sheet.nrows):
+			if i > 0:
+				# receipt_no, op_type, username, auth, asset_id, name, recipient, company, owner, unit_loc, amount, payment_stat, image, approv
+				self.createReceipt(sheet.cell_value(i, 2), sheet.cell_value(i, 3), sheet.cell_value(i, 4),
+							  sheet.cell_value(i, 5), sheet.cell_value(i, 6), sheet.cell_value(i, 7),
+							  sheet.cell_value(i, 8), sheet.cell_value(i, 9), sheet.cell_value(i, 10),
+							  sheet.cell_value(i, 11), sheet.cell_value(i, 12), sheet.cell_value(i, 13),
+							  sheet.cell_value(i, 14), sheet.cell_value(i, 15))
+		print("Successfully retrieved all operations data")
+
+		# Import Assets
+		wb = xlrd.open_workbook(assets_filepath)
+		sheet = wb.sheet_by_index(0)
+		for i in range(sheet.nrows):
+			if i > 0:
+				self.createAsset("assets", username, sheet.cell_value(i, 2), sheet.cell_value(i, 3), sheet.cell_value(i, 4),
+							sheet.cell_value(i, 5), sheet.cell_value(i, 6), sheet.cell_value(i, 7),
+							sheet.cell_value(i, 8), sheet.cell_value(i, 9), sheet.cell_value(i, 10))
+		print("Successfully retrieved all assets data")
+
+	def exportToExcel(self):
+		# read the data
+		df=sql.read_sql('select * from operations', self.db)
+
+		# # print the data for checkking
+		# print(df)
+
+		# export the data into the excel sheet
+		df.to_excel('operations.xlsx')
+
+		# read the data
+		df=sql.read_sql('select * from assets', self.db)
+
+		# # print the data for checking
+		# print(df)
+
+		# export the data into the excel sheet
+		df.to_excel('assets.xlsx')
 
 	def delOperation(self, op_id):
 		try:

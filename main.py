@@ -26,21 +26,6 @@ def displayHeader(frame, header_y, sub_y):
     Label(frame, text="Inventory Management System", bg="#DDDDDD", fg="#6A6A6A", font=sub).place(relx=.5, rely=sub_y, anchor="center")
 
 
-def uploadImage(canvas, text):
-    global upload_img, photo_filename
-    fileTypes = [('JPG Files', '*.jpg'),
-                 ('JPEG Files', '*.jpeg'),
-                 ('PNG Files', '*.png')]
-    photo_filename = filedialog.askopenfilename(filetypes=fileTypes)
-    if len(photo_filename) > 0:
-        image = Image.open(photo_filename)
-        resized_img = image.resize((250, 250), Image.ANTIALIAS)
-        upload_img = ImageTk.PhotoImage(resized_img)
-
-        canvas.create_image(0, 0, image=upload_img, anchor=NW)
-        canvas.delete(text)
-
-
 def approvedMessage(frames, message, success):
     for i in frames:
         i.destroy()
@@ -187,24 +172,17 @@ def createAsset():
     frames = [create_bg, create_left, create_right]
 
     displayHeader(create_left, 0.050, 0.100)
-    create_photo_preview = Canvas(create_left, bg="#FFFFFF", width=250, height=250)
-    create_photo_preview.place(relx=.5, rely=0.450, anchor="center")
-    create_photo_text = create_photo_preview.create_text((125, 125), text="No Photo Uploaded", font=field_label)
-
-    upload_btn = Button(create_left, text="Upload", width=13, command=lambda: uploadImage(create_photo_preview, create_photo_text), bg="#B3D687", fg="#FFFFFF", bd=0, font=buttonA)
-    upload_btn.place(relx=.5, rely=0.725, anchor="center")
+    create_form = asset.createAsset(root)
+    create_form.displayUploadImage(create_left, buttonA, field_label)
+    create_form.displayCreate(create_right, field_label)
     back_btn = Button(create_left, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
     back_btn.place(relx=.15, rely=0.950, anchor="center")
 
-    create_form = asset.createAsset(root)
-    create_form.setCreate(create_right, field_label)
-
     def checkCreateAsset(frames, form):
-        if form.setImage(photo_filename):
-            if form.submitForm(login_credentials.username.get()):
-                approvedMessage(frames, "Asset Created\nSuccessfully!", True)
-            else:
-                approvedMessage(frames, "Error Creating\nAsset!", False)
+        if form.submitForm(login_credentials.username.get()):
+            approvedMessage(frames, "Asset Created\nSuccessfully!", True)
+        else:
+            approvedMessage(frames, "Error Creating\nAsset!", False)
 
     create_btn = Button(create_right, text="Create", width=15, command=lambda: checkCreateAsset(frames, create_form),
                         bg="#B8D8D8", fg="#FFFFFF", bd=0, font=buttonA)
@@ -439,27 +417,27 @@ def importExport():
 
 
 def importOption():
-    import_bg = Frame(root, bg="#DDDDDD", width=300, height=400)
+    import_bg = Frame(root, bg="#DDDDDD", width=300, height=450)
     import_bg.columnconfigure(0, weight=1)
     import_bg.place(relx=.5, rely=.5, anchor="center")
 
-    displayHeader(import_bg, 0.15, 0.25)
+    displayHeader(import_bg, 0.10, 0.15)
     frames = [import_bg]
     import_user = table.ImportExport()
     import_user.displayImport(import_bg, sub)
 
     def importFile(frames):
-        if import_user.importFile():
+        if import_user.importFile(login_credentials.username.get()):
             approvedMessage(frames, "Successfully\nImported File!", True)
         else:
             approvedMessage(frames, "Error Importing\nFile!", False)
 
     import_btn = Button(import_bg, text="Import", width=15, command=lambda: importFile(frames), bg="#3C4648", fg="#FFFFFF", bd=0, font=buttonA)
-    import_btn.place(relx=.5, rely=0.725, anchor="center")
+    import_btn.place(relx=.5, rely=0.800, anchor="center")
 
     back_btn = Button(import_bg, text="Back", width=10, command=lambda: goToNext(frames, 12), bg="#2D2E2E",
                       fg="#FFFFFF", bd=0, font=buttonB)
-    back_btn.place(relx=.5, rely=0.850, anchor="center")
+    back_btn.place(relx=.5, rely=0.900, anchor="center")
 
 
 def exportOption():
