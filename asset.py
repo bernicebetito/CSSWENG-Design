@@ -420,3 +420,439 @@ class deleteAsset():
 
         self.database.delAsset(delete_assets)
         return True
+
+class findAsset():
+    def __init__(self, root):
+
+        self.database = db.Database()
+        self.root = root
+
+        self.find_asset_name = StringVar()
+        self.findAsset_location = StringVar()
+        self.findAsset_owner = StringVar()
+        self.findAsset_status = StringVar()
+
+        self.selected_assets_int = IntVar()
+        self.find_assets = []
+
+    def displayFind(self, findAsset_form_frame, field_label, buttonA):
+
+        Label(findAsset_form_frame, text="Search by Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.200, anchor="c")
+        Entry(findAsset_form_frame, textvariable=self.find_asset_name, bd=0).place(height=20, width=225, relx=.5, rely=0.250, anchor="c")
+
+        Label(findAsset_form_frame, text="Search by Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.325, anchor="c")
+        Entry(findAsset_form_frame, textvariable=self.findAsset_location, bd=0).place(height=20, width=225, relx=.5, rely=0.375, anchor="c")
+
+        Label(findAsset_form_frame, text="Search by Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.450, anchor="c")
+        Entry(findAsset_form_frame, textvariable=self.findAsset_owner, bd=0).place(height=20, width=225, relx=.5, rely=0.500, anchor="c")
+
+        Label(findAsset_form_frame, text="Search by Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.575, anchor="c")
+        Entry(findAsset_form_frame, textvariable=self.findAsset_status, bd=0).place(height=20, width=225, relx=.5, rely=0.625, anchor="c")
+
+        filter_btn = Button(findAsset_form_frame, text="Search", width=13, command=lambda: self.searchTable(), bg="#DC5047", fg="#FFFFFF", bd=0, font=buttonA)
+        filter_btn.place(relx=.5, rely=0.725, anchor="c")
+
+    def displayTable(self, findAsset_bg):
+        self.findAsset_bg = findAsset_bg
+        self.findAsset_table_frame = Frame(findAsset_bg, bg="#191919", width=825, height=500)
+        self.findAsset_table_frame.place(relx=.625, rely=.5, anchor="center")
+        self.findAsset_canvas = Canvas(self.findAsset_table_frame, bg="#191919", width=825, height=500)
+
+        findAsset_filter = {"asset_name": "", "company": "", "owner": "", "location": "", "pay_status": "", "status": ""}
+        findAsset_measurements = {"cell_width": 150, "cell_height": 75, "rows": self.getContent(findAsset_filter),
+                               "columns": 10}
+
+        self.findAsset_table = table.Table(findAsset_measurements, self.findAsset_canvas, self.findAsset_table_contents)
+        self.findAsset_table.setScrollbars(self.findAsset_table_frame)
+        self.findAsset_table.optionsTable(23, "checkbox")
+        self.findAsset_canvas.configure(scrollregion=self.findAsset_canvas.bbox("all"))
+
+    def getContent(self, filter_val):
+        findAsset_table_header = ["Select", "Photo", "Asset Name", "Company", "Owner", "Location",
+                               "Price", "Payment Status", "Amount", "Status"]
+        self.findAsset_table_contents = []
+        curr_row = []
+        for column in findAsset_table_header:
+            curr_row.append(column)
+        self.findAsset_table_contents.append(curr_row)
+
+        self.root.table_image = []
+
+        findAsset = self.database.viewTable(1, filter_val)
+        if type(findAsset) == list:
+            for row in range(len(findAsset)):
+                curr_row = []
+                for column in range(len(findAsset[row])):
+                    if type(findAsset[row][column]) == bytes:
+                        filepath = self.database.readBLOB(findAsset[row][0])
+                        image = Image.open(filepath)
+                        resized_img = image.resize((50, 50), Image.ANTIALIAS)
+                        table_image = ImageTk.PhotoImage(resized_img)
+                        self.root.table_image.append(table_image)
+                        curr_row.insert(1, table_image)
+                    else:
+                        curr_row.append(findAsset[row][column])
+                self.findAsset_table_contents.append(curr_row)
+            return len(findAsset) + 1
+        return 1
+
+    def filterTable(self):
+        self.findAsset_canvas.delete("all")
+
+        if len(self.findAsset_asset_name.get()) > 0 or self.findAsset_disposed_int.get() > 0:
+            status = ""
+            if self.selected_assets_int.get() == 1:
+                status = "Disposed"
+            findAsset_filter = {"asset_name": self.find_asset_name.get(), "company": "", "owner": "",
+                             "location": "", "pay_status": "", "status": status}
+            self.find_asset_name.set("")
+            self.selected_assets_int.set(0)
+        else:
+            findAsset_filter = {"asset_name": "", "company": "", "owner": "", "location": "", "pay_status": "", "status": ""}
+
+        self.findAsset_table.rows = self.getContent(delete_filter)
+        self.findAsset_table.contents = self.delete_table_contents
+        self.findAsset_table.optionsTable(11, "radio")
+        self.findAsset_canvas.configure(scrollregion=self.delete_canvas.bbox("all"))
+
+    def getSelected(self):
+        self.find_assets = self.findAsset_table.getSelectedCheckbox()
+        if len(self.find_assets) > 0:
+            self.findAsset_canvas.delete("all")
+
+            for current in range(len(self.find_assets)):
+                self.find_assets[current] += 1
+
+            for keep_asset in range(len(self.findAsset_table_contents) - 1, -1, -1):
+                if keep_asset not in self.find_assets and keep_asset != 0:
+                    del self.findAsset_table_contents[keep_asset]
+                else:
+                    del self.findAsset_table_contents[keep_asset][0]
+
+            self.findAsset_table.rows = len(self.find_assets) + 1
+            self.findAsset_table.cols = len(self.findAsset_table_contents[0])
+            self.findAsset_table.contents = self.findAsset_table_contents
+            self.findAsset_table.createTable()
+            self.findAsset_canvas.configure(scrollregion=self.findAsset_canvas.bbox("all"))
+            return True
+        return False
+
+
+    def selectAssets(self):
+        return True
+
+class updateAsset():
+    def __init__(self, root):
+        self.database = db.Database()
+        self.root = root
+
+        self.update_photo_filename = ""
+        self.update_photo = ""
+        self.update_name = StringVar()
+        self.update_company = StringVar()
+        self.update_status = StringVar()
+        self.update_location = StringVar()
+        self.update_price = DoubleVar()
+        self.update_quantity = DoubleVar()
+        self.update_ownership = StringVar()
+        self.update_payment_status = StringVar()
+        self.update_payment_status_int = IntVar()
+
+        self.update_name_field = Entry()
+        self.update_company_field = Entry()
+        self.update_status_field = Entry()
+        self.update_location_field = Entry()
+        self.update_price_field = Entry()
+        self.update_quantity_field = Entry()
+        self.update_owner_field = Entry()
+        self.update_payment_field = Radiobutton()
+
+        self.update_fields = []
+        self.update_error_label = Label()
+        self.update_all_invalid = False
+
+        self.selected_asset = -1
+
+        self.reg_validDouble = root.register(self.validDouble)
+        self.reg_invalidDouble = root.register(self.invalidDouble)
+
+    def validDouble(self, value):
+        for i in self.update_fields:
+            i.configure(highlightthickness=0, highlightbackground="#D64000", highlightcolor="#D64000")
+        self.update_error_label.config(text="")
+        try:
+            float(value)
+            self.update_button.config(state=NORMAL)
+            return True
+        except :
+            return False
+
+    def invalidDouble(self):
+        self.update_button.config(state=DISABLED)
+        if not self.update_all_invalid:
+            for i in self.find_fields:
+                i.configure(highlightthickness=0, highlightbackground="#D64000", highlightcolor="#D64000")
+            self.update_error_label.config(text="Price and Quantity should be Numbers")
+            self.update_price_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
+            self.update_quantity_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
+
+    def displayFind(self, update_form_frame, field_label, buttonA):
+
+        Label(update_form_frame, text="Search by Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.200, anchor="c")
+        Entry(update_form_frame, textvariable=self.update_name, bd=0).place(height=20, width=225, relx=.5, rely=0.250, anchor="c")
+
+        Label(update_form_frame, text="Search by Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.325, anchor="c")
+        Entry(update_form_frame, textvariable=self.update_location, bd=0).place(height=20, width=225, relx=.5, rely=0.375, anchor="c")
+
+        Label(update_form_frame, text="Search by Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.450, anchor="c")
+        Entry(update_form_frame, textvariable=self.update_ownership, bd=0).place(height=20, width=225, relx=.5, rely=0.500, anchor="c")
+
+        Label(update_form_frame, text="Search by Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.575, anchor="c")
+        Entry(update_form_frame, textvariable=self.update_status, bd=0).place(height=20, width=225, relx=.5, rely=0.625, anchor="c")
+
+        filter_btn = Button(update_form_frame, text="Search", width=13, command=lambda: self.searchTable(), bg="#DC5047", fg="#FFFFFF", bd=0, font=buttonA)
+        filter_btn.place(relx=.5, rely=0.725, anchor="c")
+
+    def displayTable(self, update_bg):
+        self.update_bg = update_bg
+        self.update_table_frame = Frame(update_bg, bg="#191919", width=825, height=500)
+        self.update_table_frame.place(relx=.625, rely=.5, anchor="center")
+        self.update_canvas = Canvas(self.update_table_frame, bg="#191919", width=825, height=500)
+
+        update_filter = {"asset_name": "", "company": "", "owner": "", "location": "", "pay_status": "", "status": ""}
+        update_measurements = {"cell_width": 150, "cell_height": 75, "rows": self.getContent(update_filter),
+                               "columns": 10}
+
+        self.update_table = table.Table(update_measurements, self.update_canvas, self.update_table_contents)
+        self.update_table.setScrollbars(self.update_table_frame)
+        self.update_table.optionsTable(23, "radio")
+        self.update_canvas.configure(scrollregion=self.update_canvas.bbox("all"))
+
+    def getContent(self, filter_val):
+        update_table_header = ["Select", "Photo", "Asset Name", "Company", "Owner", "Location",
+                               "Price", "Quantity", "Payment Status", "Status"]
+        self.update_table_contents = []
+        curr_row = []
+        for column in update_table_header:
+            curr_row.append(column)
+        self.update_table_contents.append(curr_row)
+
+        self.root.table_image = []
+
+        update = self.database.viewTable(1, filter_val)
+        if type(update) == list:
+            for row in range(len(update)):
+                curr_row = []
+                for column in range(len(update[row])):
+                    if type(update[row][column]) == bytes:
+                        filepath = self.database.readBLOB(update[row][0])
+                        image = Image.open(filepath)
+                        resized_img = image.resize((50, 50), Image.ANTIALIAS)
+                        table_image = ImageTk.PhotoImage(resized_img)
+                        self.root.table_image.append(table_image)
+                        curr_row.insert(1, table_image)
+                    else:
+                        curr_row.append(update[row][column])
+                self.update_table_contents.append(curr_row)
+            return len(update) + 1
+        return 1
+
+    def filterTable(self):
+        self.updateAsset_canvas.delete("all")
+
+        if len(self.updateAsset_asset_name.get()) > 0 or self.updateAsset_disposed_int.get() > 0:
+            status = ""
+            if self.selected_assets_int.get() == 1:
+                status = "Disposed"
+            updateAsset_filter = {"asset_name": self.update_asset_name.get(), "company": "", "owner": "",
+                             "location": "", "pay_status": "", "status": status}
+            self.update_asset_name.set("")
+            self.selected_assets_int.set(0)
+        else:
+            updateAsset_filter = {"asset_name": "", "company": "", "owner": "", "location": "", "pay_status": "", "status": ""}
+
+        self.updateAsset_table.rows = self.getContent(delete_filter)
+        self.updateAsset_table.contents = self.delete_table_contents
+        self.updateAsset_table.optionsTable(11, "radio")
+        self.updateAsset_canvas.configure(scrollregion=self.delete_canvas.bbox("all"))
+
+    def getSelected(self):
+        self.selected_asset = self.update_table.getSelectedRadio()
+        if self.selected_asset > -1:
+            
+            self.update_contents = self.update_table.contents[self.selected_asset - 1]
+
+            self.update_name = StringVar()
+            self.update_company = StringVar()
+            self.update_status = StringVar()
+            self.update_location = StringVar()
+            self.update_price = DoubleVar()
+            self.update_quantity = DoubleVar()
+            self.update_ownership = StringVar()
+            self.update_payment_status = StringVar()
+            self.update_payment_status_int = IntVar()
+
+            self.update_name = self.update_contents[2]
+            self.update_company = self.update_contents[3]
+            self.update_ownership = self.update_contents[4]
+            self.update_location = self.update_contents[5]
+            self.update_price = self.update_contents[6]
+            self.update_quantity = self.update_contents[7]
+            self.update_payment_status = self.update_contents[8]
+            self.update_status = self.update_contents[9]
+            
+            return True
+        return False
+
+    def setButton(self, update_button):
+        self.update_button = update_button
+        self.update_button.config(state=NORMAL)
+
+    def uploadImage(self):
+        fileTypes = [('JPG Files', '*.jpg'),
+                     ('JPEG Files', '*.jpeg'),
+                     ('PNG Files', '*.png')]
+        self.update_photo_filename = filedialog.askopenfilename(filetypes=fileTypes)
+
+        image = Image.open(self.update_photo_filename)
+        resized_img = image.resize((250, 250), Image.ANTIALIAS)
+        upload_img = ImageTk.PhotoImage(resized_img)
+
+        self.update_photo = upload_img
+        self.update_photo_preview.create_image(0, 0, image=upload_img, anchor=NW)
+
+    def displayUploadedImage(self, update_left, buttonA, field_label):
+
+        self.update_photo_preview = Canvas(update_left, bg="#FFFFFF", width=250, height=250)
+        self.update_photo_preview.place(relx=.5, rely=0.450, anchor="center")
+        self.update_photo_text = self.update_photo_preview.create_text((125, 125), text="No Photo Uploaded", font=field_label)
+
+        filter_val = {"asset_name": "", "company": "", "owner": "", "location": "", "pay_status": "", "status": ""}
+        update = self.database.viewTable(1, filter_val)
+        filepath = self.database.readBLOB(update[self.selected_asset-2][0])
+
+        image_set = Image.open(filepath)
+        resized_img = image_set.resize((250, 250), Image.ANTIALIAS)
+        upload_img = ImageTk.PhotoImage(resized_img)
+        
+        self.root.update_photo = upload_img
+
+        self.update_photo_preview.create_image(0, 0, image=upload_img, anchor=NW)
+        self.update_photo_preview.delete(self.update_photo_text)
+
+        upload_btn = Button(update_left, text="Upload", width=13, command=lambda: self.uploadImage(), bg="#B3D687",
+                            fg="#FFFFFF", bd=0, font=buttonA)
+        upload_btn.place(relx=.5, rely=0.725, anchor="center")
+
+    def displayDetails(self, update_right, field_label):
+
+        print("-------------------------")
+        print(self.update_name)
+        print("-------------------------")
+        
+        Label(update_right, text="Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.100,
+                                                                                                   rely=0.200,
+                                                                                                   anchor="center")
+        self.update_name_field = Entry(update_right, textvariable=self.update_name, width=35, bd=0)
+        self.update_name_field.delete(0, 'end')
+        self.update_name_field.insert(0, self.update_name)
+        self.update_name_field.place(height=25, width=250, relx=.245, rely=0.250, anchor="center")
+        self.update_fields.append(self.update_name_field)
+
+        Label(update_right, text="Company", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.590, rely=0.200,
+                                                                                                anchor="center")
+        self.update_company_field = Entry(update_right, textvariable=self.update_company, width=35, bd=0)
+        self.update_company_field.delete(0, 'end')
+        self.update_company_field.insert(0, self.update_company)
+        self.update_company_field.place(height=25, width=250, relx=.750, rely=0.250, anchor="center")
+        self.update_fields.append(self.update_company_field)
+
+        Label(update_right, text="Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.070, rely=0.350,
+                                                                                               anchor="center")
+        self.update_status_field = Label(update_right, text=self.update_status, width=35, bg="#FFFFFF", fg="#000000")
+        self.update_status_field.place(height=25, width=250, relx=.245, rely=0.400, anchor="center")
+
+        Label(update_right, text="Unit Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.605,
+                                                                                                      rely=0.350,
+                                                                                                      anchor="center")
+        self.update_location_field = Entry(update_right, textvariable=self.update_location, width=35, bd=0)
+        self.update_location_field.delete(0, 'end')
+        self.update_location_field.insert(0, self.update_location)
+        self.update_location_field.place(height=25, width=250, relx=.750, rely=0.400, anchor="center")
+        self.update_fields.append(self.update_location_field)
+
+        Label(update_right, text="Price", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.065, rely=0.500,
+                                                                                              anchor="center")
+        self.update_price_field = Entry(update_right, textvariable=self.update_price, width=35, bd=0)
+        self.update_price_field.delete(0, 'end')
+        self.update_price_field.insert(0, self.update_price)
+        self.update_price_field.place(height=25, width=250, relx=.245, rely=0.550, anchor="center")
+        self.update_price_field.config(validate="focusout", validatecommand=(self.reg_validDouble, '%P'),
+                                       invalidcommand=(self.reg_invalidDouble,))
+        self.update_fields.append(self.update_price_field)
+
+        Label(update_right, text="Quantity", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.585, rely=0.500,
+                                                                                                 anchor="center")
+        self.update_quantity_field = Entry(update_right, textvariable=self.update_quantity, width=35, bd=0)
+        self.update_quantity_field.delete(0, 'end')
+        self.update_quantity_field.insert(0, self.update_quantity)
+        self.update_quantity_field.place(height=25, width=250, relx=.750, rely=0.550, anchor="center")
+        self.update_quantity_field.config(validate="focusout", validatecommand=(self.reg_validDouble, '%P'),
+                                          invalidcommand=(self.reg_invalidDouble,))
+        self.update_fields.append(self.update_quantity_field)
+
+        Label(update_right, text="Ownership", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.090, rely=0.650,
+                                                                                                  anchor="center")
+        self.update_owner_field = Entry(update_right, textvariable=self.update_ownership, width=35, bd=0)
+        self.update_owner_field.delete(0, 'end')
+        self.update_owner_field.insert(0, self.update_ownership)
+        self.update_owner_field.place(height=25, width=250, relx=.245, rely=0.700, anchor="center")
+        self.update_fields.append(self.update_owner_field)
+
+        Label(update_right, text="Payment Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.625,
+                                                                                                       rely=0.650,
+                                                                                                       anchor="center")
+        self.update_payment_paid = Radiobutton(update_right, text="Paid", bg="#DDDDDD",
+                                               variable=self.update_payment_status_int, value=1)
+        self.update_payment_paid.place(relx=.650, rely=0.700, anchor="center")
+        self.update_payment_paid = Radiobutton(update_right, text="Unpaid", bg="#DDDDDD",
+                                               variable=self.update_payment_status_int, value=2)
+        self.update_payment_paid.place(relx=.850, rely=0.700, anchor="center")
+
+        self.update_error_label = Label(update_right, bg="#DDDDDD", fg="#D64000", font=field_label)
+        self.update_error_label.place(relx=.5, rely=0.750, anchor="center")
+
+    def submitForm(self, username):
+        valid_first = len(self.update_name.get()) > 1 and len(self.update_company.get()) > 1
+        valid_second = len(self.update_location.get()) > 1 and len(self.update_ownership.get()) > 1 and len(self.update_photo_filename) > 0
+        valid_third = self.update_price.get() > 0 and self.update_quantity.get() > 0 and self.update_payment_status_int.get() > 0
+        if valid_first and valid_second and valid_third:
+            name = self.update_name.get()
+            company = self.update_company.get()
+            owner = self.update_ownership.get()
+            status = "Available"
+            unit_loc = self.update_location.get()
+            price = self.update_price.get()
+            quantity = self.update_quantity.get()
+            if self.update_payment_status_int.get() == 1:
+                payment_stat = "Paid"
+            else:
+                payment_stat = "Unpaid"
+            image = self.database.convertToBinaryData(self.update_photo_filename)
+            if not image:
+                return False
+
+            self.database.updateAsset("assets", username, name, company, owner, status, unit_loc, price, quantity, payment_stat, image)
+            return True
+        else:
+            if self.update_price.get() <= 0 or self.update_quantity.get() <= 0:
+                for i in self.update_fields:
+                    i.configure(highlightthickness=0, highlightbackground="#D64000", highlightcolor="#D64000")
+                self.update_error_label.config(text="Price and Quantity should be Higher than 0.00")
+                self.update_price_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
+                self.update_quantity_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
+            else:
+                for i in self.update_fields:
+                    i.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
+                self.update_error_label.config(text="Please Fill Up All Fields")
+            return False

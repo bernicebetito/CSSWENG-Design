@@ -39,6 +39,14 @@ class Database():
 					passwd = "cssw3nG!",
 					database = "prime_properties"
 			)
+			#                     CAR                        #
+			#self.db = mysql.connect(
+			#		host = "localhost",
+			#		port = "3310",
+			#		user = "root",
+			#		passwd = "12345",
+			#		database = "prime_properties"
+			#)
 		except Error:
 			print("Database Connection Error. Please initialize database.")
 			quit()
@@ -122,6 +130,9 @@ class Database():
 		asset_id = asset_record[0]
 		self.createReceipt(receipt_no, op_type, username, None, asset_id, name, None, company, owner, unit_loc, amount, payment_stat, image, None)
 		print("Successfully Created Asset!")
+
+	def updateAsset(self, tb_name, username, name, company, owner, status, unit_loc, price, amount, payment_stat, image):
+		print("TODO")
 
 	def getAsset(self, asset_ID):
 		try:
