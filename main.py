@@ -180,16 +180,16 @@ def createAsset():
     back_btn = Button(create_left, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
     back_btn.place(relx=.15, rely=0.950, anchor="center")
 
-    def checkCreateAsset(frames, form):
-        if form.submitForm(login_credentials.username.get()):
+    def checkCreateAsset(frames):
+        success_submit = create_form.submitForm(login_credentials.username.get())
+        if success_submit:
             approvedMessage(frames, "Asset Created\nSuccessfully!", True)
-        else:
+        elif not success_submit and success_submit is not None:
             approvedMessage(frames, "Error Creating\nAsset!", False)
 
-    create_btn = Button(create_right, text="Create", width=15, command=lambda: checkCreateAsset(frames, create_form),
+    create_btn = Button(create_right, text="Create", width=15, command=lambda: checkCreateAsset(frames),
                         bg="#B8D8D8", fg="#FFFFFF", bd=0, font=buttonA)
     create_btn.place(relx=.250, rely=0.975, anchor="center")
-    create_form.setButton(create_btn)
 
 
 def manageUser():
