@@ -75,18 +75,18 @@ def goToNext(currentFrames, nextFunc):
             historyPage()
         elif nextFunc == 10:  # Receive
             receiveAsset()
-        elif nextFunc == 11:  # Update
+        elif nextFunc == 11:  # Update Asset
             updateAsset()
-        elif nextFunc == 12:  # Import & Export
+        elif nextFunc == 12:  # Update Asset Page
+            updateAsset()
+        elif nextFunc == 13:  # Import & Export
             importExport()
-        elif nextFunc == 13:  # Import
+        elif nextFunc == 14:  # Import
             importOption()
-        elif nextFunc == 14:  # Export
+        elif nextFunc == 15:  # Export
             exportOption()
-        elif nextFunc == 15:  # Delete
+        elif nextFunc == 16:  # Delete
             deleteAsset()
-        elif nextFunc == 16:  # Update Asset
-            updatePage()
     else:
         login()
 
@@ -132,7 +132,7 @@ def nav():
     receive_btn = Button(nav_bg, text="Receive", width=15, command=lambda: goToNext(frames, 10), bg="#24434D", fg="#FFFFFF", bd=0, font=buttonA)
     update_btn = Button(nav_bg, text="Update", width=15, command=lambda: goToNext(frames, 11), bg="#4F6367", fg="#FFFFFF", bd=0, font=buttonA)
     import_btn = Button(nav_bg, text="Import & Export", width=15, command=lambda: goToNext(frames, 12), bg="#3C4648", fg="#FFFFFF", bd=0, font=buttonA)
-    delete_btn = Button(nav_bg, text="Delete", width=15, command=lambda: goToNext(frames, 15), bg="#FE5F55", fg="#FFFFFF", bd=0, font=buttonA)
+    delete_btn = Button(nav_bg, text="Delete", width=15, command=lambda: goToNext(frames, 16), bg="#FE5F55", fg="#FFFFFF", bd=0, font=buttonA)
     logout_btn = Button(nav_bg, text="Logout", width=10, command=lambda: goToNext(frames, 1), bg="#363636", fg="#FFFFFF", bd=0, font=buttonB)
 
     if role == "manager":
@@ -310,6 +310,77 @@ def changePassword():
     back_btn.place(relx=.5, rely=0.900, anchor="center")
 
 
+def findAsset():
+
+    findAsset_bg = Frame(root, bg="#DDDDDD", width=1200, height=600)
+    findAsset_bg.pack()
+    findAsset_bg.columnconfigure(0, weight=1)
+    findAsset_bg.place(relx=.5, rely=.5, anchor="center")
+
+    findAsset_form_frame = Frame(findAsset_bg, bg="#DDDDDD", width=300, height=550)
+    findAsset_form_frame.place(relx=.135, rely=.5, anchor="center")
+
+    displayHeader(findAsset_form_frame, 0.050, 0.100)
+
+    findAsset_page = asset.findAsset(root)
+    findAsset_page.displayFind(findAsset_form_frame, field_label, buttonA)
+    findAsset_page.displayTable(findAsset_bg)
+
+    def confirmAssets(frames):
+        if findAsset_page.getSelected():
+            for widget in findAsset_form_frame.winfo_children():
+                widget.destroy()
+
+            displayHeader(findAsset_form_frame, 0.050, 0.100)
+
+            #filter_ins = Label(findAsset_form_frame, text="Confirm Assets Quantities", bg="#DDDDDD", fg="#363636", font=header)
+            #filter_ins.place(relx=.1, rely=.1, anchor="center")
+            #current_font = tkfont.Font(filter_ins, filter_ins.cget("font"))
+            #current_font.configure(size=18, slant="italic")
+            #filter_ins.config(font=current_font)
+
+            move_btn = Button(findAsset_form_frame, text="Move", width=13, command=lambda: performOperations(frames), bg="#6D94AA",
+                              fg="#FFFFFF", bd=0, font=buttonA)
+            move_btn.place(relx=.5, rely=0.25, anchor="center")
+
+            receive_btn = Button(findAsset_form_frame, text="Receive", width=13, command=lambda: performOperations(frames), bg="#6D94AA",
+                              fg="#FFFFFF", bd=0, font=buttonA)
+            receive_btn.place(relx=.5, rely=0.35, anchor="center")
+
+            lend_btn = Button(findAsset_form_frame, text="Lend", width=13, command=lambda: performOperations(frames), bg="#6D94AA",
+                              fg="#FFFFFF", bd=0, font=buttonA)
+            lend_btn.place(relx=.5, rely=0.45, anchor="center")
+
+            store_btn = Button(findAsset_form_frame, text="Store", width=13, command=lambda: performOperations(frames), bg="#6D94AA",
+                              fg="#FFFFFF", bd=0, font=buttonA)
+            store_btn.place(relx=.5, rely=0.55, anchor="center")
+
+            sell_btn = Button(findAsset_form_frame, text="Sell", width=13, command=lambda: performOperations(frames), bg="#6D94AA",
+                              fg="#FFFFFF", bd=0, font=buttonA)
+            sell_btn.place(relx=.5, rely=0.65, anchor="center")
+
+            dispose_btn = Button(findAsset_form_frame, text="Lend", width=13, command=lambda: performOperations(frames), bg="#6D94AA",
+                              fg="#FFFFFF", bd=0, font=buttonA)
+            dispose_btn.place(relx=.5, rely=0.75, anchor="center")
+
+            back_btn = Button(findAsset_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 15), bg="#2D2E2E",
+                              fg="#FFFFFF", bd=0, font=buttonB)
+            back_btn.place(relx=.15, rely=0.950, anchor="center")
+
+    def performOperations(frames):
+        ## Check
+        print("TODO")
+
+    frames = [findAsset_bg, findAsset_form_frame, findAsset_page.findAsset_table_frame]
+
+    operation_btn = Button(findAsset_form_frame, text="Operations", width=13, command=lambda: confirmAssets(frames), bg="#24434D",
+                        fg="#FFFFFF", bd=0, font=buttonA)
+    operation_btn.place(relx=.25, rely=0.850, anchor="center")
+
+    back_btn = Button(findAsset_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
+    back_btn.place(relx=.15, rely=0.950, anchor="center")
+
+
 def historyPage():
     history_bg = Frame(root, bg="#DDDDDD", width=1200, height=600)
     history_bg.pack()
@@ -397,6 +468,85 @@ def receiveAsset():
     back_btn = Button(receive_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E",
                       fg="#FFFFFF", bd=0, font=buttonB)
     back_btn.place(relx=.15, rely=0.950, anchor="center")
+
+
+def updateAsset():
+    global update_page
+
+    update_bg = Frame(root, bg="#DDDDDD", width=1200, height=600)
+    update_bg.pack()
+    update_bg.columnconfigure(0, weight=1)
+    update_bg.place(relx=.5, rely=.5, anchor="center")
+
+    update_form_frame = Frame(update_bg, bg="#DDDDDD", width=300, height=550)
+    update_form_frame.place(relx=.135, rely=.5, anchor="center")
+
+    displayHeader(update_form_frame, 0.050, 0.100)
+
+    update_page = asset.updateAsset(root)
+    update_page.displayFind(update_form_frame, field_label, buttonA)
+    update_page.displayTable(update_bg)
+
+    def confirmUpdate(frames, nextFunc):
+        if update_page.getSelected():
+            goToNext(frames, nextFunc)
+        else:
+            print("Fail")
+
+    def validUpdateAssets(frames):
+        if update_page.updateAssets():
+            approvedMessage(frames, "Assets Updated\nSuccessfully!", True)
+        else:
+            approvedMessage(frames, "Error Updating\nAssets!", False)
+
+    frames = [update_bg, update_form_frame, update_page.update_table_frame]
+
+    update_btn = Button(update_form_frame, text="Update", width=13, command=lambda: confirmUpdate(frames, 12),
+                        bg="#24434D",
+                        fg="#FFFFFF", bd=0, font=buttonA)
+    update_btn.place(relx=.25, rely=0.850, anchor="center")
+
+    back_btn = Button(update_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E",
+                      fg="#FFFFFF", bd=0, font=buttonB)
+    back_btn.place(relx=.15, rely=0.950, anchor="center")
+
+
+def updatePage():
+    global update_page
+
+    global photo_filename
+
+    update_selected_bg = Frame(root, bg="#DDDDDD", width=950, height=600)
+    update_selected_bg.columnconfigure(0, weight=1)
+    update_selected_bg.place(relx=.5, rely=.5, anchor="center")
+
+    update_left = Frame(update_selected_bg, bg="#DDDDDD", width=300, height=575)
+    update_left.columnconfigure(0, weight=1)
+    update_left.place(relx=.175, rely=.5, anchor="center")
+
+    update_right = Frame(update_selected_bg, bg="#DDDDDD", width=575, height=550)
+    update_right.place(relx=.675, rely=.5, anchor="center")
+
+    frames = [update_selected_bg, update_left, update_right]
+
+    displayHeader(update_left, 0.050, 0.100)
+    update_page.displayUploadedImage(update_left, buttonA, field_label)
+    update_page.displayDetails(update_right, field_label)
+
+    def checkUpdateAsset(frames, form):
+        if form.submitForm(login_credentials.username.get()):
+            approvedMessage(frames, "Asset Updated\nSuccessfully!", True)
+        else:
+            approvedMessage(frames, "Error Updating\nAsset!", False)
+
+    back_btn = Button(update_left, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E",
+                      fg="#FFFFFF", bd=0, font=buttonB)
+    back_btn.place(relx=.15, rely=0.950, anchor="center")
+
+    update_btn = Button(update_right, text="Update", width=15, command=lambda: checkUpdateAsset(frames, update_page),
+                        bg="#B8D8D8", fg="#FFFFFF", bd=0, font=buttonA)
+    update_btn.place(relx=.250, rely=0.975, anchor="center")
+    update_page.setButton(update_btn)
 
 
 def importExport():
@@ -518,154 +668,6 @@ def deleteAsset():
     back_btn = Button(delete_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E",
                       fg="#FFFFFF", bd=0, font=buttonB)
     back_btn.place(relx=.15, rely=0.950, anchor="center")
-
-
-def updatePage():
-
-    global update_page
-
-    global photo_filename
-
-    update_selected_bg = Frame(root, bg="#DDDDDD", width=950, height=600)
-    update_selected_bg.columnconfigure(0, weight=1)
-    update_selected_bg.place(relx=.5, rely=.5, anchor="center")  
-
-    update_left = Frame(update_selected_bg, bg="#DDDDDD", width=300, height=575)
-    update_left.columnconfigure(0, weight=1)
-    update_left.place(relx=.175, rely=.5, anchor="center")
-
-    update_right = Frame(update_selected_bg, bg="#DDDDDD", width=575, height=550)
-    update_right.place(relx=.675, rely=.5, anchor="center")
-
-    frames = [update_selected_bg, update_left, update_right]
-
-    displayHeader(update_left, 0.050, 0.100)
-    update_page.displayUploadedImage(update_left, buttonA, field_label)
-    update_page.displayDetails(update_right, field_label)
-
-
-    def checkUpdateAsset(frames, form):
-        if form.submitForm(login_credentials.username.get()):
-            approvedMessage(frames, "Asset Updated\nSuccessfully!", True)
-        else:
-            approvedMessage(frames, "Error Updating\nAsset!", False)
-    
-    back_btn = Button(update_left, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
-    back_btn.place(relx=.15, rely=0.950, anchor="center")
-
-    update_btn = Button(update_right, text="Update", width=15, command=lambda: checkUpdateAsset(frames, update_page),
-                        bg="#B8D8D8", fg="#FFFFFF", bd=0, font=buttonA)
-    update_btn.place(relx=.250, rely=0.975, anchor="center")
-    update_page.setButton(update_btn)
-
-def updateAsset():
-
-    global update_page
-
-    update_bg = Frame(root, bg="#DDDDDD", width=1200, height=600)
-    update_bg.pack()
-    update_bg.columnconfigure(0, weight=1)
-    update_bg.place(relx=.5, rely=.5, anchor="c")
-
-    update_form_frame = Frame(update_bg, bg="#DDDDDD", width=300, height=550)
-    update_form_frame.place(relx=.135, rely=.5, anchor="c")
-
-    displayHeader(update_form_frame, 0.050, 0.100)
-
-    update_page = asset.updateAsset(root)
-    update_page.displayFind(update_form_frame, field_label, buttonA)
-    update_page.displayTable(update_bg)
-
-    def confirmUpdate(frames, nextFunc):
-        if update_page.getSelected():
-            goToNext(frames, nextFunc)
-        else: print("Fail")
-
-    def validUpdateAssets(frames):
-        if update_page.updateAssets():
-            approvedMessage(frames, "Assets Updated\nSuccessfully!", True)
-        else:
-            approvedMessage(frames, "Error Updating\nAssets!", False)
-
-    frames = [update_bg, update_form_frame, update_page.update_table_frame]
-
-    update_btn = Button(update_form_frame, text="Update", width=13, command=lambda: confirmUpdate(frames, 16), bg="#24434D",
-                        fg="#FFFFFF", bd=0, font=buttonA)
-    update_btn.place(relx=.25, rely=0.850, anchor="c")
-
-    back_btn = Button(update_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
-    back_btn.place(relx=.15, rely=0.950, anchor="c")
-
-
-def findAsset():
-
-    findAsset_bg = Frame(root, bg="#DDDDDD", width=1200, height=600)
-    findAsset_bg.pack()
-    findAsset_bg.columnconfigure(0, weight=1)
-    findAsset_bg.place(relx=.5, rely=.5, anchor="c")
-
-    findAsset_form_frame = Frame(findAsset_bg, bg="#DDDDDD", width=300, height=550)
-    findAsset_form_frame.place(relx=.135, rely=.5, anchor="c")
-
-    displayHeader(findAsset_form_frame, 0.050, 0.100)
-
-    findAsset_page = asset.findAsset(root)
-    findAsset_page.displayFind(findAsset_form_frame, field_label, buttonA)
-    findAsset_page.displayTable(findAsset_bg)
-
-    def confirmAssets(frames):
-        if findAsset_page.getSelected():
-            for widget in findAsset_form_frame.winfo_children():
-                widget.destroy()
-
-            displayHeader(findAsset_form_frame, 0.050, 0.100)
-
-            #filter_ins = Label(findAsset_form_frame, text="Confirm Assets Quantities", bg="#DDDDDD", fg="#363636", font=header)
-            #filter_ins.place(relx=.1, rely=.1, anchor="center")
-            #current_font = tkfont.Font(filter_ins, filter_ins.cget("font"))
-            #current_font.configure(size=18, slant="italic")
-            #filter_ins.config(font=current_font)
-
-            move_btn = Button(findAsset_form_frame, text="Move", width=13, command=lambda: performOperations(frames), bg="#6D94AA",
-                              fg="#FFFFFF", bd=0, font=buttonA)
-            move_btn.place(relx=.5, rely=0.25, anchor="center")
-
-            receive_btn = Button(findAsset_form_frame, text="Receive", width=13, command=lambda: performOperations(frames), bg="#6D94AA",
-                              fg="#FFFFFF", bd=0, font=buttonA)
-            receive_btn.place(relx=.5, rely=0.35, anchor="center")
-
-            lend_btn = Button(findAsset_form_frame, text="Lend", width=13, command=lambda: performOperations(frames), bg="#6D94AA",
-                              fg="#FFFFFF", bd=0, font=buttonA)
-            lend_btn.place(relx=.5, rely=0.45, anchor="center")
-
-            store_btn = Button(findAsset_form_frame, text="Store", width=13, command=lambda: performOperations(frames), bg="#6D94AA",
-                              fg="#FFFFFF", bd=0, font=buttonA)
-            store_btn.place(relx=.5, rely=0.55, anchor="center")
-
-            sell_btn = Button(findAsset_form_frame, text="Sell", width=13, command=lambda: performOperations(frames), bg="#6D94AA",
-                              fg="#FFFFFF", bd=0, font=buttonA)
-            sell_btn.place(relx=.5, rely=0.65, anchor="center")
-
-            dispose_btn = Button(findAsset_form_frame, text="Lend", width=13, command=lambda: performOperations(frames), bg="#6D94AA",
-                              fg="#FFFFFF", bd=0, font=buttonA)
-            dispose_btn.place(relx=.5, rely=0.75, anchor="center")
-
-            back_btn = Button(findAsset_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 15), bg="#2D2E2E",
-                              fg="#FFFFFF", bd=0, font=buttonB)
-            back_btn.place(relx=.15, rely=0.950, anchor="center")
-
-    def performOperations(frames):
-        ## Check
-        print("TODO") 
-
-    frames = [findAsset_bg, findAsset_form_frame, findAsset_page.findAsset_table_frame]
-
-    operation_btn = Button(findAsset_form_frame, text="Operations", width=13, command=lambda: confirmAssets(frames), bg="#24434D",
-                        fg="#FFFFFF", bd=0, font=buttonA)
-    operation_btn.place(relx=.25, rely=0.850, anchor="c")
-
-    back_btn = Button(findAsset_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
-    back_btn.place(relx=.15, rely=0.950, anchor="c")
 
 
 login()
