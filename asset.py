@@ -457,6 +457,27 @@ class findAsset():
         self.selected_assets_int = IntVar()
         self.find_assets = []
 
+        self.receipt_no_field = Entry() 
+        self.receipt_no = IntVar()
+
+        self.operation_field = Entry()
+        self.operation = StringVar()
+
+        self.user_field = Entry()
+        self.user = StringVar()
+
+        self.location_field = Entry()
+        self.location = StringVar()
+
+        self.company_field = Entry()
+        self.company = StringVar()
+
+        self.owner_field = Entry()
+        self.owner = StringVar()
+
+        self.status_field = Entry()
+        self.status = StringVar()
+
     def displayFind(self, findAsset_form_frame, field_label, buttonA):
 
         Label(findAsset_form_frame, text="Search by Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.200, anchor="c")
@@ -559,9 +580,73 @@ class findAsset():
             return True
         return False
 
+    def displayReceipt(self, receipt_bg, field_label):
 
-    def selectAssets(self):
+        '''
+        self.operation_fields.append(self.operation_receipt)
+        '''
+        Label(receipt_bg, text="Receipt Number", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.250,
+                                                                                               anchor="center")
+        self.receipt_no_field = Label(receipt_bg, text=self.receipt_no, width=25, bg="#FFFFFF", fg="#000000")
+        self.receipt_no_field.place(height=25, width=200, relx=.5, rely=0.300, anchor="center")
+
+        Label(receipt_bg, text="Operation", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.040, rely=0.375,
+                                                                                               anchor="w")
+        self.operation_field = Entry(receipt_bg, textvariable=self.operation, width=25, bd=0)
+        self.operation_field.delete(0, 'end')
+        self.operation_field.insert(0, self.operation)
+        self.operation_field.place(height=25, width=200, relx=.25, rely=0.425, anchor="center")
+
+        Label(receipt_bg, text="Noted By", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.040, rely=0.500,
+                                                                                               anchor="w")
+        self.user_field = Entry(receipt_bg, textvariable=self.user, width=25, bd=0)
+        self.user_field.delete(0, 'end')
+        self.user_field.insert(0, self.user)
+        self.user_field.place(height=25, width=200, relx=.25, rely=0.550, anchor="center")
+
+        Label(receipt_bg, text="Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.040, rely=0.625,
+                                                                                               anchor="w")
+        self.location_field = Entry(receipt_bg, textvariable=self.location, width=25, bd=0)
+        self.location_field.delete(0, 'end')
+        self.location_field.insert(0, self.location)
+        self.location_field.place(height=25, width=200, relx=.25, rely=0.675, anchor="center")
+
+        Label(receipt_bg, text="Company", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.540, rely=0.375,
+                                                                                               anchor="w")
+        self.company_field = Entry(receipt_bg, textvariable=self.company, width=25, bd=0)
+        self.company_field.delete(0, 'end')
+        self.company_field.insert(0, self.company)
+        self.company_field.place(height=25, width=200, relx=.745, rely=0.425, anchor="center")
+
+        Label(receipt_bg, text="Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.540, rely=0.500,
+                                                                                               anchor="w")
+        self.owner_field = Entry(receipt_bg, textvariable=self.owner, width=25, bd=0)
+        self.owner_field.delete(0, 'end')
+        self.owner_field.insert(0, self.owner)
+        self.owner_field.place(height=25, width=200, relx=.745, rely=0.550, anchor="center")
+
+        Label(receipt_bg, text="Payment Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.540, rely=0.625,
+                                                                                               anchor="w")
+        self.status_field = Entry(receipt_bg, textvariable=self.status, width=25, bd=0)
+        self.status_field.delete(0, 'end')
+        self.status_field.insert(0, self.status)
+        self.status_field.place(height=25, width=200, relx=.745, rely=0.675, anchor="center")
+
+    def assetOperationSuccess(self):
+        ## TODO: Place checkers if receipt values are valid
         return True
+
+    def displaySummaryDetails(self, summary_bg):
+        ## TODO: Display receipt details
+        return True 
+
+    def displaySummaryAssets(self, summary_bg):
+        ## TODO: Display asset details
+        return True
+
+    def operationSuccess(self):
+        ## TODO: Reflect changes to db
+        return True 
 
 class updateAsset():
     def __init__(self, root):
@@ -597,6 +682,8 @@ class updateAsset():
 
         self.reg_validDouble = root.register(self.validDouble)
         self.reg_invalidDouble = root.register(self.invalidDouble)
+
+        self.asset_index = 0
 
     def validDouble(self, value):
         for i in self.update_fields:
@@ -700,20 +787,14 @@ class updateAsset():
 
     def getSelected(self):
         self.selected_asset = self.update_table.getSelectedRadio()
+
         if self.selected_asset > -1:
             
-            self.update_contents = self.update_table.contents[self.selected_asset - 1]
-
-            self.update_name = StringVar()
-            self.update_company = StringVar()
-            self.update_status = StringVar()
-            self.update_location = StringVar()
-            self.update_price = DoubleVar()
-            self.update_quantity = DoubleVar()
-            self.update_ownership = StringVar()
-            self.update_payment_status = StringVar()
-            self.update_payment_status_int = IntVar()
-
+            for keep_asset in range(len(self.update_table_contents)):
+                if self.selected_asset == self.update_table_contents[keep_asset][0]:
+                    self.update_contents = self.update_table_contents[keep_asset]
+                    self.asset_index = keep_asset-1
+            
             self.update_name = self.update_contents[2]
             self.update_company = self.update_contents[3]
             self.update_ownership = self.update_contents[4]
@@ -751,7 +832,7 @@ class updateAsset():
 
         filter_val = {"asset_name": "", "company": "", "owner": "", "location": "", "pay_status": "", "status": ""}
         update = self.database.viewTable(1, filter_val)
-        filepath = self.database.readBLOB(update[self.selected_asset-2][0])
+        filepath = self.database.readBLOB(update[self.asset_index][0])
 
         image_set = Image.open(filepath)
         resized_img = image_set.resize((250, 250), Image.ANTIALIAS)
@@ -767,10 +848,6 @@ class updateAsset():
         upload_btn.place(relx=.5, rely=0.725, anchor="center")
 
     def displayDetails(self, update_right, field_label):
-
-        print("-------------------------")
-        print(self.update_name)
-        print("-------------------------")
         
         Label(update_right, text="Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.100,
                                                                                                    rely=0.200,
@@ -845,18 +922,18 @@ class updateAsset():
         self.update_error_label.place(relx=.5, rely=0.750, anchor="center")
 
     def submitForm(self, username):
-        valid_first = len(self.update_name.get()) > 1 and len(self.update_company.get()) > 1
-        valid_second = len(self.update_location.get()) > 1 and len(self.update_ownership.get()) > 1 and len(self.update_photo_filename) > 0
-        valid_third = self.update_price.get() > 0 and self.update_quantity.get() > 0 and self.update_payment_status_int.get() > 0
+        valid_first = len(self.update_name) > 1 and len(self.update_company) > 1
+        valid_second = len(self.update_location) > 1 and len(self.update_ownership) > 1 and len(self.update_photo_filename) > 0
+        valid_third = self.update_price > 0 and self.update_quantity > 0 and self.update_payment_status_int.get() > 0
         if valid_first and valid_second and valid_third:
-            name = self.update_name.get()
-            company = self.update_company.get()
-            owner = self.update_ownership.get()
+            name = self.update_name
+            company = self.update_company
+            owner = self.update_ownership
             status = "Available"
-            unit_loc = self.update_location.get()
-            price = self.update_price.get()
-            quantity = self.update_quantity.get()
-            if self.update_payment_status_int.get() == 1:
+            unit_loc = self.update_location
+            price = self.update_price
+            quantity = self.update_quantity
+            if self.update_payment_status_int == 1:
                 payment_stat = "Paid"
             else:
                 payment_stat = "Unpaid"
@@ -867,7 +944,7 @@ class updateAsset():
             self.database.updateAsset("assets", username, name, company, owner, status, unit_loc, price, quantity, payment_stat, image)
             return True
         else:
-            if self.update_price.get() <= 0 or self.update_quantity.get() <= 0:
+            if self.update_price <= 0 or self.update_quantity <= 0:
                 for i in self.update_fields:
                     i.configure(highlightthickness=0, highlightbackground="#D64000", highlightcolor="#D64000")
                 self.update_error_label.config(text="Price and Quantity should be Higher than 0.00")

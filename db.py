@@ -32,21 +32,21 @@ class Database():
 			# 		database = "prime_properties")
 			#
 			#                    BERNICE                     #
+			#self.db = mysql.connect(
+			#		host = "localhost",
+			#		port = "3306",
+			#		user = "root",
+			#		passwd = "cssw3nG!",
+			#		database = "prime_properties"
+			#)
+			#                     CAR                        #
 			self.db = mysql.connect(
 					host = "localhost",
-					port = "3306",
+					port = "3310",
 					user = "root",
-					passwd = "cssw3nG!",
+					passwd = "12345",
 					database = "prime_properties"
 			)
-			#                     CAR                        #
-			# self.db = mysql.connect(
-			# 		host = "localhost",
-			# 		port = "3310",
-			# 		user = "root",
-			# 		passwd = "12345",
-			# 		database = "prime_properties"
-			# )
 		except Error:
 			print("Database Connection Error. Please initialize database.")
 			quit()
@@ -466,17 +466,19 @@ class Database():
 			print("Failed to retrieve record/s")
 
 
-''' Database Initializations'''
-# db = Database()
-# db.createDatabase("prime_properties")
-# db.createTables()
+''' Database Initializations
+db = Database()
+db.createDatabase("prime_properties")
+db.createTables()
 
-# deleteDatabase("prime_properties")
-# deleteTable("users")
-# deleteTable("operations")
-
+db.deleteDatabase("prime_properties")
+db.deleteTable("users")
+db.deleteTable("operations")
+'''
 # Sample accounts for testing purposes
-# createUser("admin", "admin1234", "manager")
-# createUser("clerk", "clerk1234", "clerk")
-
+'''
+db.createUser("admin", "admin1234", "manager")
+db.createUser("clerk", "clerk1234", "clerk")
+db.createUser("a", "a", "manager")
+'''
 # viewTable("users")
