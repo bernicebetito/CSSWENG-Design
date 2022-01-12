@@ -1,10 +1,12 @@
 import mysql.connector as mysql
 import datetime
+
 import os
 from mysql.connector import Error
 
 import pymysql
 from pymysql import*
+
 import xlwt
 import xlrd
 import pandas.io.sql as sql
@@ -32,21 +34,21 @@ class Database():
 			# 		database = "prime_properties")
 			#
 			#                    BERNICE                     #
-			#self.db = mysql.connect(
-			#		host = "localhost",
-			#		port = "3306",
-			#		user = "root",
-			#		passwd = "cssw3nG!",
-			#		database = "prime_properties"
-			#)
-			#                     CAR                        #
 			self.db = mysql.connect(
 					host = "localhost",
-					port = "3310",
+					port = "3306",
 					user = "root",
-					passwd = "12345",
+					passwd = "cssw3nG!",
 					database = "prime_properties"
 			)
+			#                     CAR                        #
+			# self.db = mysql.connect(
+			# 		host = "localhost",
+			# 		port = "3310",
+			# 		user = "root",
+			# 		passwd = "12345",
+			# database = "prime_properties"
+			# )
 		except Error:
 			print("Database Connection Error. Please initialize database.")
 			quit()
@@ -114,7 +116,7 @@ class Database():
 			return False
 
 	# ASSETS
-	def createAsset(self, tb_name, username, name, company, owner, status, unit_loc, price, amount, payment_stat, image):
+	def createAsset(self, tb_name, username, name, company, owner, status, unit_loc, price, amount, payment_stat, image, mod_ts):
 		try:
 			self.cursor.execute("SELECT id FROM assets WHERE name='" + name + "' and owner='" + owner + "' and company='" + company + "' and payment_stat='" + payment_stat + "' and unit_loc='" + unit_loc + "'")
 			numrow = self.cursor.fetchone()
@@ -123,8 +125,8 @@ class Database():
 				self.cursor.execute("UPDATE assets SET amount = amount + " + str(amount) + " WHERE id='" + str(numrow[0]) + "'")
 				self.db.commit()
 			else:
-				asset_query = "INSERT INTO " + tb_name + " (name, company, owner, status, unit_loc, price, amount, payment_stat, image) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-				asset_values = (name, company, owner, status, unit_loc, price, amount, payment_stat, image)
+				asset_query = "INSERT INTO " + tb_name + " (name, company, owner, status, unit_loc, price, amount, payment_stat, image, mod_ts) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+				asset_values = (name, company, owner, status, unit_loc, price, amount, payment_stat, image, mod_ts)
 				self.cursor.execute(asset_query, asset_values)
 				self.db.commit()
 
@@ -231,8 +233,9 @@ class Database():
 
 	# OPERATIONS
 	def createReceipt(self, receipt_no, op_type, username, auth, asset_id, name, recipient, company, owner, unit_loc, amount, payment_stat, image, approval_stat):
-		query = "INSERT INTO operations (receipt_no, op_type, username, authorized_by, asset_id, asset_name, recipient, company, owner, unit_loc, amount, payment_stat, image, approval_stat) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-		values = (receipt_no, op_type, username, auth, asset_id, name, recipient, company, owner, unit_loc, amount, payment_stat, image, approval_stat)
+		query = "INSERT INTO operations (receipt_no, op_type, username, authorized_by, asset_id, asset_name, recipient, company, owner, unit_loc, amount, payment_stat, image, approval_stat, op_ts) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+		currTime = datetime.datetime.now()
+		values = (receipt_no, op_type, username, auth, asset_id, name, recipient, company, owner, unit_loc, amount, payment_stat, image, approval_stat, currTime)
 		self.cursor.execute(query, values)
 		self.db.commit()
 		print("Successfully Created Receipt!")
@@ -318,22 +321,17 @@ class Database():
 		self.deleteTable("operations")
 
 		# Assets Table: asset ID, asset name, company, owner, status, unit_loc, price, amount, payment_stat, image, modification date&time
-		self.cursor.execute("CREATE TABLE IF NOT EXISTS assets (id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), company VARCHAR(255), owner VARCHAR(255), status VARCHAR(255), unit_loc VARCHAR(255), price FLOAT(53,2), amount FLOAT(53,2), payment_stat VARCHAR(255), image LONGBLOB, mod_ts TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)")
+		self.cursor.execute("CREATE TABLE IF NOT EXISTS assets (id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), company VARCHAR(255), owner VARCHAR(255), status VARCHAR(255), unit_loc VARCHAR(255), price FLOAT(53,2), amount FLOAT(53,2), payment_stat VARCHAR(255), image LONGBLOB, mod_ts VARCHAR(255))")
 
 		# Operations Table: operation ID, receipt no., operation type, username, asset_id, company, ownership, new location, amount, payment_stat, approval status, operation timestamp
-		self.cursor.execute("CREATE TABLE IF NOT EXISTS operations (id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, receipt_no VARCHAR(255), op_type VARCHAR(255), username VARCHAR(255), authorized_by VARCHAR(255), asset_id INT(11), asset_name VARCHAR(255), recipient VARCHAR(255), company VARCHAR(255), owner VARCHAR(255), unit_loc VARCHAR(255), amount FLOAT(53,2), payment_stat VARCHAR(255), image LONGBLOB, approval_stat VARCHAR(255), op_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
+		self.cursor.execute("CREATE TABLE IF NOT EXISTS operations (id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, receipt_no VARCHAR(255), op_type VARCHAR(255), username VARCHAR(255), authorized_by VARCHAR(255), asset_id INT(11), asset_name VARCHAR(255), recipient VARCHAR(255), company VARCHAR(255), owner VARCHAR(255), unit_loc VARCHAR(255), amount FLOAT(53,2), payment_stat VARCHAR(255), image LONGBLOB, approval_stat VARCHAR(255), op_ts VARCHAR(255))")
 
 		# Import Operations
 		wb = xlrd.open_workbook(ops_filepath)
 		sheet = wb.sheet_by_index(0)
 		for i in range(sheet.nrows):
 			if i > 0:
-				# receipt_no, op_type, username, auth, asset_id, name, recipient, company, owner, unit_loc, amount, payment_stat, image, approv
-				self.createReceipt(sheet.cell_value(i, 2), sheet.cell_value(i, 3), sheet.cell_value(i, 4),
-							  sheet.cell_value(i, 5), sheet.cell_value(i, 6), sheet.cell_value(i, 7),
-							  sheet.cell_value(i, 8), sheet.cell_value(i, 9), sheet.cell_value(i, 10),
-							  sheet.cell_value(i, 11), sheet.cell_value(i, 12), sheet.cell_value(i, 13),
-							  sheet.cell_value(i, 14), sheet.cell_value(i, 15))
+				self.createReceipt(sheet.cell_value(i, 2), sheet.cell_value(i, 3), sheet.cell_value(i, 4), sheet.cell_value(i, 5), sheet.cell_value(i, 6), sheet.cell_value(i, 7), sheet.cell_value(i, 8), sheet.cell_value(i, 9), sheet.cell_value(i, 10), sheet.cell_value(i, 11), sheet.cell_value(i, 12), sheet.cell_value(i, 13), sheet.cell_value(i, 14), sheet.cell_value(i, 15))
 		print("Successfully retrieved all operations data")
 
 		# Import Assets
@@ -343,26 +341,23 @@ class Database():
 			if i > 0:
 				self.createAsset("assets", username, sheet.cell_value(i, 2), sheet.cell_value(i, 3), sheet.cell_value(i, 4),
 							sheet.cell_value(i, 5), sheet.cell_value(i, 6), sheet.cell_value(i, 7),
-							sheet.cell_value(i, 8), sheet.cell_value(i, 9), sheet.cell_value(i, 10))
+							sheet.cell_value(i, 8), sheet.cell_value(i, 9), sheet.cell_value(i, 10),
+							sheet.cell_value(i, 11))
 		print("Successfully retrieved all assets data")
 
 	def exportToExcel(self):
-		# read the data
-		df=sql.read_sql('select * from operations', self.db)
+		con = connect(
+			host="localhost",
+			port=3306,
+			user="root",
+			passwd="cssw3nG!",
+			database="prime_properties"
+		)
 
-		# # print the data for checkking
-		# print(df)
-
-		# export the data into the excel sheet
+		df=sql.read_sql('select * from operations', con)
 		df.to_excel('operations.xlsx')
 
-		# read the data
-		df=sql.read_sql('select * from assets', self.db)
-
-		# # print the data for checking
-		# print(df)
-
-		# export the data into the excel sheet
+		df=sql.read_sql('select * from assets', con)
 		df.to_excel('assets.xlsx')
 
 	# GENERAL

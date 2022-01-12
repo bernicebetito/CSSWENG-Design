@@ -186,9 +186,9 @@ def createAsset():
 
     def checkCreateAsset(frames):
         success_submit = create_form.submitForm(login_credentials.username.get())
-        if success_submit:
+        if success_submit is True:
             approvedMessage(frames, "Asset Created\nSuccessfully!", True)
-        elif not success_submit and success_submit is not None:
+        elif success_submit is not None:
             approvedMessage(frames, "Error Creating\nAsset!", False)
 
     create_btn = Button(create_right, text="Create", width=15, command=lambda: checkCreateAsset(frames),
@@ -315,7 +315,7 @@ def changePassword():
 
 
 def summaryPage():
-    
+
     global findAsset_page
 
     summary_bg = Frame(root, bg="#DDDDDD", width=1200, height=600)
@@ -344,6 +344,7 @@ def summaryPage():
     back_btn = Button(summary_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 8), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
     back_btn.place(relx=.15, rely=0.950, anchor="c")
 
+
 def receiptPage():
 
     global findAsset_page
@@ -371,6 +372,7 @@ def receiptPage():
     back_btn = Button(receipt_bg, text="Back", width=10, command=lambda: goToNext(frames, 8), bg="#2D2E2E",
                       fg="#FFFFFF", bd=0, font=buttonB)
     back_btn.place(relx=.5, rely=0.900, anchor="center")
+
 
 def findAsset():
 
@@ -433,7 +435,7 @@ def findAsset():
 
     def performOperations(frames):
         ## Check
-        goToNext(frames, 17) 
+        goToNext(frames, 17)
 
     frames = [findAsset_bg, findAsset_form_frame, findAsset_page.findAsset_table_frame]
 
@@ -443,6 +445,7 @@ def findAsset():
 
     back_btn = Button(findAsset_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
     back_btn.place(relx=.15, rely=0.950, anchor="c")
+
 
 def historyPage():
     history_bg = Frame(root, bg="#DDDDDD", width=1200, height=600)
@@ -580,7 +583,7 @@ def updatePage():
 
     update_selected_bg = Frame(root, bg="#DDDDDD", width=950, height=600)
     update_selected_bg.columnconfigure(0, weight=1)
-    update_selected_bg.place(relx=.5, rely=.5, anchor="center")  
+    update_selected_bg.place(relx=.5, rely=.5, anchor="center")
 
     update_left = Frame(update_selected_bg, bg="#DDDDDD", width=300, height=575)
     update_left.columnconfigure(0, weight=1)
@@ -601,7 +604,7 @@ def updatePage():
             approvedMessage(frames, "Asset Updated\nSuccessfully!", True)
         else:
             approvedMessage(frames, "Error Updating\nAsset!", False)
-    
+
     back_btn = Button(update_left, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
     back_btn.place(relx=.15, rely=0.950, anchor="center")
 
@@ -609,6 +612,7 @@ def updatePage():
                         bg="#B8D8D8", fg="#FFFFFF", bd=0, font=buttonA)
     update_btn.place(relx=.250, rely=0.975, anchor="center")
     update_page.setButton(update_btn)
+
 
 def importExport():
     import_bg = Frame(root, bg="#DDDDDD", width=300, height=300)
@@ -640,9 +644,10 @@ def importOption():
     import_user.displayImport(import_bg, sub)
 
     def importFile(frames):
-        if import_user.importFile(login_credentials.username.get()):
+        import_files = import_user.importFile(login_credentials.username.get())
+        if import_files is True:
             approvedMessage(frames, "Successfully\nImported File!", True)
-        else:
+        elif import_files is not None:
             approvedMessage(frames, "Error Importing\nFile!", False)
 
     import_btn = Button(import_bg, text="Import", width=15, command=lambda: importFile(frames), bg="#3C4648", fg="#FFFFFF", bd=0, font=buttonA)
