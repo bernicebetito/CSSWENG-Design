@@ -346,18 +346,10 @@ class Database():
 		print("Successfully retrieved all assets data")
 
 	def exportToExcel(self):
-		con = connect(
-			host="localhost",
-			port=3306,
-			user="root",
-			passwd="cssw3nG!",
-			database="prime_properties"
-		)
-
-		df=sql.read_sql('select * from operations', con)
+		df=sql.read_sql('select * from operations', self.db)
 		df.to_excel('operations.xlsx')
 
-		df=sql.read_sql('select * from assets', con)
+		df=sql.read_sql('select * from assets', self.db)
 		df.to_excel('assets.xlsx')
 
 	# GENERAL
@@ -460,20 +452,3 @@ class Database():
 		except Error:
 			print("Failed to retrieve record/s")
 
-
-''' Database Initializations
-db = Database()
-db.createDatabase("prime_properties")
-db.createTables()
-
-db.deleteDatabase("prime_properties")
-db.deleteTable("users")
-db.deleteTable("operations")
-'''
-# Sample accounts for testing purposes
-'''
-db.createUser("admin", "admin1234", "manager")
-db.createUser("clerk", "clerk1234", "clerk")
-db.createUser("a", "a", "manager")
-'''
-# viewTable("users")
