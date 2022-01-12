@@ -405,27 +405,27 @@ def findAsset():
             #current_font.configure(size=18, slant="italic")
             #filter_ins.config(font=current_font)
 
-            move_btn = Button(findAsset_form_frame, text="Move", width=13, command=lambda: performOperations(frames), bg="#6D94AA",
+            move_btn = Button(findAsset_form_frame, text="Move", width=13, command=lambda: performOperations(frames, 1), bg="#6D94AA",
                               fg="#FFFFFF", bd=0, font=buttonA)
             move_btn.place(relx=.5, rely=0.25, anchor="center")
 
-            receive_btn = Button(findAsset_form_frame, text="Receive", width=13, command=lambda: performOperations(frames), bg="#6D94AA",
+            receive_btn = Button(findAsset_form_frame, text="Receive", width=13, command=lambda: performOperations(frames, 2), bg="#6D94AA",
                               fg="#FFFFFF", bd=0, font=buttonA)
             receive_btn.place(relx=.5, rely=0.35, anchor="center")
 
-            lend_btn = Button(findAsset_form_frame, text="Lend", width=13, command=lambda: performOperations(frames), bg="#6D94AA",
+            lend_btn = Button(findAsset_form_frame, text="Lend", width=13, command=lambda: performOperations(frames, 3), bg="#6D94AA",
                               fg="#FFFFFF", bd=0, font=buttonA)
             lend_btn.place(relx=.5, rely=0.45, anchor="center")
 
-            store_btn = Button(findAsset_form_frame, text="Store", width=13, command=lambda: performOperations(frames), bg="#6D94AA",
+            store_btn = Button(findAsset_form_frame, text="Store", width=13, command=lambda: performOperations(frames, 4), bg="#6D94AA",
                               fg="#FFFFFF", bd=0, font=buttonA)
             store_btn.place(relx=.5, rely=0.55, anchor="center")
 
-            sell_btn = Button(findAsset_form_frame, text="Sell", width=13, command=lambda: performOperations(frames), bg="#6D94AA",
+            sell_btn = Button(findAsset_form_frame, text="Sell", width=13, command=lambda: performOperations(frames, 5), bg="#6D94AA",
                               fg="#FFFFFF", bd=0, font=buttonA)
             sell_btn.place(relx=.5, rely=0.65, anchor="center")
 
-            dispose_btn = Button(findAsset_form_frame, text="Dispose", width=13, command=lambda: performOperations(frames), bg="#6D94AA",
+            dispose_btn = Button(findAsset_form_frame, text="Dispose", width=13, command=lambda: performOperations(frames, 6), bg="#6D94AA",
                               fg="#FFFFFF", bd=0, font=buttonA)
             dispose_btn.place(relx=.5, rely=0.75, anchor="center")
 
@@ -433,8 +433,9 @@ def findAsset():
                               fg="#FFFFFF", bd=0, font=buttonB)
             back_btn.place(relx=.15, rely=0.950, anchor="center")
 
-    def performOperations(frames):
+    def performOperations(frames, operation_no):
         ## Check
+        findAsset_page.setOperation(operation_no, login_credentials.username.get())
         goToNext(frames, 17)
 
     frames = [findAsset_bg, findAsset_form_frame, findAsset_page.findAsset_table_frame]

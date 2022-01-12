@@ -510,8 +510,17 @@ class findAsset():
         Label(findAsset_form_frame, text="Search by Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.575, anchor="c")
         Entry(findAsset_form_frame, textvariable=self.findAsset_status, bd=0).place(height=20, width=225, relx=.5, rely=0.625, anchor="c")
 
+        '''
         filter_btn = Button(findAsset_form_frame, text="Search", width=13, command=lambda: self.searchTable(), bg="#DC5047", fg="#FFFFFF", bd=0, font=buttonA)
         filter_btn.place(relx=.5, rely=0.725, anchor="c")
+
+        filter_ins = Label(delete_form_frame, text="Choose Assets to Delete", bg="#DDDDDD", fg="#363636", font=field_label)
+        filter_ins.place(relx=.5, rely=0.575, anchor="center")
+
+        current_font = tkfont.Font(filter_ins, filter_ins.cget("font"))
+        current_font.configure(weight="bold", slant="italic")
+        filter_ins.config(font=current_font)
+        '''
 
     def displayTable(self, findAsset_bg):
         self.findAsset_bg = findAsset_bg
@@ -610,7 +619,7 @@ class findAsset():
 
         Label(receipt_bg, text="Receipt Number", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.250,
                                                                                                anchor="center")
-        self.receipt_no_field = Label(receipt_bg, text=self.receipt_no, width=25, bg="#FFFFFF", fg="#000000")
+        self.receipt_no_field = Label(receipt_bg, text=self.receipt_no, width=25, bg="#FFFFFF", fg="#000000", state='disabled')
         self.receipt_no_field.place(height=25, width=200, relx=.5, rely=0.300, anchor="center")
 
         Label(receipt_bg, text="Operation", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.040, rely=0.375,
@@ -618,6 +627,7 @@ class findAsset():
         self.operation_field = Entry(receipt_bg, textvariable=self.operation, width=25, bd=0)
         self.operation_field.delete(0, 'end')
         self.operation_field.insert(0, self.operation)
+        self.operation_field.config(state='disabled')
         self.operation_field.place(height=25, width=200, relx=.25, rely=0.425, anchor="center")
 
         Label(receipt_bg, text="Noted By", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.040, rely=0.500,
@@ -625,6 +635,7 @@ class findAsset():
         self.user_field = Entry(receipt_bg, textvariable=self.user, width=25, bd=0)
         self.user_field.delete(0, 'end')
         self.user_field.insert(0, self.user)
+        self.user_field.config(state='disabled')
         self.user_field.place(height=25, width=200, relx=.25, rely=0.550, anchor="center")
 
         Label(receipt_bg, text="Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.040, rely=0.625,
@@ -655,6 +666,25 @@ class findAsset():
         self.status_field.insert(0, self.status)
         self.status_field.place(height=25, width=200, relx=.745, rely=0.675, anchor="center")
 
+    def setOperation(self, op_no, user):
+
+        if op_no == 1:
+            self.operation = "Move"
+        elif op_no == 2:
+            self.operation = "Receive"
+        elif op_no == 3:
+            self.operation = "Lend"
+        elif op_no == 4:
+            self.operation = "Store"
+        elif op_no == 5:
+            self.operation = "Sell"
+        elif op_no == 6:
+            self.operation = "Dispose"
+        else: 
+            self.operation = ""
+
+        self.user = user
+
     def assetOperationSuccess(self):
         ## TODO: Place checkers if receipt values are valid
         return True
@@ -671,6 +701,7 @@ class findAsset():
         Label(summary_form_frame, text="Noted by", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.345, anchor="c")
         Entry(summary_form_frame, textvariable=self.user, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.380, anchor="c")
 
+        ### Editable
         Label(summary_form_frame, text="Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.430, anchor="c")
         Entry(summary_form_frame, textvariable=self.location, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.465, anchor="c")
 
@@ -746,6 +777,8 @@ class updateAsset():
 
         self.selected_asset = -1
 
+        self.filter
+
         self.reg_validDouble = root.register(self.validDouble)
         self.reg_invalidDouble = root.register(self.invalidDouble)
 
@@ -774,18 +807,18 @@ class updateAsset():
     def displayFind(self, update_form_frame, field_label, buttonA):
 
         Label(update_form_frame, text="Search by Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.200, anchor="c")
-        Entry(update_form_frame, textvariable=self.update_name, bd=0).place(height=20, width=225, relx=.5, rely=0.250, anchor="c")
+        Entry(update_form_frame, textvariable=self.filter_name, bd=0).place(height=20, width=225, relx=.5, rely=0.250, anchor="c")
 
         Label(update_form_frame, text="Search by Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.325, anchor="c")
-        Entry(update_form_frame, textvariable=self.update_location, bd=0).place(height=20, width=225, relx=.5, rely=0.375, anchor="c")
+        Entry(update_form_frame, textvariable=self.filter_location, bd=0).place(height=20, width=225, relx=.5, rely=0.375, anchor="c")
 
         Label(update_form_frame, text="Search by Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.450, anchor="c")
-        Entry(update_form_frame, textvariable=self.update_ownership, bd=0).place(height=20, width=225, relx=.5, rely=0.500, anchor="c")
+        Entry(update_form_frame, textvariable=self.filter_ownership, bd=0).place(height=20, width=225, relx=.5, rely=0.500, anchor="c")
 
         Label(update_form_frame, text="Search by Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.575, anchor="c")
-        Entry(update_form_frame, textvariable=self.update_status, bd=0).place(height=20, width=225, relx=.5, rely=0.625, anchor="c")
+        Entry(update_form_frame, textvariable=self.filter_status, bd=0).place(height=20, width=225, relx=.5, rely=0.625, anchor="c")
 
-        filter_btn = Button(update_form_frame, text="Search", width=13, command=lambda: self.searchTable(), bg="#DC5047", fg="#FFFFFF", bd=0, font=buttonA)
+        filter_btn = Button(update_form_frame, text="Search", width=13, command=lambda: self.filterTable(), bg="#DC5047", fg="#FFFFFF", bd=0, font=buttonA)
         filter_btn.place(relx=.5, rely=0.725, anchor="c")
 
     def displayTable(self, update_bg):
@@ -833,9 +866,9 @@ class updateAsset():
         return 1
 
     def filterTable(self):
-        self.updateAsset_canvas.delete("all")
+        self.update_canvas.delete("all")
 
-        if len(self.updateAsset_asset_name.get()) > 0 or self.updateAsset_disposed_int.get() > 0:
+        if len(self.update_asset_name.get()) > 0 or self.update_disposed_int.get() > 0:
             status = ""
             if self.selected_assets_int.get() == 1:
                 status = "Disposed"
