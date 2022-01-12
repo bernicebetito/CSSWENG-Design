@@ -423,7 +423,7 @@ def findAsset():
                               fg="#FFFFFF", bd=0, font=buttonA)
             dispose_btn.place(relx=.5, rely=0.75, anchor="center")
 
-            back_btn = Button(findAsset_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 15), bg="#2D2E2E",
+            back_btn = Button(findAsset_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E",
                               fg="#FFFFFF", bd=0, font=buttonB)
             back_btn.place(relx=.15, rely=0.950, anchor="center")
 
