@@ -151,6 +151,13 @@ class ImportExport():
                                      bg="#667275", fg="#FFFFFF", bd=0, font=btn_font)
         self.choose_asset_btn.place(relx=.5, rely=0.635, anchor="center")
 
+        self.import_error_label = Label(import_bg, bg="#DDDDDD", fg="#D64000", font=sub)
+        self.import_error_label.place(relx=.5, rely=0.715, anchor="center")
+
+        current_font = tkfont.Font(self.import_error_label, self.import_error_label.cget("font"))
+        current_font.configure(weight="bold")
+        self.import_error_label.config(font=current_font)
+
     def uploadOperationsFile(self):
         fileTypes = [('Excel Workbook', '*.xlsx'),
                      ('Excel 97-2003 Workbook', '*.xls')]
@@ -174,7 +181,14 @@ class ImportExport():
                 return True
             except:
                 return False
-        return False
+
+        if len(self.import_operations) <= 0 and len(self.import_assets) > 0:
+            self.import_error_label.config(text="Upload File for Operations")
+        elif len(self.import_operations) > 0 and len(self.import_assets) <= 0:
+            self.import_error_label.config(text="Upload File for Asset")
+        else:
+            self.import_error_label.config(text="Upload Files to Import")
+        return None
 
     def exportFile(self):
         self.database.exportToExcel()

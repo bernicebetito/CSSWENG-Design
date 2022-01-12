@@ -2,8 +2,8 @@ from tkinter import *
 from PIL import Image, ImageTk
 import tkinter.font as tkfont
 from tkinter import filedialog
-import os, table
-import db
+import os, datetime
+import table, db
 
 
 class createAsset():
@@ -134,8 +134,8 @@ class createAsset():
         for i in self.create_fields:
             i.configure(highlightthickness=0, highlightbackground="#D64000", highlightcolor="#D64000")
         valid_first = len(self.create_name.get()) > 1 and len(self.create_company.get()) > 1
-        valid_second = len(self.create_location.get()) > 1 and len(self.create_ownership.get()) > 1 and len(self.create_photo_filename) > 0
-        valid_third = len(self.create_price.get()) > 0 and len(self.create_quantity.get()) > 0 and self.create_payment_status_int.get() > 0
+        valid_second = len(self.create_location.get()) > 1 and len(self.create_ownership.get()) > 1 and self.create_payment_status_int.get() > 0
+        valid_third = len(self.create_price.get()) > 0 and len(self.create_quantity.get()) > 0 and len(self.create_photo_filename) > 0
         if valid_first and valid_second and valid_third:
             name = self.create_name.get()
             company = self.create_company.get()
@@ -168,30 +168,44 @@ class createAsset():
                 return None
 
             try:
-                self.database.createAsset("assets", username, name, company, owner, status, unit_loc, float(price), float(quantity), payment_stat, image)
+                currTime = datetime.datetime.now()
+                self.database.createAsset("assets", username, name, company, owner, status, unit_loc, float(price), float(quantity), payment_stat, image, currTime)
                 return True
             except:
                 return False
         else:
             for i in self.create_fields:
                 i.configure(highlightthickness=0, highlightbackground="#D64000", highlightcolor="#D64000")
-            if len(self.create_photo_filename) == 0:
-                self.create_error_label.config(text="Please Upload A Photo")
-            if len(self.create_price.get()) > 0 and len(self.create_quantity.get()) > 0:
-                price = self.create_price.get()
-                quantity = self.create_quantity.get()
-                if (str(self.create_price.get())[0] == 0 and str(price).find(".") > 0) or (str(quantity)[0] == 0 and str(quantity).find(".") > 0):
-                    self.create_error_label.config(text="Price and Quantity follow the following format: 12.34")
-                elif not self.validDouble(price) or not self.validDouble(quantity):
-                    self.invalidDouble()
-                elif float(price) <= 0 or float(quantity) <= 0:
-                    self.create_error_label.config(text="Price and Quantity should be Higher than 0.00")
-                self.create_price_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
-                self.create_quantity_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
-            else:
+
+            if not valid_first and not valid_second and not valid_third:
                 for i in self.create_fields:
                     i.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
                 self.create_error_label.config(text="Please Fill Up All Fields")
+            elif not valid_first or not valid_second:
+                for i in self.create_fields:
+                    i.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
+                self.create_error_label.config(text="Please Fill Up All Fields")
+            elif len(self.create_photo_filename) <= 0:
+                self.create_error_label.config(text="Please Upload A Photo")
+            elif not os.path.isfile(self.create_photo_filename):
+                self.create_error_label.config(text="Please Upload A Valid Photo")
+            elif len(self.create_price.get()) > 0 and len(self.create_quantity.get()) > 0:
+                price = self.create_price.get()
+                quantity = self.create_quantity.get()
+                invalid_float = False
+                if (str(self.create_price.get())[0] == 0 and str(price).find(".") > 0) or (str(quantity)[0] == 0 and str(quantity).find(".") > 0):
+                    self.create_error_label.config(text="Price and Quantity follow the following format: 12.34")
+                    invalid_float = True
+                elif not self.validDouble(price) or not self.validDouble(quantity):
+                    self.invalidDouble()
+                    invalid_float = True
+                elif float(price) <= 0 or float(quantity) <= 0:
+                    self.create_error_label.config(text="Price and Quantity should be Higher than 0.00")
+                    invalid_float = True
+                if invalid_float:
+                    self.create_price_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
+                    self.create_quantity_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
+
             return None
 
 
@@ -315,6 +329,7 @@ class receiveAsset():
             return True
         except:
             return False
+
 
 class deleteAsset():
     def __init__(self, root):
@@ -442,6 +457,7 @@ class deleteAsset():
 
         self.database.delAsset(delete_assets)
         return True
+
 
 class findAsset():
     def __init__(self, root):
@@ -647,6 +663,7 @@ class findAsset():
     def operationSuccess(self):
         ## TODO: Reflect changes to db
         return True 
+
 
 class updateAsset():
     def __init__(self, root):
