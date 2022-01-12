@@ -456,6 +456,8 @@ class findAsset():
 
         self.selected_assets_int = IntVar()
         self.find_assets = []
+        self.find_assets_rows = [] 
+        self.find_assets_cols = []
 
         self.receipt_no_field = Entry() 
         self.receipt_no = IntVar()
@@ -560,21 +562,25 @@ class findAsset():
 
     def getSelected(self):
         self.find_assets = self.findAsset_table.getSelectedCheckbox()
+
         if len(self.find_assets) > 0:
             self.findAsset_canvas.delete("all")
 
-            for current in range(len(self.find_assets)):
-                self.find_assets[current] += 1
-
             for keep_asset in range(len(self.findAsset_table_contents) - 1, -1, -1):
-                if keep_asset not in self.find_assets and keep_asset != 0:
+                if self.findAsset_table_contents[keep_asset][0] not in self.find_assets and keep_asset != 0:
                     del self.findAsset_table_contents[keep_asset]
                 else:
+                    self.findAsset_table_contents[keep_asset].append(self.findAsset_table_contents[keep_asset][0])
                     del self.findAsset_table_contents[keep_asset][0]
 
-            self.findAsset_table.rows = len(self.find_assets) + 1
-            self.findAsset_table.cols = len(self.findAsset_table_contents[0])
+            self.findAsset_table.rows = len(self.findAsset_table_contents)
+            self.findAsset_table.cols = len(self.findAsset_table_contents[0]) - 1
             self.findAsset_table.contents = self.findAsset_table_contents
+
+            self.find_assets = self.findAsset_table.contents
+            self.find_assets_rows = self.findAsset_table.rows
+            self.find_assets_cols = self.findAsset_table.cols  
+
             self.findAsset_table.createTable()
             self.findAsset_canvas.configure(scrollregion=self.findAsset_canvas.bbox("all"))
             return True
@@ -585,6 +591,7 @@ class findAsset():
         '''
         self.operation_fields.append(self.operation_receipt)
         '''
+
         Label(receipt_bg, text="Receipt Number", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.250,
                                                                                                anchor="center")
         self.receipt_no_field = Label(receipt_bg, text=self.receipt_no, width=25, bg="#FFFFFF", fg="#000000")
@@ -636,12 +643,54 @@ class findAsset():
         ## TODO: Place checkers if receipt values are valid
         return True
 
-    def displaySummaryDetails(self, summary_bg):
+    def displaySummaryDetails(self, summary_bg, summary_form_frame, field_label):
         ## TODO: Display receipt details
+
+        Label(summary_form_frame, text="Receipt Number", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.175, anchor="c")
+        Entry(summary_form_frame, textvariable=self.receipt_no, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.210, anchor="c")
+
+        Label(summary_form_frame, text="Operation", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.260, anchor="c")
+        Entry(summary_form_frame, textvariable=self.operation, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.295, anchor="c")
+
+        Label(summary_form_frame, text="Noted by", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.345, anchor="c")
+        Entry(summary_form_frame, textvariable=self.user, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.380, anchor="c")
+
+        Label(summary_form_frame, text="Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.430, anchor="c")
+        Entry(summary_form_frame, textvariable=self.location, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.465, anchor="c")
+
+        Label(summary_form_frame, text="Payment Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.515, anchor="c")
+        Entry(summary_form_frame, textvariable=self.status, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.550, anchor="c")
+
+        Label(summary_form_frame, text="Company", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.600, anchor="c")
+        Entry(summary_form_frame, textvariable=self.company, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.635, anchor="c")
+
+        Label(summary_form_frame, text="Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.685, anchor="c")
+        Entry(summary_form_frame, textvariable=self.owner, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.720, anchor="c")
+
+        '''
+        filter_btn = Button(findAsset_form_frame, text="Search", width=13, command=lambda: self.searchTable(), bg="#DC5047", fg="#FFFFFF", bd=0, font=buttonA)
+        filter_btn.place(relx=.5, rely=0.725, anchor="c")
+        '''
         return True 
 
     def displaySummaryAssets(self, summary_bg):
         ## TODO: Display asset details
+        
+        self.summary_bg = summary_bg
+        self.summary_table_frame = Frame(summary_bg, bg="#191919", width=825, height=500)
+        self.summary_table_frame.place(relx=.625, rely=.5, anchor="center")
+
+        self.summary_canvas = Canvas(self.summary_table_frame, bg="#191919", width=825, height=500)
+
+        summary_measurements = {"cell_width": 150, "cell_height": 75, "rows": self.find_assets_rows,
+                               "columns": 10}
+
+        self.summary_table = table.Table(summary_measurements, self.summary_canvas, self.find_assets)
+        self.summary_table.setScrollbars(self.summary_table_frame)
+        self.summary_canvas.configure(scrollregion=self.summary_canvas.bbox("all"))
+
+        self.summary_table.createTable()
+
         return True
 
     def operationSuccess(self):

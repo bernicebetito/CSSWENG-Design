@@ -87,6 +87,10 @@ def goToNext(currentFrames, nextFunc):
             exportOption()
         elif nextFunc == 16:  # Delete
             deleteAsset()
+        elif nextFunc == 17:  # Receipt
+            receiptPage()
+        elif nextFunc == 18:  # Summary
+            summaryPage()
     else:
         login()
 
@@ -324,7 +328,7 @@ def summaryPage():
 
     displayHeader(summary_form_frame, 0.050, 0.100)
 
-    findAsset_page.displaySummaryDetails(summary_bg)
+    findAsset_page.displaySummaryDetails(summary_bg, summary_form_frame, field_label)
     findAsset_page.displaySummaryAssets(summary_bg)
 
     def confirmAssets(frames):
@@ -423,7 +427,7 @@ def findAsset():
                               fg="#FFFFFF", bd=0, font=buttonA)
             dispose_btn.place(relx=.5, rely=0.75, anchor="center")
 
-            back_btn = Button(findAsset_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E",
+            back_btn = Button(findAsset_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 8), bg="#2D2E2E",
                               fg="#FFFFFF", bd=0, font=buttonB)
             back_btn.place(relx=.15, rely=0.950, anchor="center")
 
