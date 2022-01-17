@@ -539,7 +539,7 @@ class findAsset():
 
     def getContent(self, filter_val):
         findAsset_table_header = ["Select", "Photo", "Asset Name", "Company", "Owner", "Location",
-                               "Price", "Payment Status", "Amount", "Status"]
+                               "Price", "Quantity", "Payment Status", "Availability"]
         self.findAsset_table_contents = []
         curr_row = []
         for column in findAsset_table_header:
@@ -752,6 +752,7 @@ class updateAsset():
 
         self.update_photo_filename = ""
         self.update_photo = ""
+        self.asset_no = IntVar()
         self.update_name = StringVar()
         self.update_company = StringVar()
         self.update_status = StringVar()
@@ -761,6 +762,9 @@ class updateAsset():
         self.update_ownership = StringVar()
         self.update_payment_status = StringVar()
         self.update_payment_status_int = IntVar()
+
+        self.receipt_no = IntVar()
+        self.op_type = "Update"
 
         self.update_name_field = Entry()
         self.update_company_field = Entry()
@@ -777,7 +781,10 @@ class updateAsset():
 
         self.selected_asset = -1
 
-        self.filter
+        self.filter_name = StringVar()
+        self.filter_location = StringVar()
+        self.filter_ownership = StringVar() 
+        self.filter_status = StringVar()
 
         self.reg_validDouble = root.register(self.validDouble)
         self.reg_invalidDouble = root.register(self.invalidDouble)
@@ -804,22 +811,31 @@ class updateAsset():
             self.update_price_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
             self.update_quantity_field.configure(highlightthickness=2, highlightbackground="#D64000", highlightcolor="#D64000")
 
-    def displayFind(self, update_form_frame, field_label, buttonA):
+    def displayFind(self, update_form_frame, field_label, buttonA, buttonB):
 
         Label(update_form_frame, text="Search by Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.200, anchor="c")
-        Entry(update_form_frame, textvariable=self.filter_name, bd=0).place(height=20, width=225, relx=.5, rely=0.250, anchor="c")
+        Entry(update_form_frame, textvariable=self.update_name, bd=0).place(height=20, width=225, relx=.5, rely=0.245, anchor="c")
 
-        Label(update_form_frame, text="Search by Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.325, anchor="c")
-        Entry(update_form_frame, textvariable=self.filter_location, bd=0).place(height=20, width=225, relx=.5, rely=0.375, anchor="c")
+        Label(update_form_frame, text="Search by Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.295, anchor="c")
+        Entry(update_form_frame, textvariable=self.update_location, bd=0).place(height=20, width=225, relx=.5, rely=0.340, anchor="c")
 
-        Label(update_form_frame, text="Search by Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.450, anchor="c")
-        Entry(update_form_frame, textvariable=self.filter_ownership, bd=0).place(height=20, width=225, relx=.5, rely=0.500, anchor="c")
+        Label(update_form_frame, text="Search by Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.390, anchor="c")
+        Entry(update_form_frame, textvariable=self.update_ownership, bd=0).place(height=20, width=225, relx=.5, rely=0.435, anchor="c")
 
-        Label(update_form_frame, text="Search by Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.575, anchor="c")
-        Entry(update_form_frame, textvariable=self.filter_status, bd=0).place(height=20, width=225, relx=.5, rely=0.625, anchor="c")
+        Label(update_form_frame, text="Filter by Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=0.300, rely=0.500, anchor="center")                     
+        
+        paid_on = Radiobutton(update_form_frame, text="Paid", bg="#DDDDDD", variable=self.update_payment_status_int, value=1)
+        paid_on.place(relx=.60, rely=0.500, anchor="center")
+
+        paid_off = Radiobutton(update_form_frame, text="Unpaid", bg="#DDDDDD", variable=self.update_payment_status_int, value=2)
+        paid_off.place(relx=.80, rely=0.500, anchor="center")
+
 
         filter_btn = Button(update_form_frame, text="Search", width=13, command=lambda: self.filterTable(), bg="#DC5047", fg="#FFFFFF", bd=0, font=buttonA)
-        filter_btn.place(relx=.5, rely=0.725, anchor="c")
+        filter_btn.place(relx=.5, rely=0.625, anchor="c")
+
+        clear_btn = Button(update_form_frame, text="Clear Filter", width=13, command=lambda: self.filterTable(), bg="#404040", fg="#FFFFFF", bd=0, font=buttonB)
+        clear_btn.place(relx=.5, rely=0.725, anchor="center")
 
     def displayTable(self, update_bg):
         self.update_bg = update_bg
@@ -866,23 +882,36 @@ class updateAsset():
         return 1
 
     def filterTable(self):
-        self.update_canvas.delete("all")
+        self.update_table_frame.destroy()
+        self.update_table_frame = Frame(self.update_bg, bg="#191919", width=825, height=500)
+        self.update_table_frame.place(relx=.625, rely=.5, anchor="center")
+        self.update_canvas = Canvas(self.update_table_frame, bg="#191919", width=825, height=500)
 
-        if len(self.update_asset_name.get()) > 0 or self.update_disposed_int.get() > 0:
+        if len(self.update_name.get()) > 0 or len(self.update_ownership.get()) > 0 or len(self.update_location.get()) > 0 or self.update_payment_status_int.get() > 0:
+            
             status = ""
-            if self.selected_assets_int.get() == 1:
-                status = "Disposed"
-            updateAsset_filter = {"asset_name": self.update_asset_name.get(), "company": "", "owner": "",
-                             "location": "", "pay_status": "", "status": status}
-            self.update_asset_name.set("")
-            self.selected_assets_int.set(0)
-        else:
-            updateAsset_filter = {"asset_name": "", "company": "", "owner": "", "location": "", "pay_status": "", "status": ""}
 
-        self.updateAsset_table.rows = self.getContent(delete_filter)
-        self.updateAsset_table.contents = self.delete_table_contents
-        self.updateAsset_table.optionsTable(11, "radio")
-        self.updateAsset_canvas.configure(scrollregion=self.delete_canvas.bbox("all"))
+            if self.update_payment_status_int.get() == 1:
+                status = "Paid"
+            else:
+                status = "Unpaid"            
+
+            update_filter = {"asset_name": self.update_name.get(), "company": "", "owner": self.update_ownership.get(),
+                             "location": self.update_location.get(), "pay_status": status, "status": ""}
+            self.update_name.set("")
+            self.update_ownership.set("")
+            self.update_location.set("")
+            self.update_payment_status_int.set(0)
+        else:
+            update_filter = {"asset_name": "", "company": "", "owner": "", "location": "", "pay_status": "", "status": ""}
+
+        self.update_table.canvas = self.update_canvas
+        self.update_table.rows = self.getContent(update_filter)
+        self.update_table.contents = self.update_table_contents
+        self.update_table.setScrollbars(self.update_table_frame)
+        self.update_table.optionsTable(23, "radio")
+        self.update_canvas.configure(scrollregion=self.update_canvas.bbox("all"))
+        
 
     def getSelected(self):
         self.selected_asset = self.update_table.getSelectedRadio()
@@ -894,6 +923,7 @@ class updateAsset():
                     self.update_contents = self.update_table_contents[keep_asset]
                     self.asset_index = keep_asset-1
             
+            self.asset_no = self.update_contents[0]
             self.update_name = self.update_contents[2]
             self.update_company = self.update_contents[3]
             self.update_ownership = self.update_contents[4]
@@ -932,6 +962,8 @@ class updateAsset():
         filter_val = {"asset_name": "", "company": "", "owner": "", "location": "", "pay_status": "", "status": ""}
         update = self.database.viewTable(1, filter_val)
         filepath = self.database.readBLOB(update[self.asset_index][0])
+
+        self.update_photo_filename = filepath
 
         image_set = Image.open(filepath)
         resized_img = image_set.resize((250, 250), Image.ANTIALIAS)
@@ -1013,9 +1045,9 @@ class updateAsset():
         self.update_payment_paid = Radiobutton(update_right, text="Paid", bg="#DDDDDD",
                                                variable=self.update_payment_status_int, value=1)
         self.update_payment_paid.place(relx=.650, rely=0.700, anchor="center")
-        self.update_payment_paid = Radiobutton(update_right, text="Unpaid", bg="#DDDDDD",
+        self.update_payment_unpaid = Radiobutton(update_right, text="Unpaid", bg="#DDDDDD",
                                                variable=self.update_payment_status_int, value=2)
-        self.update_payment_paid.place(relx=.850, rely=0.700, anchor="center")
+        self.update_payment_unpaid.place(relx=.850, rely=0.700, anchor="center")
 
         self.update_error_label = Label(update_right, bg="#DDDDDD", fg="#D64000", font=field_label)
         self.update_error_label.place(relx=.5, rely=0.750, anchor="center")
@@ -1024,7 +1056,11 @@ class updateAsset():
         valid_first = len(self.update_name) > 1 and len(self.update_company) > 1
         valid_second = len(self.update_location) > 1 and len(self.update_ownership) > 1 and len(self.update_photo_filename) > 0
         valid_third = self.update_price > 0 and self.update_quantity > 0 and self.update_payment_status_int.get() > 0
+
+        self.asset_no = 1
+
         if valid_first and valid_second and valid_third:
+            asset_id = self.asset_no
             name = self.update_name
             company = self.update_company
             owner = self.update_ownership
@@ -1032,15 +1068,23 @@ class updateAsset():
             unit_loc = self.update_location
             price = self.update_price
             quantity = self.update_quantity
-            if self.update_payment_status_int == 1:
+
+            if self.update_payment_status_int.get() == 1:
                 payment_stat = "Paid"
             else:
                 payment_stat = "Unpaid"
+
             image = self.database.convertToBinaryData(self.update_photo_filename)
             if not image:
                 return False
 
-            self.database.updateAsset("assets", username, name, company, owner, status, unit_loc, price, quantity, payment_stat, image)
+            print("---------------------- SUBMIT FORM")
+            
+
+            #self.database.createReceipt("1", "Update", username, "Unauthorized", asset_id, name, "None", company, owner, unit_loc, quantity, payment_stat, image, "Unapproved")
+            # createReceipt(receipt_no, op_type, username, auth, asset_ID, name, recipient, company, owner, unit_loc, amount, payment_stat, image, approval)
+                                                                            
+
             return True
         else:
             if self.update_price <= 0 or self.update_quantity <= 0:

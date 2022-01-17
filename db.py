@@ -34,21 +34,21 @@ class Database():
 			# 		database = "prime_properties")
 			#
 			#                    BERNICE                     #
+			#self.db = mysql.connect(
+			#		host = "localhost",
+			#		port = "3306",
+			#		user = "root",
+			#		passwd = "cssw3nG!",
+			#		database = "prime_properties"
+			#)
+			#                     CAR                        #
 			self.db = mysql.connect(
-					host = "localhost",
-					port = "3306",
-					user = "root",
-					passwd = "cssw3nG!",
+			 		host = "localhost",
+			 		port = "3310",
+			 		user = "root",
+			 		passwd = "12345",
 					database = "prime_properties"
 			)
-			#                     CAR                        #
-			# self.db = mysql.connect(
-			# 		host = "localhost",
-			# 		port = "3310",
-			# 		user = "root",
-			# 		passwd = "12345",
-			# database = "prime_properties"
-			# )
 		except Error:
 			print("Database Connection Error. Please initialize database.")
 			quit()
@@ -162,9 +162,6 @@ class Database():
 		self.cursor.execute(query)
 		field = str(self.cursor.fetchone()[0])
 		return field
-
-	def updateAsset(self, tb_name, username, name, company, owner, status, unit_loc, price, amount, payment_stat, image):
-		print("TODO")
 
 	def receiveAsset(self, op_id, asset_ID):
 		self.cursor.execute("SELECT asset_name, company, owner, unit_loc, amount, payment_stat FROM operations WHERE id = '" + str(op_id) + "'")

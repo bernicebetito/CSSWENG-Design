@@ -552,7 +552,7 @@ def updateAsset():
     displayHeader(update_form_frame, 0.050, 0.100)
 
     update_page = asset.updateAsset(root)
-    update_page.displayFind(update_form_frame, field_label, buttonA)
+    update_page.displayFind(update_form_frame, field_label, buttonA, buttonB)
     update_page.displayTable(update_bg)
 
     def confirmUpdate(frames, nextFunc):
@@ -579,7 +579,6 @@ def updateAsset():
 def updatePage():
 
     global update_page
-
     global photo_filename
 
     update_selected_bg = Frame(root, bg="#DDDDDD", width=950, height=600)
@@ -601,10 +600,18 @@ def updatePage():
 
 
     def checkUpdateAsset(frames, form):
+
+        '''
         if form.submitForm(login_credentials.username.get()):
             approvedMessage(frames, "Asset Updated\nSuccessfully!", True)
         else:
             approvedMessage(frames, "Error Updating\nAsset!", False)
+        '''
+
+        if form.submitForm(login_credentials.username.get()):
+            ## Check inputs
+            approvedMessage(frames, "Changes successfully\nsent for approval", True)
+            
 
     back_btn = Button(update_left, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
     back_btn.place(relx=.15, rely=0.950, anchor="center")
