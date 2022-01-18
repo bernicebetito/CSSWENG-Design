@@ -364,8 +364,6 @@ def receiptPage():
         if findAsset_page.assetOperationSuccess():
             #approvedMessage(frames, "Successful operation", True)
             goToNext(frames, 18)
-        else:
-            approvedMessage(frames, "Try Again", False)
 
     confirm_btn = Button(receipt_bg, text="Confirm", height=1, width=15,
                              command=lambda: operationSuccess(frames), bg="#8EB8CF", fg="#FFFFFF", bd=0, font=buttonA)

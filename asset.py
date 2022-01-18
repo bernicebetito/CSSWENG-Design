@@ -477,6 +477,9 @@ class findAsset():
         self.receipt_no_field = Entry() 
         self.receipt_no = IntVar()
 
+        self.recipient_field = Entry()
+        self.recipient = StringVar()
+
         self.operation_field = Entry()
         self.operation = StringVar()
 
@@ -500,7 +503,13 @@ class findAsset():
         self.find_assets = [] # Array of selected assets
         self.find_assets_rows = [] 
         self.find_assets_cols = []
+        self.photo_filepaths = []
+        self.photo_id = []
 
+        # New 
+        self.new_company = StringVar()
+        self.new_owner = StringVar()
+        self.new_location = StringVar()
 
     def displayFind(self, findAsset_form_frame, field_label, buttonA, buttonB):
 
@@ -566,6 +575,9 @@ class findAsset():
                         table_image = ImageTk.PhotoImage(resized_img)
                         self.root.table_image.append(table_image)
                         curr_row.insert(1, table_image)
+
+                        self.photo_filepaths.append(filepath)
+
                     else:
                         curr_row.append(findAsset[row][column])
                 self.findAsset_table_contents.append(curr_row)
@@ -607,6 +619,7 @@ class findAsset():
 
     def getSelected(self):
         self.find_assets = self.findAsset_table.getSelectedCheckbox()
+        self.photo_id = self.find_assets
 
         if len(self.find_assets) > 0:
             self.findAsset_canvas.delete("all")
@@ -633,10 +646,18 @@ class findAsset():
 
     def displayReceipt(self, receipt_bg, field_label):
 
-        Label(receipt_bg, text="Receipt Number", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.250,
-                                                                                               anchor="center")
-        self.receipt_no_field = Label(receipt_bg, text=self.receipt_no, width=25, bg="#FFFFFF", fg="#000000", state='disabled')
-        self.receipt_no_field.place(height=25, width=200, relx=.5, rely=0.300, anchor="center")
+        # Editable
+        Label(receipt_bg, text="Enter Receipt Number", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.040, rely=0.250,
+                                                                                               anchor="w")
+        self.receipt_no_field = Entry(receipt_bg, textvariable=self.receipt_no, width=25, bd=0)
+        self.receipt_no_field.delete(0, 'end')
+        self.receipt_no_field.place(height=25, width=200, relx=.25, rely=0.300, anchor="center")
+
+        Label(receipt_bg, text="Enter Recipient", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.540, rely=0.250,
+                                                                                               anchor="w")
+        self.recipient_field = Entry(receipt_bg, textvariable=self.recipient, width=25, bd=0)
+        self.recipient_field.delete(0, 'end')
+        self.recipient_field.place(height=25, width=200, relx=.745, rely=0.300, anchor="center")
 
         Label(receipt_bg, text="Operation", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.040, rely=0.375,
                                                                                                anchor="w")
@@ -654,111 +675,98 @@ class findAsset():
         self.user_field.config(state='disabled')
         self.user_field.place(height=25, width=200, relx=.25, rely=0.550, anchor="center")
 
-        Label(receipt_bg, text="Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.040, rely=0.625,
-                                                                                               anchor="w")
-        self.location_field = Entry(receipt_bg, textvariable=self.location, width=25, bd=0)
-        self.location_field.delete(0, 'end')
-        self.location_field.insert(0, self.location)
-        self.location_field.place(height=25, width=200, relx=.25, rely=0.675, anchor="center")
-
-        Label(receipt_bg, text="Company", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.540, rely=0.375,
-                                                                                               anchor="w")
-        self.company_field = Entry(receipt_bg, textvariable=self.company, width=25, bd=0)
-        self.company_field.delete(0, 'end')
-        self.company_field.insert(0, self.company)
-        self.company_field.place(height=25, width=200, relx=.745, rely=0.425, anchor="center")
-
-        Label(receipt_bg, text="Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.540, rely=0.500,
-                                                                                               anchor="w")
-        self.owner_field = Entry(receipt_bg, textvariable=self.owner, width=25, bd=0)
-        self.owner_field.delete(0, 'end')
-        self.owner_field.insert(0, self.owner)
-        self.owner_field.place(height=25, width=200, relx=.745, rely=0.550, anchor="center")
-
-        Label(receipt_bg, text="Payment Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.540, rely=0.625,
+        Label(receipt_bg, text="Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.040, rely=0.625,
                                                                                                anchor="w")
         self.status_field = Entry(receipt_bg, textvariable=self.status, width=25, bd=0)
         self.status_field.delete(0, 'end')
         self.status_field.insert(0, self.status)
         self.status_field.config(state='disabled')
-        self.status_field.place(height=25, width=200, relx=.745, rely=0.675, anchor="center")
+        self.status_field.place(height=25, width=200, relx=.25, rely=0.675, anchor="center")
+
+        ## EDITABLE
+        Label(receipt_bg, text="New Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.540, rely=0.625,
+                                                                                               anchor="w")
+        self.location_field = Entry(receipt_bg, textvariable=self.new_location, width=25, bd=0)
+        self.location_field.delete(0, 'end')
+        #self.location_field.insert(0, self.location)
+        self.location_field.place(height=25, width=200, relx=.745, rely=0.675, anchor="center")
+
+        Label(receipt_bg, text="New Company", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.540, rely=0.375,
+                                                                                               anchor="w")
+        self.company_field = Entry(receipt_bg, textvariable=self.new_company, width=25, bd=0)
+        self.company_field.delete(0, 'end')
+        #self.company_field.insert(0, self.company)
+        self.company_field.place(height=25, width=200, relx=.745, rely=0.425, anchor="center")
+
+        Label(receipt_bg, text="New Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.540, rely=0.500,
+                                                                                               anchor="w")
+        self.owner_field = Entry(receipt_bg, textvariable=self.new_owner, width=25, bd=0)
+        self.owner_field.delete(0, 'end')
+        #self.owner_field.insert(0, self.owner)
+        self.owner_field.place(height=25, width=200, relx=.745, rely=0.550, anchor="center")
+
+        self.receipt_error_label = Label(receipt_bg, bg="#DDDDDD", fg="#D64000", font=field_label)
+        self.receipt_error_label.place(relx=.5, rely=0.730, anchor="center")
 
     def setOperation(self, op_no, user):
 
-        ''' Scrapped
         if op_no == 1:
             self.operation = "Move"
             self.status = "In Transit - Move"
-        elif op_no == 2:
-            self.operation = "Receive"
-            self.status = "scrap"
-        elif op_no == 3:
+        elif op_no == 2: 
             self.operation = "Lend"
             self.status = "In Transit - Lent"
-        elif op_no == 4:
+        elif op_no == 3:
             self.operation = "Store"
             self.status = "In Transit - Stored"
-        elif op_no == 5:
+        elif op_no == 4:
             self.operation = "Sell"
             self.status = "In Transit - Sold"
-        elif op_no == 6:
+        elif op_no == 5:
             self.operation = "Dispose"
             self.status = "In Transit - Disposed"
         else: 
             self.operation = ""
 
         self.user = user
-        '''
-
-        if op_no == 1:
-            self.operation = "Move"
-            self.status = "In Transit - Move"
-        elif op_no == 2:
-            self.operation = "Lend"
-            self.status = "In Transit - Lent"
-        elif op_no == 3:
-            self.operation = "Store"
-            self.status = "In Transit - Stored"
-        elif op_no == 4:
-            self.operation = "Sell"
-            self.status = "In Transit - Sold"
-        elif op_no == 5:
-            self.operation = "Dispose"
-            self.status = "In Transit - Disposed"            
-        else: 
-            self.operation = ""
-
-        self.user = user
-
-
+        
     def assetOperationSuccess(self):
         ## TODO: Place checkers if receipt values are valid
-        return True
+        if self.receipt_no.get() >= 0 and not self.database.checkReceiptNo(self.receipt_no.get()):
+            if len(self.new_location.get()) > 0 and len(self.new_company.get()) > 0 and len(self.new_owner.get()) > 0 and len(self.recipient.get()):
+                self.location = self.new_location.get()
+                self.owner = self.new_owner.get()
+                self.company = self.new_company.get()
+                self.receipt_no = self.receipt_no.get()
+                self.recipient = self.recipient.get()
+                return True
+            else:
+                self.receipt_error_label.config(text="Please Fill Up All Fields")
+        else:
+            self.receipt_error_label.config(text="Please Use Another Receipt Number")
 
     def displaySummaryDetails(self, summary_bg, summary_form_frame, field_label):
-        ## TODO: Display receipt details
 
         Label(summary_form_frame, text="Receipt Number", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.175, anchor="c")
-        Entry(summary_form_frame, textvariable=self.receipt_no, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.210, anchor="c")
+        Label(summary_form_frame, text=self.receipt_no, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.210, anchor="c")
 
-        Label(summary_form_frame, text="Operation", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.260, anchor="c")
-        Entry(summary_form_frame, textvariable=self.operation, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.295, anchor="c")
+        Label(summary_form_frame, text="Recipient", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.260, anchor="c")
+        Label(summary_form_frame, text=self.recipient, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.295, anchor="c")
 
         Label(summary_form_frame, text="Noted by", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.345, anchor="c")
-        Entry(summary_form_frame, textvariable=self.user, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.380, anchor="c")
+        Label(summary_form_frame, text=self.user, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.380, anchor="c")
 
-        ### Editable
-        Label(summary_form_frame, text="Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.430, anchor="c")
-        Entry(summary_form_frame, textvariable=self.location, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.465, anchor="c")
+        Label(summary_form_frame, text="New Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.430, anchor="c")
+        Label(summary_form_frame, text=self.location, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.465, anchor="c")
 
         Label(summary_form_frame, text="Payment Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.515, anchor="c")
-        Entry(summary_form_frame, textvariable=self.status, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.550, anchor="c")
+        Label(summary_form_frame, textv=self.status, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.550, anchor="c")
 
-        Label(summary_form_frame, text="Company", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.600, anchor="c")
-        Entry(summary_form_frame, textvariable=self.company, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.635, anchor="c")
+        Label(summary_form_frame, text="New Company", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.600, anchor="c")
+        Label(summary_form_frame, text=self.company, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.635, anchor="c")
 
-        Label(summary_form_frame, text="Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.685, anchor="c")
-        Entry(summary_form_frame, textvariable=self.owner, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.720, anchor="c")
+        Label(summary_form_frame, text="New Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.685, anchor="c")
+        Label(summary_form_frame, text=self.owner, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.720, anchor="c")
 
         return True 
 
@@ -784,14 +792,38 @@ class findAsset():
 
     def operationSuccess(self):
         ## TODO: Reflect changes to db
-        return True 
 
+        find_filepath = []
+
+        for y in range(len(self.photo_id)):
+            find_filepath.append("asset_"+str(self.photo_id[y]))
+        index = 0 
+        image_filepath = []
+
+        for z in range(len(self.photo_filepaths)):
+            if self.photo_filepaths[z].find(find_filepath[index]) != -1:
+                image_filepath.append(self.photo_filepaths[z])
+                index = index+1
+
+        del self.find_assets[0]
+        for x in range(len(self.find_assets)):
+            
+            asset_id = self.find_assets[x][9]
+            name = self.find_assets[x][1]
+            quantity = self.find_assets[x][6]
+            payment_stat = self.find_assets[x][7]
+            image = image_filepath[x]
+            
+            self.database.createReceipt(self.receipt_no, self.operation, self.user, "Unauthorized", asset_id, name, self.recipient, self.company, self.owner, self.location, quantity, payment_stat, image, "Unapproved")
+        
+        return True
 
 class updateAsset():
     def __init__(self, root):
         self.database = db.Database()
         self.root = root
 
+        # Update variables
         self.update_photo_filename = ""
         self.update_photo = ""
         self.asset_no = IntVar()
@@ -805,9 +837,20 @@ class updateAsset():
         self.update_payment_status = StringVar()
         self.update_payment_status_int = IntVar()
 
-        self.receipt_no = IntVar()
-        self.op_type = "Update"
+        # New updated variables
+        self.new_name = StringVar()
+        self.new_company = StringVar()
+        self.new_location = StringVar()
+        self.new_price = DoubleVar()
+        self.new_quantity = DoubleVar()
+        self.new_ownership = StringVar()
+        self.new_payment_status = StringVar()
+        self.new_payment_status_int = IntVar()
 
+        self.new_photo_filename = ""
+        self.new_photo = ""
+
+        # Update entry fields
         self.update_name_field = Entry()
         self.update_company_field = Entry()
         self.update_status_field = Entry()
@@ -823,7 +866,9 @@ class updateAsset():
 
         self.selected_asset = -1
 
-        # Receipt
+        # Receipt fields
+        self.op_type = "Update"
+
         self.receipt_no_field = Entry() 
         self.receipt_no = IntVar()
 
@@ -973,7 +1018,6 @@ class updateAsset():
         self.update_table.optionsTable(23, "radio")
         self.update_canvas.configure(scrollregion=self.update_canvas.bbox("all"))
         
-
     def getSelected(self):
         self.selected_asset = self.update_table.getSelectedRadio()
 
@@ -993,7 +1037,7 @@ class updateAsset():
             self.update_quantity = self.update_contents[7]
             self.update_payment_status = self.update_contents[8]
             self.update_status = self.update_contents[9]
-            
+
             return True
         return False
 
@@ -1025,6 +1069,7 @@ class updateAsset():
         filepath = self.database.readBLOB(update[self.asset_index][0])
 
         self.update_photo_filename = filepath
+        self.new_photo_filename = filepath
 
         image_set = Image.open(filepath)
         resized_img = image_set.resize((250, 250), Image.ANTIALIAS)
@@ -1044,7 +1089,7 @@ class updateAsset():
         Label(update_right, text="Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.100,
                                                                                                    rely=0.200,
                                                                                                    anchor="center")
-        self.update_name_field = Entry(update_right, textvariable=self.update_name, width=35, bd=0)
+        self.update_name_field = Entry(update_right, textvariable=self.new_name, width=35, bd=0)
         self.update_name_field.delete(0, 'end')
         self.update_name_field.insert(0, self.update_name)
         self.update_name_field.place(height=25, width=250, relx=.245, rely=0.250, anchor="center")
@@ -1052,7 +1097,7 @@ class updateAsset():
 
         Label(update_right, text="Company", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.590, rely=0.200,
                                                                                                 anchor="center")
-        self.update_company_field = Entry(update_right, textvariable=self.update_company, width=35, bd=0)
+        self.update_company_field = Entry(update_right, textvariable=self.new_company, width=35, bd=0)
         self.update_company_field.delete(0, 'end')
         self.update_company_field.insert(0, self.update_company)
         self.update_company_field.place(height=25, width=250, relx=.750, rely=0.250, anchor="center")
@@ -1066,7 +1111,7 @@ class updateAsset():
         Label(update_right, text="Unit Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.605,
                                                                                                       rely=0.350,
                                                                                                       anchor="center")
-        self.update_location_field = Entry(update_right, textvariable=self.update_location, width=35, bd=0)
+        self.update_location_field = Entry(update_right, textvariable=self.new_location, width=35, bd=0)
         self.update_location_field.delete(0, 'end')
         self.update_location_field.insert(0, self.update_location)
         self.update_location_field.place(height=25, width=250, relx=.750, rely=0.400, anchor="center")
@@ -1074,7 +1119,7 @@ class updateAsset():
 
         Label(update_right, text="Price", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.065, rely=0.500,
                                                                                               anchor="center")
-        self.update_price_field = Entry(update_right, textvariable=self.update_price, width=35, bd=0)
+        self.update_price_field = Entry(update_right, textvariable=self.new_price, width=35, bd=0)
         self.update_price_field.delete(0, 'end')
         self.update_price_field.insert(0, self.update_price)
         self.update_price_field.place(height=25, width=250, relx=.245, rely=0.550, anchor="center")
@@ -1084,7 +1129,7 @@ class updateAsset():
 
         Label(update_right, text="Quantity", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.585, rely=0.500,
                                                                                                  anchor="center")
-        self.update_quantity_field = Entry(update_right, textvariable=self.update_quantity, width=35, bd=0)
+        self.update_quantity_field = Entry(update_right, textvariable=self.new_quantity, width=35, bd=0)
         self.update_quantity_field.delete(0, 'end')
         self.update_quantity_field.insert(0, self.update_quantity)
         self.update_quantity_field.place(height=25, width=250, relx=.750, rely=0.550, anchor="center")
@@ -1094,7 +1139,7 @@ class updateAsset():
 
         Label(update_right, text="Ownership", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.090, rely=0.650,
                                                                                                   anchor="center")
-        self.update_owner_field = Entry(update_right, textvariable=self.update_ownership, width=35, bd=0)
+        self.update_owner_field = Entry(update_right, textvariable=self.new_ownership, width=35, bd=0)
         self.update_owner_field.delete(0, 'end')
         self.update_owner_field.insert(0, self.update_ownership)
         self.update_owner_field.place(height=25, width=250, relx=.245, rely=0.700, anchor="center")
@@ -1104,50 +1149,38 @@ class updateAsset():
                                                                                                        rely=0.650,
                                                                                                        anchor="center")
         self.update_payment_paid = Radiobutton(update_right, text="Paid", bg="#DDDDDD",
-                                               variable=self.update_payment_status_int, value=1)
+                                               variable=self.new_payment_status_int, value=1)
         self.update_payment_paid.place(relx=.650, rely=0.700, anchor="center")
         self.update_payment_unpaid = Radiobutton(update_right, text="Unpaid", bg="#DDDDDD",
-                                               variable=self.update_payment_status_int, value=2)
+                                               variable=self.new_payment_status_int, value=2)
         self.update_payment_unpaid.place(relx=.850, rely=0.700, anchor="center")
 
         self.update_error_label = Label(update_right, bg="#DDDDDD", fg="#D64000", font=field_label)
         self.update_error_label.place(relx=.5, rely=0.750, anchor="center")
 
     def checkForm(self, username):
-        valid_first = len(self.update_name) > 1 and len(self.update_company) > 1
-        valid_second = len(self.update_location) > 1 and len(self.update_ownership) > 1 and len(self.update_photo_filename) > 0
-        valid_third = self.update_price > 0 and self.update_quantity > 0 and self.update_payment_status_int.get() > 0
+        valid_first = len(self.new_name.get()) > 1 and len(self.new_company.get()) > 1
+        valid_second = len(self.new_location.get()) > 1 and len(self.new_ownership.get()) > 1 and len(self.new_photo_filename) > 0
+        valid_third = self.new_price.get() > 0 and self.new_quantity.get() > 0 and self.new_payment_status_int.get() > 0
 
-        self.asset_no = 1
-
+        # Check validity
         if valid_first and valid_second and valid_third:
 
-            asset_id = self.asset_no
-            name = self.update_name
-            company = self.update_company
-            owner = self.update_ownership
-            status = "Available"
-            unit_loc = self.update_location
-            price = self.update_price
-            quantity = self.update_quantity
-
-            if self.update_payment_status_int.get() == 1:
-                payment_stat = "Paid"
-            else:
-                payment_stat = "Unpaid"
-
-            image = self.database.convertToBinaryData(self.update_photo_filename)
-            if not image:
-                return False
-                                             
             self.operation = "Update"
             self.user = username
-            self.location = unit_loc
-            self.company = company
-            self.owner = owner
-            self.status = status
 
-            self.update_name = name
+            self.update_name = self.new_name.get()
+            self.update_company = self.new_company.get()
+            self.update_location = self.new_location.get()
+            self.update_price = self.new_price.get()
+            self.update_quantity = self.new_quantity.get()
+            self.update_ownership = self.new_ownership.get()
+
+
+            if self.new_payment_status_int.get() == 1:
+                self.update_payment_status = "Paid"
+            else:
+                self.update_payment_status = "Unpaid"
 
             return True
         else:
@@ -1188,33 +1221,33 @@ class updateAsset():
 
         Label(receipt_bg, text="Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.040, rely=0.625,
                                                                                                anchor="w")
-        self.location_field = Entry(receipt_bg, textvariable=self.location, width=25, bd=0)
+        self.location_field = Entry(receipt_bg, textvariable=self.update_location, width=25, bd=0)
         self.location_field.delete(0, 'end')
-        self.location_field.insert(0, self.location)
+        self.location_field.insert(0, self.update_location)
         self.location_field.config(state='disabled')
         self.location_field.place(height=25, width=200, relx=.25, rely=0.675, anchor="center")
 
         Label(receipt_bg, text="Company", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.540, rely=0.375,
                                                                                                anchor="w")
-        self.company_field = Entry(receipt_bg, textvariable=self.company, width=25, bd=0)
+        self.company_field = Entry(receipt_bg, textvariable=self.update_company, width=25, bd=0)
         self.company_field.delete(0, 'end')
-        self.company_field.insert(0, self.company)
+        self.company_field.insert(0, self.update_company)
         self.company_field.config(state='disabled')
         self.company_field.place(height=25, width=200, relx=.745, rely=0.425, anchor="center")
 
         Label(receipt_bg, text="Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.540, rely=0.500,
                                                                                                anchor="w")
-        self.owner_field = Entry(receipt_bg, textvariable=self.owner, width=25, bd=0)
+        self.owner_field = Entry(receipt_bg, textvariable=self.update_ownership, width=25, bd=0)
         self.owner_field.delete(0, 'end')
-        self.owner_field.insert(0, self.owner)
+        self.owner_field.insert(0, self.update_ownership)
         self.owner_field.config(state='disabled')
         self.owner_field.place(height=25, width=200, relx=.745, rely=0.550, anchor="center")
 
         Label(receipt_bg, text="Payment Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.540, rely=0.625,
                                                                                                anchor="w")
-        self.status_field = Entry(receipt_bg, textvariable=self.status, width=25, bd=0)
+        self.status_field = Entry(receipt_bg, textvariable=self.update_payment_status, width=25, bd=0)
         self.status_field.delete(0, 'end')
-        self.status_field.insert(0, self.status)
+        self.status_field.insert(0, self.update_payment_status)
         self.status_field.config(state='disabled')
         self.status_field.place(height=25, width=200, relx=.745, rely=0.675, anchor="center")
 
@@ -1242,10 +1275,6 @@ class updateAsset():
         if self.receipt_no.get() >= 0 and not self.database.checkReceiptNo(self.receipt_no.get()):
             self.database.createReceipt(self.receipt_no.get(), "Update", self.user, "Unauthorized", asset_id, name, "None", company, owner, unit_loc, quantity, payment_stat, image, "Unapproved")
             return True
-    
+
         return False
-        #print("---------------------- SUBMIT FORM")
-            
-        #self.database.createReceipt("1", "Update", username, "Unauthorized", asset_id, name, "None", company, owner, unit_loc, quantity, payment_stat, image, "Unapproved")
-        # createReceipt(receipt_no, op_type, username, auth, asset_ID, name, recipient, company, owner, unit_loc, amount, payment_stat, image, approval)
-            
+        
