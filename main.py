@@ -91,6 +91,8 @@ def goToNext(currentFrames, nextFunc):
             receiptPage()
         elif nextFunc == 18:  # Summary
             summaryPage()
+        elif nextFunc == 19:  # Receipt for update
+            updateReceipt()
     else:
         login()
 
@@ -389,7 +391,7 @@ def findAsset():
     displayHeader(findAsset_form_frame, 0.050, 0.100)
 
     findAsset_page = asset.findAsset(root)
-    findAsset_page.displayFind(findAsset_form_frame, field_label, buttonA)
+    findAsset_page.displayFind(findAsset_form_frame, field_label, buttonA, buttonB)
     findAsset_page.displayTable(findAsset_bg)
 
     def confirmAssets(frames):
@@ -399,36 +401,34 @@ def findAsset():
 
             displayHeader(findAsset_form_frame, 0.050, 0.100)
 
-            #filter_ins = Label(findAsset_form_frame, text="Confirm Assets Quantities", bg="#DDDDDD", fg="#363636", font=header)
-            #filter_ins.place(relx=.1, rely=.1, anchor="center")
-            #current_font = tkfont.Font(filter_ins, filter_ins.cget("font"))
-            #current_font.configure(size=18, slant="italic")
-            #filter_ins.config(font=current_font)
-
             move_btn = Button(findAsset_form_frame, text="Move", width=13, command=lambda: performOperations(frames, 1), bg="#6D94AA",
                               fg="#FFFFFF", bd=0, font=buttonA)
             move_btn.place(relx=.5, rely=0.25, anchor="center")
 
+            ''' There's already receive on main nav
             receive_btn = Button(findAsset_form_frame, text="Receive", width=13, command=lambda: performOperations(frames, 2), bg="#6D94AA",
                               fg="#FFFFFF", bd=0, font=buttonA)
             receive_btn.place(relx=.5, rely=0.35, anchor="center")
+            (relx=.5, rely=0.75, anchor="center")
+            '''
 
-            lend_btn = Button(findAsset_form_frame, text="Lend", width=13, command=lambda: performOperations(frames, 3), bg="#6D94AA",
+            lend_btn = Button(findAsset_form_frame, text="Lend", width=13, command=lambda: performOperations(frames, 2), bg="#6D94AA",
                               fg="#FFFFFF", bd=0, font=buttonA)
-            lend_btn.place(relx=.5, rely=0.45, anchor="center")
+            lend_btn.place(relx=.5, rely=0.35, anchor="center")
 
-            store_btn = Button(findAsset_form_frame, text="Store", width=13, command=lambda: performOperations(frames, 4), bg="#6D94AA",
+            store_btn = Button(findAsset_form_frame, text="Store", width=13, command=lambda: performOperations(frames, 3), bg="#6D94AA",
                               fg="#FFFFFF", bd=0, font=buttonA)
-            store_btn.place(relx=.5, rely=0.55, anchor="center")
+            store_btn.place(relx=.5, rely=0.45, anchor="center")
 
-            sell_btn = Button(findAsset_form_frame, text="Sell", width=13, command=lambda: performOperations(frames, 5), bg="#6D94AA",
+            sell_btn = Button(findAsset_form_frame, text="Sell", width=13, command=lambda: performOperations(frames, 4), bg="#6D94AA",
                               fg="#FFFFFF", bd=0, font=buttonA)
-            sell_btn.place(relx=.5, rely=0.65, anchor="center")
+            sell_btn.place(relx=.5, rely=0.55, anchor="center")
 
-            dispose_btn = Button(findAsset_form_frame, text="Dispose", width=13, command=lambda: performOperations(frames, 6), bg="#6D94AA",
+            dispose_btn = Button(findAsset_form_frame, text="Dispose", width=13, command=lambda: performOperations(frames, 5), bg="#6D94AA",
                               fg="#FFFFFF", bd=0, font=buttonA)
-            dispose_btn.place(relx=.5, rely=0.75, anchor="center")
+            dispose_btn.place(relx=.5, rely=0.65, anchor="center")
 
+            
             back_btn = Button(findAsset_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 8), bg="#2D2E2E",
                               fg="#FFFFFF", bd=0, font=buttonB)
             back_btn.place(relx=.15, rely=0.950, anchor="center")
@@ -603,15 +603,12 @@ def updatePage():
 
         '''
         if form.submitForm(login_credentials.username.get()):
-            approvedMessage(frames, "Asset Updated\nSuccessfully!", True)
-        else:
-            approvedMessage(frames, "Error Updating\nAsset!", False)
-        '''
-
-        if form.submitForm(login_credentials.username.get()):
             ## Check inputs
             approvedMessage(frames, "Changes successfully\nsent for approval", True)
-            
+        '''
+
+        if form.checkForm(login_credentials.username.get()):
+            goToNext(frames, 19) 
 
     back_btn = Button(update_left, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E", fg="#FFFFFF", bd=0, font=buttonB)
     back_btn.place(relx=.15, rely=0.950, anchor="center")
@@ -621,6 +618,34 @@ def updatePage():
     update_btn.place(relx=.250, rely=0.975, anchor="center")
     update_page.setButton(update_btn)
 
+
+def updateReceipt():
+
+    global update_page
+
+    receipt_bg = Frame(root, bg="#DDDDDD", width=500, height=550)
+    receipt_bg.columnconfigure(0, weight=1)
+    receipt_bg.place(relx=.5, rely=.5, anchor="center")
+
+    displayHeader(receipt_bg, 0.10, 0.15)
+    update_page.displayReceipt(receipt_bg, field_label)
+
+    frames = [receipt_bg]
+
+    def operationSuccess(frames):
+        if update_page.assetOperationSuccess():
+            #approvedMessage(frames, "Successful operation", True)
+            approvedMessage(frames, "Changes successfully\nsent for approval", True)
+        else:
+            approvedMessage(frames, "Try Again", False)
+
+    confirm_btn = Button(receipt_bg, text="Confirm", height=1, width=15,
+                             command=lambda: operationSuccess(frames), bg="#8EB8CF", fg="#FFFFFF", bd=0, font=buttonA)
+    confirm_btn.place(relx=.5, rely=0.800, anchor="center")
+
+    back_btn = Button(receipt_bg, text="Back", width=10, command=lambda: goToNext(frames, 11), bg="#2D2E2E",
+                      fg="#FFFFFF", bd=0, font=buttonB)
+    back_btn.place(relx=.5, rely=0.900, anchor="center")
 
 def importExport():
     import_bg = Frame(root, bg="#DDDDDD", width=300, height=300)
