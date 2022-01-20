@@ -34,21 +34,21 @@ class Database():
 			# 		database = "prime_properties")
 			#
 			#                    BERNICE                     #
-			#self.db = mysql.connect(
-			#		host = "localhost",
-			#		port = "3306",
-			#		user = "root",
-			#		passwd = "cssw3nG!",
-			#		database = "prime_properties"
-			#)
-			#                     CAR                        #
 			self.db = mysql.connect(
-			 		host = "localhost",
-			 		port = "3310",
-			 		user = "root",
-			 		passwd = "12345",
-					database = "prime_properties"
+				host="localhost",
+				port="3306",
+				user="root",
+				passwd="cssw3nG!",
+				database="prime_properties"
 			)
+			#                     CAR                        #
+			# self.db = mysql.connect(
+			#  		host = "localhost",
+			#  		port = "3310",
+			#  		user = "root",
+			#  		passwd = "12345",
+			# 		database = "prime_properties"
+			# )
 		except Error:
 			print("Database Connection Error. Please initialize database.")
 			quit()
@@ -418,7 +418,7 @@ class Database():
 				command = "SELECT id, receipt_no, op_type, username, authorized_by, asset_id, image, asset_name, recipient, company, owner, unit_loc, amount, payment_stat, approval_stat FROM operations"
 				filters = " WHERE "
 				if in_transit:
-					command = "SELECT operations.id, operations.receipt_no, operations.op_type, operations.username, operations.authorized_by, operations.asset_id, operations.image, operations.asset_name, operations.recipient, operations.company, operations.owner, operations.unit_loc, operations.amount, operations.payment_stat, operations.approval_stat FROM operations INNER JOIN assets ON assets.status LIKE 'In Transit%' AND assets.id = operations.asset_id"
+					command = "SELECT operations.id, operations.receipt_no, operations.op_type, operations.username, operations.authorized_by, operations.asset_id, operations.image, operations.asset_name, operations.recipient, operations.company, operations.owner, operations.unit_loc, operations.amount, operations.payment_stat, operations.approval_stat FROM operations INNER JOIN assets ON assets.status LIKE 'In Transit%' AND assets.id = operations.asset_id AND operations.op_type LIKE 'Move' or operations.op_type LIKE 'Sold' or operations.op_type LIKE 'Disposed' or operations.op_type LIKE 'Borrowed' or operations.op_type LIKE 'Lent'"
 					filters = " AND "
 				if len(receipt_num) > 0:
 					filters += "operations.receipt_no = '" + str(receipt_num) + "'"
@@ -448,4 +448,3 @@ class Database():
 				return self.cursor.fetchall()
 		except Error:
 			print("Failed to retrieve record/s")
-
