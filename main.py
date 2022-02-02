@@ -403,13 +403,6 @@ def findAsset():
                               fg="#FFFFFF", bd=0, font=buttonA)
             move_btn.place(relx=.5, rely=0.25, anchor="center")
 
-            ''' There's already receive on main nav
-            receive_btn = Button(findAsset_form_frame, text="Receive", width=13, command=lambda: performOperations(frames, 2), bg="#6D94AA",
-                              fg="#FFFFFF", bd=0, font=buttonA)
-            receive_btn.place(relx=.5, rely=0.35, anchor="center")
-            (relx=.5, rely=0.75, anchor="center")
-            '''
-
             lend_btn = Button(findAsset_form_frame, text="Lend", width=13, command=lambda: performOperations(frames, 2), bg="#6D94AA",
                               fg="#FFFFFF", bd=0, font=buttonA)
             lend_btn.place(relx=.5, rely=0.35, anchor="center")

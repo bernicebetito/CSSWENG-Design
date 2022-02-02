@@ -797,7 +797,7 @@ class findAsset():
 
         for y in range(len(self.photo_id)):
             find_filepath.append("asset_"+str(self.photo_id[y]))
-        index = 0 
+        index = 0
         image_filepath = []
 
         for z in range(len(self.photo_filepaths)):
@@ -805,7 +805,11 @@ class findAsset():
                 image_filepath.append(self.photo_filepaths[z])
                 index = index+1
 
+            if index == len(find_filepath):
+                break
+
         del self.find_assets[0]
+
         for x in range(len(self.find_assets)):
             
             asset_id = self.find_assets[x][9]
@@ -1273,8 +1277,16 @@ class updateAsset():
 
         # Check valid receipt number
         if self.receipt_no.get() >= 0 and not self.database.checkReceiptNo(self.receipt_no.get()):
-            self.database.createReceipt(self.receipt_no.get(), "Update", self.user, "Unauthorized", asset_id, name, "None", company, owner, unit_loc, quantity, payment_stat, image, "Unapproved")
-            return True
+            self.database.createReceipt(self.receipt_no.get(), "Update", self.user, "Authorized", asset_id, name, "None", company, owner, unit_loc, quantity, payment_stat, image, "Unapproved")
+            
 
+            # Reflect updates
+            update_query = "UPDATE assets SET name = '" + name + "', company = '" + company + "', owner = '" + owner\
+                                                             + "', unit_loc = '" + unit_loc + "', price = '" + str(price) + "', amount = '" + str(quantity) + "', payment_stat = '" + payment_stat\
+                                                             + "' WHERE id = " + str(asset_id)
+            self.database.updateAsset(update_query)
+
+            return True
+                                                         
         return False
         
