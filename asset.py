@@ -819,7 +819,11 @@ class findAsset():
             image = image_filepath[x]
             
             self.database.createReceipt(self.receipt_no, self.operation, self.user, "Unauthorized", asset_id, name, self.recipient, self.company, self.owner, self.location, quantity, payment_stat, image, "Unapproved")
-        
+
+            self.operation = "In Transit - " + self.operation
+            update_query = "UPDATE assets SET status = '" + self.operation + "' WHERE id = " + str(asset_id)
+            self.database.updateAsset(update_query)
+            
         return True
 
 class updateAsset():
@@ -1049,7 +1053,9 @@ class updateAsset():
         self.update_button = update_button
         self.update_button.config(state=NORMAL)
 
+    '''
     def uploadImage(self):
+
         fileTypes = [('JPG Files', '*.jpg'),
                      ('JPEG Files', '*.jpeg'),
                      ('PNG Files', '*.png')]
@@ -1061,6 +1067,7 @@ class updateAsset():
 
         self.update_photo = upload_img
         self.update_photo_preview.create_image(0, 0, image=upload_img, anchor=NW)
+    '''
 
     def displayUploadedImage(self, update_left, buttonA, field_label):
 
@@ -1073,7 +1080,10 @@ class updateAsset():
         filepath = self.database.readBLOB(update[self.asset_index][0])
 
         self.update_photo_filename = filepath
-        self.new_photo_filename = filepath
+        #self.new_photo_filename = filepath
+
+        print("displayUploadImage bypass")
+        print(self.update_photo_filename)
 
         image_set = Image.open(filepath)
         resized_img = image_set.resize((250, 250), Image.ANTIALIAS)
@@ -1162,12 +1172,35 @@ class updateAsset():
         self.update_error_label = Label(update_right, bg="#DDDDDD", fg="#D64000", font=field_label)
         self.update_error_label.place(relx=.5, rely=0.750, anchor="center")
 
+    def uploadImage(self):
+
+        fileTypes = [('JPG Files', '*.jpg'),
+                     ('JPEG Files', '*.jpeg'),
+                     ('PNG Files', '*.png')]
+        self.update_photo_filename = filedialog.askopenfilename(filetypes=fileTypes)
+
+        print("Upload image bypass")
+        print(self.update_photo_filename)
+
+        if len(self.update_photo_filename) > 0:
+            image = Image.open(self.update_photo_filename)
+            resized_img = image.resize((250, 250), Image.ANTIALIAS)
+            upload_img = ImageTk.PhotoImage(resized_img)
+            self.root.update_photo = upload_img
+
+            self.update_photo_preview.create_image(0, 0, image=upload_img, anchor=NW)
+            self.update_photo_preview.delete(self.update_photo_text)
+
     def checkForm(self, username):
         valid_first = len(self.new_name.get()) > 1 and len(self.new_company.get()) > 1
-        valid_second = len(self.new_location.get()) > 1 and len(self.new_ownership.get()) > 1 and len(self.new_photo_filename) > 0
+        valid_second = len(self.new_location.get()) > 1 and len(self.new_ownership.get()) > 1 and len(self.update_photo_filename) > 0
         valid_third = self.new_price.get() > 0 and self.new_quantity.get() > 0 and self.new_payment_status_int.get() > 0
 
         # Check validity
+
+        print(valid_first)
+        print(valid_second)
+        print(valid_third)
         if valid_first and valid_second and valid_third:
 
             self.operation = "Update"
@@ -1271,9 +1304,16 @@ class updateAsset():
         else:
             payment_stat = "Unpaid"
 
+        print(self.update_photo_filename)
+
         image = self.database.convertToBinaryData(self.update_photo_filename)
         if not image:
             return False
+
+        query =  "UPDATE assets SET image = %s WHERE id = %s"
+        args = (image, str(asset_id))
+        self.database.updatePhoto(query,args)
+        
 
         # Check valid receipt number
         if self.receipt_no.get() >= 0 and not self.database.checkReceiptNo(self.receipt_no.get()):

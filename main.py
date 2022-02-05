@@ -625,8 +625,8 @@ def updateReceipt():
 
     def operationSuccess(frames):
         if update_page.assetOperationSuccess():
-            #approvedMessage(frames, "Successful operation", True)
-            approvedMessage(frames, "Changes successfully\nsent for approval", True)
+            approvedMessage(frames, "Successful operation", True)
+            #approvedMessage(frames, "Changes successfully\nsent for approval", True)
         else:
             approvedMessage(frames, "Try Again", False)
 

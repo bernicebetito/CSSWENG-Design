@@ -186,6 +186,13 @@ class Database():
 		except Error as error:
 			print("Update asset failed: {}".format(error))
 
+	def updatePhoto(self, query, args):
+		try:
+			self.cursor.execute(query,args)
+			self.db.commit()
+		except Error as error:
+			print(error)
+
 	def delAsset(self, asset_ID):
 		try:
 			del_query = "DELETE FROM assets "
