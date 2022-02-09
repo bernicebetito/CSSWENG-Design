@@ -19,35 +19,23 @@ class Database():
 		try:
 			# ------------------ DB SPECS ------------------ #
 			#                     TRICIA                     #
-			# db = mysql.connect(
-			#   	host = "localhost",
-			#   	user = "root",
-			#  		passwd = "CSSWENG_Group5",
-			#   	database = "prime_properties")
-			#
+			# db_specs = ["", "CSSWENG_Group5"]
+
 			#                     GRECO                      #
-			# db = mysql.connect(
-			# 		host = "localhost",
-			# 		port ='3310', #edited
-			# 		user = "root",
-			# 		passwd = "12345", #edited
-			# 		database = "prime_properties")
-			#
+			# db_specs = ["3310", "12345"]
+
 			#                    BERNICE                     #
-			#self.db = mysql.connect(
-			#	host="localhost",
-			#	port="3306",
-			#	user="root",
-			#	passwd="cssw3nG!",
-			#	database="prime_properties"
-			#)
+			db_specs = ["3306", "cssw3nG!"]
+
 			#                     CAR                        #
+			# db_specs = ["3310", "12345"]
+
 			self.db = mysql.connect(
-			  		host = "localhost",
-			  		port = "3310",
-			  		user = "root",
-			  		passwd = "12345",
-			 		database = "prime_properties"
+				host="localhost",
+				port=db_specs[0],
+				user="root",
+				passwd=db_specs[1],
+				database="prime_properties"
 			)
 		except Error:
 			print("Database Connection Error. Please initialize database.")
@@ -76,6 +64,9 @@ class Database():
 
 	def deleteTable(self, tb_name):
 		self.cursor.execute("DROP TABLE " + tb_name)
+
+	def emptyTable(self, tb_name):
+		self.cursor.execute("TRUNCATE TABLE " + tb_name)
 
 	# ------------------ APPLICATION FUNCTIONALITIES ------------------ #
 	# USERS
@@ -235,7 +226,7 @@ class Database():
 			except OSError:
 				print("Creation of the directory %s failed" % path)
 
-		storage_filepath = path + r"\asset_{0}.jpeg".format(str(asset_ID))  # saves to AssetImages folder
+		storage_filepath = path + r"\asset_{0}.jpeg".format(str(asset_ID))
 		with open(storage_filepath, 'wb') as file:
 			file.write(result)
 			file.close()
@@ -327,7 +318,36 @@ class Database():
 			print("Operation Deletion Failed")
 
 	# IMPORTING AND EXPORTING
-	def importToExcel(self, assets_filepath, ops_filepath, username):
+	def importImagesfromFolder(self, filepath, asset_ID):
+		path = filepath
+		valid_images = [".jpg", ".jpeg", ".gif", ".png", ".tga"]
+		asset = "asset_"
+
+		for f in os.listdir(path):
+			ext = os.path.splitext(f)[1]
+			if ext.lower() in valid_images:
+				fname = os.path.splitext(f)[0]
+				if fname == (asset + str(int(asset_ID))):
+					image = self.convertToBinaryData(os.path.join(path, f))
+					return image
+
+		return None
+
+	def importReceipt(self, op_id, receipt_no, op_type, username, auth, asset_id, name, recipient, company, owner, unit_loc, amount, payment_stat, image, approval_stat):
+		query = "INSERT INTO operations (id, receipt_no, op_type, username, authorized_by, asset_id, asset_name, recipient, company, owner, unit_loc, amount, payment_stat, image, approval_stat, op_ts) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+		currTime = datetime.datetime.now()
+		values = (op_id, receipt_no, op_type, username, auth, asset_id, name, recipient, company, owner, unit_loc, amount, payment_stat, image, approval_stat, currTime)
+		self.cursor.execute(query, values)
+		self.db.commit()
+
+	def importAsset(self, tb_name, asset_ID, name, company, owner, status, unit_loc, price, amount, payment_stat, image):
+		query = "INSERT INTO " + tb_name + " (id, name, company, owner, status, unit_loc, price, amount, payment_stat, image, mod_ts) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+		currTime = datetime.datetime.now()
+		values = (asset_ID, name, company, owner, status, unit_loc, price, amount, payment_stat, image, currTime)
+		self.cursor.execute(query, values)
+		self.db.commit()
+
+	def importToExcel(self, assets_filepath, ops_filepath, photos_dir):
 		self.deleteTable("assets")
 		self.deleteTable("operations")
 
@@ -340,27 +360,42 @@ class Database():
 		# Import Operations
 		wb = xlrd.open_workbook(ops_filepath)
 		sheet = wb.sheet_by_index(0)
-		for i in range(sheet.nrows):
-			if i > 0:
-				self.createReceipt(sheet.cell_value(i, 2), sheet.cell_value(i, 3), sheet.cell_value(i, 4), sheet.cell_value(i, 5), sheet.cell_value(i, 6), sheet.cell_value(i, 7), sheet.cell_value(i, 8), sheet.cell_value(i, 9), sheet.cell_value(i, 10), sheet.cell_value(i, 11), sheet.cell_value(i, 12), sheet.cell_value(i, 13), sheet.cell_value(i, 14), sheet.cell_value(i, 15))
-		print("Successfully retrieved all operations data")
+		for i in range(1, sheet.nrows):
+			# Import image from folder of asset images
+			img = self.importImagesfromFolder(photos_dir, sheet.cell_value(i, 6))
+			if img is not None:
+				# receipt_no, op_type, username, auth, asset_id, name, recipient, company, owner, unit_loc, amount, payment_stat, image, approv
+				self.importReceipt(sheet.cell_value(i, 1), sheet.cell_value(i, 2), sheet.cell_value(i, 3),
+							  sheet.cell_value(i, 4), sheet.cell_value(i, 5), sheet.cell_value(i, 6),
+							  sheet.cell_value(i, 7), sheet.cell_value(i, 8), sheet.cell_value(i, 9),
+							  sheet.cell_value(i, 10), sheet.cell_value(i, 11), sheet.cell_value(i, 12),
+							  sheet.cell_value(i, 13), img, sheet.cell_value(i, 14))
+			else:
+				self.emptyTable("operations")
+				self.emptyTable("assets")
+				raise TypeError
 
 		# Import Assets
 		wb = xlrd.open_workbook(assets_filepath)
 		sheet = wb.sheet_by_index(0)
-		for i in range(sheet.nrows):
-			if i > 0:
-				self.createAsset("assets", username, sheet.cell_value(i, 2), sheet.cell_value(i, 3), sheet.cell_value(i, 4),
-							sheet.cell_value(i, 5), sheet.cell_value(i, 6), sheet.cell_value(i, 7),
-							sheet.cell_value(i, 8), sheet.cell_value(i, 9), sheet.cell_value(i, 10),
-							sheet.cell_value(i, 11))
-		print("Successfully retrieved all assets data")
+		for i in range(1, sheet.nrows):
+			# Import image from folder of asset images
+			img = self.importImagesfromFolder(photos_dir, sheet.cell_value(i, 1))
+			if img is not None:
+				# assetID, name, company, owner, status, unit_loc, price, amount, payment_stat, image, mod_ts
+				self.importAsset("assets", sheet.cell_value(i, 1), sheet.cell_value(i, 2), sheet.cell_value(i, 3),
+							sheet.cell_value(i, 4), sheet.cell_value(i, 5), sheet.cell_value(i, 6),
+							sheet.cell_value(i, 7), sheet.cell_value(i, 8), sheet.cell_value(i, 9), img)
+			else:
+				self.emptyTable("operations")
+				self.emptyTable("assets")
+				raise TypeError
 
 	def exportToExcel(self):
-		df=sql.read_sql('select * from operations', self.db)
+		df=sql.read_sql('select id, receipt_no, op_type, username, authorized_by, asset_id, asset_name, recipient, company, owner, unit_loc, amount, payment_stat, approval_stat, op_ts from operations', self.db)
 		df.to_excel('operations.xlsx')
 
-		df=sql.read_sql('select * from assets', self.db)
+		df=sql.read_sql('select id, name, company, owner, status, unit_loc, price, amount, payment_stat, mod_ts from assets', self.db)
 		df.to_excel('assets.xlsx')
 
 	# GENERAL

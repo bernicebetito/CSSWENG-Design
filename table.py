@@ -130,29 +130,33 @@ class ImportExport():
         self.database = db.Database()
         self.import_operations = ""
         self.import_assets = ""
+        self.import_photos = ""
 
     def displayImport(self, import_bg, sub):
-        self.choose_header = Label(import_bg, text="Choose Files to Import", bg="#DDDDDD", fg="#6A6A6A", font=sub)
-        self.choose_header.place(relx=.5, rely=0.275, anchor="center")
-
-        self.chosen_operations_header = Label(import_bg, text="No Operations File Chosen", width=25, bg="#EAEAEA", fg="#191919", font=sub)
-        self.chosen_operations_header.place(relx=.5, rely=0.350, anchor="center")
+        self.choose_header = Label(import_bg, text="Choose Files to Import", bg="#DDDDDD", fg="#191919", font=sub)
+        self.choose_header.place(relx=.5, rely=0.200, anchor="center")
 
         btn_font = tkfont.Font(family='Open Sans', weight="bold", size=13)
+        self.chosen_operations_header = Label(import_bg, text="No Operations File Chosen", width=25, bg="#EAEAEA", fg="#191919", font=sub)
+        self.chosen_operations_header.place(relx=.5, rely=0.300, anchor="center")
         self.choose_ops_btn = Button(import_bg, text="Choose File", width=15, command=lambda: self.uploadOperationsFile(),
                                      bg="#667275", fg="#FFFFFF", bd=0, font=btn_font)
-        self.choose_ops_btn.place(relx=.5, rely=0.425, anchor="center")
+        self.choose_ops_btn.place(relx=.5, rely=0.375, anchor="center")
 
         self.chosen_assets_header = Label(import_bg, text="No Assets File Chosen", width=25, bg="#EAEAEA", fg="#191919", font=sub)
-        self.chosen_assets_header.place(relx=.5, rely=0.560, anchor="center")
-
-        btn_font = tkfont.Font(family='Open Sans', weight="bold", size=13)
+        self.chosen_assets_header.place(relx=.5, rely=0.475, anchor="center")
         self.choose_asset_btn = Button(import_bg, text="Choose File", width=15, command=lambda: self.uploadAssetsFile(),
                                      bg="#667275", fg="#FFFFFF", bd=0, font=btn_font)
-        self.choose_asset_btn.place(relx=.5, rely=0.635, anchor="center")
+        self.choose_asset_btn.place(relx=.5, rely=0.550, anchor="center")
+
+        self.chosen_photos_header = Label(import_bg, text="No Photos Directory Chosen", width=25, bg="#EAEAEA", fg="#191919", font=sub)
+        self.chosen_photos_header.place(relx=.5, rely=0.650, anchor="center")
+        self.choose_photos_btn = Button(import_bg, text="Choose Folder", width=15, command=lambda: self.uploadPhotosDir(),
+                                       bg="#667275", fg="#FFFFFF", bd=0, font=btn_font)
+        self.choose_photos_btn.place(relx=.5, rely=0.725, anchor="center")
 
         self.import_error_label = Label(import_bg, bg="#DDDDDD", fg="#D64000", font=sub)
-        self.import_error_label.place(relx=.5, rely=0.715, anchor="center")
+        self.import_error_label.place(relx=.5, rely=0.825, anchor="center")
 
         current_font = tkfont.Font(self.import_error_label, self.import_error_label.cget("font"))
         current_font.configure(weight="bold")
@@ -174,10 +178,16 @@ class ImportExport():
             display_name = self.import_assets.split('/')[len(self.import_assets.split('/')) - 1]
             self.chosen_assets_header.configure(text=display_name)
 
-    def importFile(self, username):
-        if len(self.import_operations) > 0 and len(self.import_assets) > 0:
+    def uploadPhotosDir(self):
+        self.import_photos = filedialog.askdirectory()
+        if len(self.import_photos) > 0:
+            display_name = self.import_photos.split('/')[len(self.import_photos.split('/')) - 1]
+            self.chosen_photos_header.configure(text=display_name)
+
+    def importFile(self):
+        if len(self.import_operations) > 0 and len(self.import_assets) > 0 and len(self.import_photos) > 0:
             try:
-                self.database.importToExcel(self.import_assets, self.import_operations, username)
+                self.database.importToExcel(self.import_assets, self.import_operations, self.import_photos)
                 return True
             except:
                 return False

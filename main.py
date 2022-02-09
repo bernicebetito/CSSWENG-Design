@@ -638,6 +638,7 @@ def updateReceipt():
                       fg="#FFFFFF", bd=0, font=buttonB)
     back_btn.place(relx=.5, rely=0.900, anchor="center")
 
+
 def importExport():
     import_bg = Frame(root, bg="#DDDDDD", width=300, height=300)
     import_bg.columnconfigure(0, weight=1)
@@ -658,28 +659,28 @@ def importExport():
 
 
 def importOption():
-    import_bg = Frame(root, bg="#DDDDDD", width=300, height=450)
+    import_bg = Frame(root, bg="#DDDDDD", width=300, height=550)
     import_bg.columnconfigure(0, weight=1)
     import_bg.place(relx=.5, rely=.5, anchor="center")
 
-    displayHeader(import_bg, 0.10, 0.15)
+    displayHeader(import_bg, 0.075, 0.125)
     frames = [import_bg]
     import_user = table.ImportExport()
     import_user.displayImport(import_bg, sub)
 
     def importFile(frames):
-        import_files = import_user.importFile(login_credentials.username.get())
+        import_files = import_user.importFile()
         if import_files is True:
-            approvedMessage(frames, "Successfully\nImported File!", True)
+            approvedMessage(frames, "Successfully\nImported Files!", True)
         elif import_files is not None:
-            approvedMessage(frames, "Error Importing\nFile!", False)
+            approvedMessage(frames, "Error Importing\nFiles!", False)
 
     import_btn = Button(import_bg, text="Import", width=15, command=lambda: importFile(frames), bg="#3C4648", fg="#FFFFFF", bd=0, font=buttonA)
-    import_btn.place(relx=.5, rely=0.800, anchor="center")
+    import_btn.place(relx=.5, rely=0.850, anchor="center")
 
     back_btn = Button(import_bg, text="Back", width=10, command=lambda: goToNext(frames, 2), bg="#2D2E2E",
                       fg="#FFFFFF", bd=0, font=buttonB)
-    back_btn.place(relx=.5, rely=0.900, anchor="center")
+    back_btn.place(relx=.5, rely=0.925, anchor="center")
 
 
 def exportOption():
