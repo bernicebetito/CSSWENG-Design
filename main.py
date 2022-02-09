@@ -761,5 +761,6 @@ def deleteAsset():
     back_btn.place(relx=.15, rely=0.950, anchor="center")
 
 
-login()
-root.mainloop()
+if __name__ == '__main__':
+    login()
+    root.mainloop()
