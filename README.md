@@ -1,4 +1,6 @@
-# CSSWENG-Design
+# CSSWENG-Prime-Properties
+An Inventory Management System for Prime Properties
+
 
 To turn into an executable file, install Pyinstaller through `pip install pyinstaller` and run
 ```
