@@ -17,8 +17,6 @@ class Table(object):
         self.images = []
         self.selectedCheckbox = []
         self.selectedRadio = ""
-        self.quantityInput = []
-        self.quantitySet = []
 
     def setScrollbars(self, frame):
         self.vertical_scroll = Scrollbar(frame, orient=VERTICAL)
@@ -92,13 +90,6 @@ class Table(object):
 
                             if self.contents[row][0] == self.selectedRadio:
                                 self.canvas.itemconfig(self.checkboxes[row], fill="#666666")
-                        elif option == "quantity":
-                           
-                            spinner = Spinbox(self.canvas, from_=1, to=self.contents[row][7], width=5)
-                            self.quantityInput.append(spinner)
-                            self.quantitySet.append(1)
-                            self.checkboxes[row] = self.canvas.create_window(x_text, y_text, window=spinner)
-                           
                     else:
                         self.canvas.create_text((x_text, y_text), text=self.contents[row][column], font=self.data_font)
 
@@ -132,13 +123,6 @@ class Table(object):
 
     def getSelectedRadio(self):
         return self.selectedRadio
-
-    def getQuantity(self):
-
-        for entry in range(len(self.quantityInput)):
-            self.quantitySet[entry] = self.quantityInput[entry].get()
-            self.quantitySet[entry] = int(self.quantitySet[entry])
-        return self.quantitySet
 
 
 class ImportExport():

@@ -426,8 +426,8 @@ def findAsset():
 
     def performOperations(frames, operation_no):
         ## Check
-        if findAsset_page.setOperation(operation_no, login_credentials.username.get()):
-            goToNext(frames, 17)
+        findAsset_page.setOperation(operation_no, login_credentials.username.get())
+        goToNext(frames, 17)
 
     frames = [findAsset_bg, findAsset_form_frame, findAsset_page.findAsset_table_frame]
 
@@ -592,6 +592,11 @@ def updatePage():
 
     def checkUpdateAsset(frames, form):
 
+        '''
+        if form.submitForm(login_credentials.username.get()):
+            ## Check inputs
+            approvedMessage(frames, "Changes successfully\nsent for approval", True)
+        '''
 
         if form.checkForm(login_credentials.username.get()):
             goToNext(frames, 19) 
