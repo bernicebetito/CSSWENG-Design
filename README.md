@@ -6,6 +6,6 @@ To turn into an executable file, install Pyinstaller through `pip install pyinst
 
 Open Windows Powershell and run the following command:
 ```
-pyinstaller -F -w main.py --name "Prime Inventory System" --icon "assets/PP-ICON.ico"
+pyinstaller -F -w main.py --name "Prime Inventory System" --icon "assets/ICON.ico"
 ```
 Go to the created folder "dist" and run the program.
