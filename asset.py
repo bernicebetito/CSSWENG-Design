@@ -505,6 +505,7 @@ class findAsset():
         self.find_assets_cols = []
         self.photo_filepaths = []
         self.photo_id = []
+        self.quantity = []
 
         # New 
         self.new_company = StringVar()
@@ -616,7 +617,7 @@ class findAsset():
         self.findAsset_table.setScrollbars(self.findAsset_table_frame)
         self.findAsset_table.optionsTable(23, "checkbox")
         self.findAsset_canvas.configure(scrollregion=self.findAsset_canvas.bbox("all"))
-
+ 
     def getSelected(self):
         self.find_assets = self.findAsset_table.getSelectedCheckbox()
         self.photo_id = self.find_assets
@@ -629,7 +630,6 @@ class findAsset():
                     del self.findAsset_table_contents[keep_asset]
                 else:
                     self.findAsset_table_contents[keep_asset].append(self.findAsset_table_contents[keep_asset][0])
-                    del self.findAsset_table_contents[keep_asset][0]
 
             self.findAsset_table.rows = len(self.findAsset_table_contents)
             self.findAsset_table.cols = len(self.findAsset_table_contents[0]) - 1
@@ -639,9 +639,11 @@ class findAsset():
             self.find_assets_rows = self.findAsset_table.rows
             self.find_assets_cols = self.findAsset_table.cols  
 
-            self.findAsset_table.createTable()
+            self.findAsset_table.optionsTable(23, "quantity")
             self.findAsset_canvas.configure(scrollregion=self.findAsset_canvas.bbox("all"))
+
             return True
+           
         return False
 
     def displayReceipt(self, receipt_bg, field_label):
@@ -710,6 +712,11 @@ class findAsset():
 
     def setOperation(self, op_no, user):
 
+        self.quantity = self.findAsset_table.getQuantity()
+        for x in range(len(self.quantity)):
+            if self.quantity[x] > self.findAsset_table.contents[x+1][7]:
+                return False
+        
         if op_no == 1:
             self.operation = "Move"
             self.status = "In Transit - Move"
@@ -729,6 +736,8 @@ class findAsset():
             self.operation = ""
 
         self.user = user
+
+        return True
         
     def assetOperationSuccess(self):
         ## TODO: Place checkers if receipt values are valid
@@ -771,8 +780,7 @@ class findAsset():
         return True 
 
     def displaySummaryAssets(self, summary_bg):
-        ## TODO: Display asset details
-        
+
         self.summary_bg = summary_bg
         self.summary_table_frame = Frame(summary_bg, bg="#191919", width=825, height=500)
         self.summary_table_frame.place(relx=.625, rely=.5, anchor="center")
@@ -782,6 +790,10 @@ class findAsset():
         summary_measurements = {"cell_width": 150, "cell_height": 75, "rows": self.find_assets_rows,
                                "columns": 10}
 
+        self.find_assets[0][0] = "Quantity"
+        for x in range(len(self.find_assets)-1):
+            self.find_assets[x+1][0] = self.quantity[x]
+
         self.summary_table = table.Table(summary_measurements, self.summary_canvas, self.find_assets)
         self.summary_table.setScrollbars(self.summary_table_frame)
         self.summary_canvas.configure(scrollregion=self.summary_canvas.bbox("all"))
@@ -790,9 +802,11 @@ class findAsset():
 
         return True
 
+
     def operationSuccess(self):
         ## TODO: Reflect changes to db
 
+        ''' WAITING FOR DEV BACKEND
         find_filepath = []
 
         for y in range(len(self.photo_id)):
@@ -825,6 +839,9 @@ class findAsset():
             self.database.updateAsset(update_query)
             
         return True
+        '''
+
+        return False
 
 class updateAsset():
     def __init__(self, root):
@@ -1053,22 +1070,6 @@ class updateAsset():
         self.update_button = update_button
         self.update_button.config(state=NORMAL)
 
-    '''
-    def uploadImage(self):
-
-        fileTypes = [('JPG Files', '*.jpg'),
-                     ('JPEG Files', '*.jpeg'),
-                     ('PNG Files', '*.png')]
-        self.update_photo_filename = filedialog.askopenfilename(filetypes=fileTypes)
-
-        image = Image.open(self.update_photo_filename)
-        resized_img = image.resize((250, 250), Image.ANTIALIAS)
-        upload_img = ImageTk.PhotoImage(resized_img)
-
-        self.update_photo = upload_img
-        self.update_photo_preview.create_image(0, 0, image=upload_img, anchor=NW)
-    '''
-
     def displayUploadedImage(self, update_left, buttonA, field_label):
 
         self.update_photo_preview = Canvas(update_left, bg="#FFFFFF", width=250, height=250)
@@ -1080,10 +1081,6 @@ class updateAsset():
         filepath = self.database.readBLOB(update[self.asset_index][0])
 
         self.update_photo_filename = filepath
-        #self.new_photo_filename = filepath
-
-        print("displayUploadImage bypass")
-        print(self.update_photo_filename)
 
         image_set = Image.open(filepath)
         resized_img = image_set.resize((250, 250), Image.ANTIALIAS)
@@ -1179,9 +1176,6 @@ class updateAsset():
                      ('PNG Files', '*.png')]
         self.update_photo_filename = filedialog.askopenfilename(filetypes=fileTypes)
 
-        print("Upload image bypass")
-        print(self.update_photo_filename)
-
         if len(self.update_photo_filename) > 0:
             image = Image.open(self.update_photo_filename)
             resized_img = image.resize((250, 250), Image.ANTIALIAS)
@@ -1198,9 +1192,6 @@ class updateAsset():
 
         # Check validity
 
-        print(valid_first)
-        print(valid_second)
-        print(valid_third)
         if valid_first and valid_second and valid_third:
 
             self.operation = "Update"
@@ -1290,6 +1281,7 @@ class updateAsset():
 
     def assetOperationSuccess(self):
 
+
         asset_id = self.asset_no
         name = self.update_name
         company = self.update_company
@@ -1303,8 +1295,6 @@ class updateAsset():
             payment_stat = "Paid"
         else:
             payment_stat = "Unpaid"
-
-        print(self.update_photo_filename)
 
         image = self.database.convertToBinaryData(self.update_photo_filename)
         if not image:
