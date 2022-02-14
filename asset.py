@@ -514,14 +514,14 @@ class findAsset():
 
     def displayFind(self, findAsset_form_frame, field_label, buttonA, buttonB):
 
-        Label(findAsset_form_frame, text="Search by Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.200, anchor="c")
-        Entry(findAsset_form_frame, textvariable=self.find_asset_name, bd=0).place(height=20, width=225, relx=.5, rely=0.245, anchor="c")
+        Label(findAsset_form_frame, text="Search by Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.200, anchor="center")
+        Entry(findAsset_form_frame, textvariable=self.find_asset_name, bd=0).place(height=20, width=225, relx=.5, rely=0.245, anchor="center")
 
-        Label(findAsset_form_frame, text="Search by Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.295, anchor="c")
-        Entry(findAsset_form_frame, textvariable=self.findAsset_location, bd=0).place(height=20, width=225, relx=.5, rely=0.340, anchor="c")
+        Label(findAsset_form_frame, text="Search by Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.295, anchor="center")
+        Entry(findAsset_form_frame, textvariable=self.findAsset_location, bd=0).place(height=20, width=225, relx=.5, rely=0.340, anchor="center")
 
-        Label(findAsset_form_frame, text="Search by Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.390, anchor="c")
-        Entry(findAsset_form_frame, textvariable=self.findAsset_owner, bd=0).place(height=20, width=225, relx=.5, rely=0.435, anchor="c")
+        Label(findAsset_form_frame, text="Search by Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.390, anchor="center")
+        Entry(findAsset_form_frame, textvariable=self.findAsset_owner, bd=0).place(height=20, width=225, relx=.5, rely=0.435, anchor="center")
 
         Label(findAsset_form_frame, text="Filter by Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=0.300, rely=0.500, anchor="center")                     
         
@@ -532,7 +532,7 @@ class findAsset():
         paid_off.place(relx=.80, rely=0.500, anchor="center")
 
         filter_btn = Button(findAsset_form_frame, text="Search", width=13, command=lambda: self.filterTable(), bg="#DC5047", fg="#FFFFFF", bd=0, font=buttonA)
-        filter_btn.place(relx=.5, rely=0.625, anchor="c")
+        filter_btn.place(relx=.5, rely=0.625, anchor="center")
 
         clear_btn = Button(findAsset_form_frame, text="Clear Filter", width=13, command=lambda: self.filterTable(), bg="#404040", fg="#FFFFFF", bd=0, font=buttonB)
         clear_btn.place(relx=.5, rely=0.725, anchor="center")
@@ -756,26 +756,26 @@ class findAsset():
 
     def displaySummaryDetails(self, summary_bg, summary_form_frame, field_label):
 
-        Label(summary_form_frame, text="Receipt Number", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.175, anchor="c")
-        Label(summary_form_frame, text=self.receipt_no, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.210, anchor="c")
+        Label(summary_form_frame, text="Receipt Number", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.175, anchor="center")
+        Label(summary_form_frame, text=self.receipt_no, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.210, anchor="center")
 
-        Label(summary_form_frame, text="Recipient", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.260, anchor="c")
-        Label(summary_form_frame, text=self.recipient, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.295, anchor="c")
+        Label(summary_form_frame, text="Recipient", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.260, anchor="center")
+        Label(summary_form_frame, text=self.recipient, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.295, anchor="center")
 
-        Label(summary_form_frame, text="Noted by", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.345, anchor="c")
-        Label(summary_form_frame, text=self.user, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.380, anchor="c")
+        Label(summary_form_frame, text="Noted by", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.345, anchor="center")
+        Label(summary_form_frame, text=self.user, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.380, anchor="center")
 
-        Label(summary_form_frame, text="New Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.430, anchor="c")
-        Label(summary_form_frame, text=self.location, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.465, anchor="c")
+        Label(summary_form_frame, text="New Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.430, anchor="center")
+        Label(summary_form_frame, text=self.location, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.465, anchor="center")
 
-        Label(summary_form_frame, text="Payment Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.515, anchor="c")
-        Label(summary_form_frame, textv=self.status, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.550, anchor="c")
+        Label(summary_form_frame, text="Payment Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.515, anchor="center")
+        Label(summary_form_frame, textv=self.status, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.550, anchor="center")
 
-        Label(summary_form_frame, text="New Company", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.600, anchor="c")
-        Label(summary_form_frame, text=self.company, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.635, anchor="c")
+        Label(summary_form_frame, text="New Company", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.600, anchor="center")
+        Label(summary_form_frame, text=self.company, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.635, anchor="center")
 
-        Label(summary_form_frame, text="New Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.685, anchor="c")
-        Label(summary_form_frame, text=self.owner, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.720, anchor="c")
+        Label(summary_form_frame, text="New Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.685, anchor="center")
+        Label(summary_form_frame, text=self.owner, bd=0, state='disabled').place(height=20, width=225, relx=.5, rely=0.720, anchor="center")
 
         return True 
 
@@ -942,14 +942,14 @@ class updateAsset():
 
     def displayFind(self, update_form_frame, field_label, buttonA, buttonB):
 
-        Label(update_form_frame, text="Search by Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.200, anchor="c")
-        Entry(update_form_frame, textvariable=self.update_name, bd=0).place(height=20, width=225, relx=.5, rely=0.245, anchor="c")
+        Label(update_form_frame, text="Search by Asset Name", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.200, anchor="center")
+        Entry(update_form_frame, textvariable=self.update_name, bd=0).place(height=20, width=225, relx=.5, rely=0.245, anchor="center")
 
-        Label(update_form_frame, text="Search by Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.295, anchor="c")
-        Entry(update_form_frame, textvariable=self.update_location, bd=0).place(height=20, width=225, relx=.5, rely=0.340, anchor="c")
+        Label(update_form_frame, text="Search by Location", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.295, anchor="center")
+        Entry(update_form_frame, textvariable=self.update_location, bd=0).place(height=20, width=225, relx=.5, rely=0.340, anchor="center")
 
-        Label(update_form_frame, text="Search by Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.390, anchor="c")
-        Entry(update_form_frame, textvariable=self.update_ownership, bd=0).place(height=20, width=225, relx=.5, rely=0.435, anchor="c")
+        Label(update_form_frame, text="Search by Owner", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=.5, rely=0.390, anchor="center")
+        Entry(update_form_frame, textvariable=self.update_ownership, bd=0).place(height=20, width=225, relx=.5, rely=0.435, anchor="center")
 
         Label(update_form_frame, text="Filter by Status", bg="#DDDDDD", fg="#363636", font=field_label).place(relx=0.300, rely=0.500, anchor="center")                     
         
@@ -961,7 +961,7 @@ class updateAsset():
 
 
         filter_btn = Button(update_form_frame, text="Search", width=13, command=lambda: self.filterTable(), bg="#DC5047", fg="#FFFFFF", bd=0, font=buttonA)
-        filter_btn.place(relx=.5, rely=0.625, anchor="c")
+        filter_btn.place(relx=.5, rely=0.625, anchor="center")
 
         clear_btn = Button(update_form_frame, text="Clear Filter", width=13, command=lambda: self.filterTable(), bg="#404040", fg="#FFFFFF", bd=0, font=buttonB)
         clear_btn.place(relx=.5, rely=0.725, anchor="center")

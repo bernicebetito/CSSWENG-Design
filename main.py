@@ -1,8 +1,6 @@
 from tkinter import *
 import tkinter.font as tkfont
-from PIL import Image, ImageTk
-from tkinter import filedialog
-import user, asset, history, table, db
+import user, asset, history, table
 
 root = Tk()
 root.title('Prime Properties - Inventory Management System')
@@ -30,7 +28,7 @@ def approvedMessage(frames, message, success):
     for i in frames:
         i.destroy()
 
-    approved_bg = Frame(root, bg="#DDDDDD", width=300, height=300)
+    approved_bg = Frame(root, bg="#DDDDDD", width=450, height=300)
     approved_bg.columnconfigure(0, weight=1)
     approved_bg.place(relx=.5, rely=.5, anchor="center")
 
