@@ -25,10 +25,10 @@ class Database():
 			# db_specs = ["3310", "12345"]
 
 			#                    BERNICE                     #
-			db_specs = ["3306", "cssw3nG!"]
+			#db_specs = ["3306", "cssw3nG!"]
 
 			#                     CAR                        #
-			# db_specs = ["3310", "12345"]
+			 db_specs = ["3310", "12345"]
 
 			self.db = mysql.connect(
 				host="localhost",
@@ -138,6 +138,17 @@ class Database():
 			print("Successfully Created Asset!")
 		except Error as e:
 			print("Failed to create asset: {}".format(e))
+
+	def duplicateAsset(self, tb_name, name, company, owner, status, unit_loc, price, amount, payment_stat, image, mod_ts):
+		try:
+			asset_query = "INSERT INTO " + tb_name + " (name, company, owner, status, unit_loc, price, amount, payment_stat, image, mod_ts) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+			asset_values = (name, company, owner, status, unit_loc, price, amount, payment_stat, image, mod_ts)
+			self.cursor.execute(asset_query, asset_values)
+			self.db.commit()
+
+			print("Successfully created another instance of an asset.")
+		except Error as e:
+			print("Failed to duplicate asset: {}".format(e))
 
 	def getAsset(self, asset_ID):
 		try:

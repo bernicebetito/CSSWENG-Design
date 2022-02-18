@@ -94,7 +94,10 @@ class Table(object):
                                 self.canvas.itemconfig(self.checkboxes[row], fill="#666666")
                         elif option == "quantity":
                            
-                            spinner = Spinbox(self.canvas, from_=1, to=self.contents[row][7], width=5)
+                            if self.contents[row][7] == 1:
+                                spinner = Spinbox(self.canvas, values=(1), width=5)
+                            else:
+                                spinner = Spinbox(self.canvas, from_=1, to=int(self.contents[row][7]), width=5)
                             self.quantityInput.append(spinner)
                             self.quantitySet.append(1)
                             self.checkboxes[row] = self.canvas.create_window(x_text, y_text, window=spinner)

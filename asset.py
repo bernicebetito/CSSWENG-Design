@@ -804,9 +804,7 @@ class findAsset():
 
 
     def operationSuccess(self):
-        ## TODO: Reflect changes to db
-
-        ''' WAITING FOR DEV BACKEND
+       
         find_filepath = []
 
         for y in range(len(self.photo_id)):
@@ -824,22 +822,36 @@ class findAsset():
 
         del self.find_assets[0]
 
-        for x in range(len(self.find_assets)):
-            
-            asset_id = self.find_assets[x][9]
-            name = self.find_assets[x][1]
-            quantity = self.find_assets[x][6]
-            payment_stat = self.find_assets[x][7]
-            image = image_filepath[x]
-            
-            self.database.createReceipt(self.receipt_no, self.operation, self.user, "Unauthorized", asset_id, name, self.recipient, self.company, self.owner, self.location, quantity, payment_stat, image, "Unapproved")
+        op = self.operation
+        self.operation = "In Transit - " + self.operation
 
-            self.operation = "In Transit - " + self.operation
-            update_query = "UPDATE assets SET status = '" + self.operation + "' WHERE id = " + str(asset_id)
-            self.database.updateAsset(update_query)
-            
-        return True
-        '''
+        currTime = datetime.datetime.now()
+
+        for x in range(len(self.find_assets)):
+
+            asset_id = self.find_assets[x][10]
+            image = image_filepath[x]  
+            quantity = self.quantity[x]
+
+            ## Check quantity
+            if quantity < self.find_assets[x][7]:
+                remaining = self.find_assets[x][7]-quantity
+                img = self.database.convertToBinaryData(image)
+
+                self.database.duplicateAsset("assets", self.find_assets[x][2], self.find_assets[x][3], self.find_assets[x][4], self.find_assets[x][9], self.find_assets[x][5], self.find_assets[x][6], remaining, self.find_assets[x][8], img, currTime)
+
+                update_query = "UPDATE assets SET company = '" + self.company + "', owner = '" + self.owner\
+                                                                + "', unit_loc = '" + self.location + "', amount = '" + str(quantity) + "', status = '" + self.operation\
+                                                                + "' WHERE id = " + str(asset_id)
+                self.database.updateAsset(update_query)
+
+            else:
+                update_query = "UPDATE assets SET company = '" + self.company + "', owner = '" + self.owner\
+                                                                + "', unit_loc = '" + self.location + "', status = '" + self.operation\
+                                                                + "' WHERE id = " + str(asset_id)
+                self.database.updateAsset(update_query)
+
+            self.database.createReceipt(self.receipt_no, op, self.user, "Authorized", asset_id, self.find_assets[x][2], self.recipient, self.company, self.owner, self.location, quantity, self.find_assets[x][8], image, "Unapproved")
 
         return False
 
