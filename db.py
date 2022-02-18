@@ -226,7 +226,7 @@ class Database():
 			except OSError:
 				print("Creation of the directory %s failed" % path)
 
-		storage_filepath = path + r"\asset_{0}.jpeg".format(str(asset_ID))
+		storage_filepath = path + r"\{0}.jpeg".format(str(asset_ID))
 		with open(storage_filepath, 'wb') as file:
 			file.write(result)
 			file.close()
