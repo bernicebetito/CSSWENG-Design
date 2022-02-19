@@ -483,7 +483,7 @@ class Database():
 				command = "SELECT id, receipt_no, op_type, username, authorized_by, asset_id, image, asset_name, recipient, company, owner, unit_loc, amount, payment_stat, approval_stat FROM operations"
 				filters = " WHERE "
 				if in_transit:
-					command = "SELECT operations.id, operations.receipt_no, operations.op_type, operations.username, operations.authorized_by, operations.asset_id, operations.image, operations.asset_name, operations.recipient, operations.company, operations.owner, operations.unit_loc, operations.amount, operations.payment_stat, operations.approval_stat FROM operations INNER JOIN assets ON assets.status LIKE 'In Transit%' AND assets.id = operations.asset_id AND operations.op_type IN ('Move', 'Sold', 'Disposed', 'Borrowed', 'Lent')"
+					command = "SELECT MAX(operations.id), operations.receipt_no, operations.op_type, operations.username, operations.authorized_by, operations.asset_id, operations.image, operations.asset_name, operations.recipient, operations.company, operations.owner, operations.unit_loc, operations.amount, operations.payment_stat, operations.approval_stat FROM operations INNER JOIN assets ON assets.status LIKE 'In Transit%' AND assets.id = operations.asset_id AND operations.op_type IN ('Move', 'Sold', 'Disposed', 'Borrowed', 'Lent') GROUP BY operations.asset_id"
 					filters = " AND "
 				if len(receipt_num) > 0:
 					filters += "operations.receipt_no = '" + str(receipt_num) + "'"
