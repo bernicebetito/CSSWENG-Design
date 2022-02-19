@@ -174,7 +174,7 @@ class ImportExport():
         self.choose_photos_btn.place(relx=.5, rely=0.725, anchor="center")
 
         self.import_error_label = Label(import_bg, bg="#DDDDDD", fg="#D64000", font=sub)
-        self.import_error_label.place(relx=.5, rely=0.825, anchor="center")
+        self.import_error_label.place(relx=.5, rely=0.785, anchor="center")
 
         current_font = tkfont.Font(self.import_error_label, self.import_error_label.cget("font"))
         current_font.configure(weight="bold")
