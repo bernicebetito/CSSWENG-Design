@@ -840,14 +840,12 @@ class findAsset():
 
                 self.database.duplicateAsset("assets", self.find_assets[x][2], self.find_assets[x][3], self.find_assets[x][4], self.find_assets[x][9], self.find_assets[x][5], self.find_assets[x][6], remaining, self.find_assets[x][8], img, currTime)
 
-                update_query = "UPDATE assets SET company = '" + self.company + "', owner = '" + self.owner\
-                                                                + "', unit_loc = '" + self.location + "', amount = '" + str(quantity) + "', status = '" + self.status\
+                update_query = "UPDATE assets SET amount = '" + str(quantity) + "', status = '" + self.status\
                                                                 + "' WHERE id = " + str(asset_id)
                 self.database.updateAsset(update_query)
 
             else:
-                update_query = "UPDATE assets SET company = '" + self.company + "', owner = '" + self.owner\
-                                                                + "', unit_loc = '" + self.location + "', status = '" + self.status\
+                update_query = "UPDATE assets SET status = '" + self.status\
                                                                 + "' WHERE id = " + str(asset_id)
                 self.database.updateAsset(update_query)
 

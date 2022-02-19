@@ -25,10 +25,10 @@ class Database():
 			# db_specs = ["3310", "12345"]
 
 			#                    BERNICE                     #
-			db_specs = ["3306", "cssw3nG!"]
+			#db_specs = ["3306", "cssw3nG!"]
 
 			#                     CAR                        #
-			# db_specs = ["3310", "12345"]
+			db_specs = ["3310", "12345"]
 
 			self.db = mysql.connect(
 				host="localhost",
