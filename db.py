@@ -24,10 +24,10 @@ class Database():
 			# db_specs = ["3310", "12345"]
 
 			#                    BERNICE                     #
-			db_specs = ["3306", "cssw3nG!"]
+			#db_specs = ["3306", "cssw3nG!"]
 
 			#                     CAR                        #
-			# db_specs = ["3310", "12345"]
+			db_specs = ["3310", "12345"]
 
 			self.db = mysql.connect(
 				host="localhost",
@@ -525,15 +525,15 @@ class Database():
 					if in_transit:
 						# print(x)
 						if x == 0:
-							command = "SELECT operations.id, operations.receipt_no, operations.op_type, operations.username, operations.authorized_by, operations.asset_id, operations.image, operations.asset_name, operations.recipient, operations.company, operations.owner, operations.unit_loc, operations.amount, operations.payment_stat, operations.approval_stat FROM operations INNER JOIN assets ON assets.status LIKE 'In Transit%' AND assets.id = operations.asset_id AND operations.op_type LIKE 'Move'"
+							command = "SELECT operations.id, operations.receipt_no, operations.op_type, operations.username, operations.authorized_by, operations.asset_id, operations.image, operations.asset_name, operations.recipient, operations.company, operations.owner, operations.unit_loc, operations.amount, operations.payment_stat, operations.approval_stat FROM operations INNER JOIN assets ON assets.status LIKE 'In Transit - Move' AND assets.id = operations.asset_id AND operations.op_type LIKE 'Move'"
 						elif x == 1:
-							command = "SELECT operations.id, operations.receipt_no, operations.op_type, operations.username, operations.authorized_by, operations.asset_id, operations.image, operations.asset_name, operations.recipient, operations.company, operations.owner, operations.unit_loc, operations.amount, operations.payment_stat, operations.approval_stat FROM operations INNER JOIN assets ON assets.status LIKE 'In Transit%' AND assets.id = operations.asset_id AND operations.op_type LIKE 'Sold'"
+							command = "SELECT operations.id, operations.receipt_no, operations.op_type, operations.username, operations.authorized_by, operations.asset_id, operations.image, operations.asset_name, operations.recipient, operations.company, operations.owner, operations.unit_loc, operations.amount, operations.payment_stat, operations.approval_stat FROM operations INNER JOIN assets ON assets.status LIKE 'In Transit - Sold' AND assets.id = operations.asset_id AND operations.op_type LIKE 'Sold'"
 						elif x == 2:
-							command = "SELECT operations.id, operations.receipt_no, operations.op_type, operations.username, operations.authorized_by, operations.asset_id, operations.image, operations.asset_name, operations.recipient, operations.company, operations.owner, operations.unit_loc, operations.amount, operations.payment_stat, operations.approval_stat FROM operations INNER JOIN assets ON assets.status LIKE 'In Transit%' AND assets.id = operations.asset_id AND operations.op_type LIKE 'Disposed'"
+							command = "SELECT operations.id, operations.receipt_no, operations.op_type, operations.username, operations.authorized_by, operations.asset_id, operations.image, operations.asset_name, operations.recipient, operations.company, operations.owner, operations.unit_loc, operations.amount, operations.payment_stat, operations.approval_stat FROM operations INNER JOIN assets ON assets.status LIKE 'In Transit - Disposed' AND assets.id = operations.asset_id AND operations.op_type LIKE 'Disposed'"
 						elif x == 3:
-							command = "SELECT operations.id, operations.receipt_no, operations.op_type, operations.username, operations.authorized_by, operations.asset_id, operations.image, operations.asset_name, operations.recipient, operations.company, operations.owner, operations.unit_loc, operations.amount, operations.payment_stat, operations.approval_stat FROM operations INNER JOIN assets ON assets.status LIKE 'In Transit%' AND assets.id = operations.asset_id AND operations.op_type LIKE 'Borrowed'"
+							command = "SELECT operations.id, operations.receipt_no, operations.op_type, operations.username, operations.authorized_by, operations.asset_id, operations.image, operations.asset_name, operations.recipient, operations.company, operations.owner, operations.unit_loc, operations.amount, operations.payment_stat, operations.approval_stat FROM operations INNER JOIN assets ON assets.status LIKE 'In Transit - Borrowed' AND assets.id = operations.asset_id AND operations.op_type LIKE 'Borrowed'"
 						elif x == 4:
-							command = "SELECT operations.id, operations.receipt_no, operations.op_type, operations.username, operations.authorized_by, operations.asset_id, operations.image, operations.asset_name, operations.recipient, operations.company, operations.owner, operations.unit_loc, operations.amount, operations.payment_stat, operations.approval_stat FROM operations INNER JOIN assets ON assets.status LIKE 'In Transit%' AND assets.id = operations.asset_id AND operations.op_type LIKE 'Lent'"
+							command = "SELECT operations.id, operations.receipt_no, operations.op_type, operations.username, operations.authorized_by, operations.asset_id, operations.image, operations.asset_name, operations.recipient, operations.company, operations.owner, operations.unit_loc, operations.amount, operations.payment_stat, operations.approval_stat FROM operations INNER JOIN assets ON assets.status LIKE 'In Transit - Lent' AND assets.id = operations.asset_id AND operations.op_type LIKE 'Lent'"
 
 						filters = " AND "
 					if len(receipt_num) > 0:
