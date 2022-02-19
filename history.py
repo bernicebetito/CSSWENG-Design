@@ -58,12 +58,19 @@ class History():
                 curr_row = []
                 for column in range(6, len(history[row]) - 1):
                     if type(history[row][column]) == bytes:
-                        filepath = self.database.readBLOB(history[row][5], False)
-                        image = Image.open(filepath)
-                        resized_img = image.resize((50, 50), Image.ANTIALIAS)
-                        table_image = ImageTk.PhotoImage(resized_img)
-                        self.root.table_image.append(table_image)
-                        curr_row.append(table_image)
+                        try:
+                            filepath = self.database.readBLOB(history[row][5], False)
+                            image = Image.open(filepath)
+                            resized_img = image.resize((50, 50), Image.ANTIALIAS)
+                            table_image = ImageTk.PhotoImage(resized_img)
+                            self.root.table_image.append(table_image)
+                            curr_row.append(table_image)
+                        except:
+                            image = Image.open(r"/assets/FILLER.jpg")
+                            resized_img = image.resize((50, 50), Image.ANTIALIAS)
+                            table_image = ImageTk.PhotoImage(resized_img)
+                            self.root.table_image.append(table_image)
+                            curr_row.append(table_image)
                     elif column != 8:
                         curr_row.append(history[row][column])
                 curr_row.append(history[row][2])

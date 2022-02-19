@@ -262,12 +262,19 @@ class receiveAsset():
                 curr_row = []
                 for column in range(1, len(receive[row]) - 1):
                     if type(receive[row][column]) == bytes:
-                        filepath = self.database.readBLOB(receive[row][5], False)
-                        image = Image.open(filepath)
-                        resized_img = image.resize((50, 50), Image.ANTIALIAS)
-                        table_image = ImageTk.PhotoImage(resized_img)
-                        self.root.table_image.append(table_image)
-                        curr_row.append(table_image)
+                        try:
+                            filepath = self.database.readBLOB(receive[row][5], False)
+                            image = Image.open(filepath)
+                            resized_img = image.resize((50, 50), Image.ANTIALIAS)
+                            table_image = ImageTk.PhotoImage(resized_img)
+                            self.root.table_image.append(table_image)
+                            curr_row.append(table_image)
+                        except:
+                            image = Image.open(r"/assets/FILLER.jpg")
+                            resized_img = image.resize((50, 50), Image.ANTIALIAS)
+                            table_image = ImageTk.PhotoImage(resized_img)
+                            self.root.table_image.append(table_image)
+                            curr_row.append(table_image)
                     elif column < 4 or column > 6:
                         curr_row.append(receive[row][column])
                 curr_row.insert(0, [receive[row][0], receive[row][5]])
@@ -394,12 +401,19 @@ class deleteAsset():
                 curr_row = []
                 for column in range(len(delete[row])):
                     if type(delete[row][column]) == bytes:
-                        filepath = self.database.readBLOB(delete[row][0], True)
-                        image = Image.open(filepath)
-                        resized_img = image.resize((50, 50), Image.ANTIALIAS)
-                        table_image = ImageTk.PhotoImage(resized_img)
-                        self.root.table_image.append(table_image)
-                        curr_row.insert(1, table_image)
+                        try:
+                            filepath = self.database.readBLOB(delete[row][0], True)
+                            image = Image.open(filepath)
+                            resized_img = image.resize((50, 50), Image.ANTIALIAS)
+                            table_image = ImageTk.PhotoImage(resized_img)
+                            self.root.table_image.append(table_image)
+                            curr_row.insert(1, table_image)
+                        except:
+                            image = Image.open(r"/assets/FILLER.jpg")
+                            resized_img = image.resize((50, 50), Image.ANTIALIAS)
+                            table_image = ImageTk.PhotoImage(resized_img)
+                            self.root.table_image.append(table_image)
+                            curr_row.insert(1, table_image)
                     else:
                         curr_row.append(delete[row][column])
                 self.delete_table_contents.append(curr_row)
@@ -553,7 +567,6 @@ class findAsset():
         self.findAsset_canvas.configure(scrollregion=self.findAsset_canvas.bbox("all"))
 
     def getContent(self, filter_val):
-
         findAsset_table_header = ["Select", "Photo", "Asset Name", "Company", "Owner", "Location",
                                "Price", "Quantity", "Payment Status", "Availability"]
         self.findAsset_table_contents = []
@@ -570,15 +583,21 @@ class findAsset():
                 curr_row = []
                 for column in range(len(findAsset[row])):
                     if type(findAsset[row][column]) == bytes:
-                        filepath = self.database.readBLOB(findAsset[row][0], True)
-                        image = Image.open(filepath)
-                        resized_img = image.resize((50, 50), Image.ANTIALIAS)
-                        table_image = ImageTk.PhotoImage(resized_img)
-                        self.root.table_image.append(table_image)
-                        curr_row.insert(1, table_image)
-
-                        self.photo_filepaths.append(filepath)
-
+                        try:
+                            filepath = self.database.readBLOB(findAsset[row][0], True)
+                            image = Image.open(filepath)
+                            resized_img = image.resize((50, 50), Image.ANTIALIAS)
+                            table_image = ImageTk.PhotoImage(resized_img)
+                            self.root.table_image.append(table_image)
+                            curr_row.insert(1, table_image)
+                            self.photo_filepaths.append(filepath)
+                        except:
+                            image = Image.open(r"/assets/FILLER.jpg")
+                            resized_img = image.resize((50, 50), Image.ANTIALIAS)
+                            table_image = ImageTk.PhotoImage(resized_img)
+                            self.root.table_image.append(table_image)
+                            curr_row.insert(1, table_image)
+                            self.photo_filepaths.append(filepath)
                     else:
                         curr_row.append(findAsset[row][column])
                 self.findAsset_table_contents.append(curr_row)
@@ -1011,12 +1030,19 @@ class updateAsset():
                 curr_row = []
                 for column in range(len(update[row])):
                     if type(update[row][column]) == bytes:
-                        filepath = self.database.readBLOB(update[row][0], True)
-                        image = Image.open(filepath)
-                        resized_img = image.resize((50, 50), Image.ANTIALIAS)
-                        table_image = ImageTk.PhotoImage(resized_img)
-                        self.root.table_image.append(table_image)
-                        curr_row.insert(1, table_image)
+                        try:
+                            filepath = self.database.readBLOB(update[row][0], True)
+                            image = Image.open(filepath)
+                            resized_img = image.resize((50, 50), Image.ANTIALIAS)
+                            table_image = ImageTk.PhotoImage(resized_img)
+                            self.root.table_image.append(table_image)
+                            curr_row.insert(1, table_image)
+                        except:
+                            image = Image.open(r"/assets/FILLER.jpg")
+                            resized_img = image.resize((50, 50), Image.ANTIALIAS)
+                            table_image = ImageTk.PhotoImage(resized_img)
+                            self.root.table_image.append(table_image)
+                            curr_row.insert(1, table_image)
                     else:
                         curr_row.append(update[row][column])
                 self.update_table_contents.append(curr_row)
