@@ -65,7 +65,7 @@ class Database():
 		self.cursor.execute("DROP TABLE IF EXISTS " + tb_name)
 
 	def emptyTable(self, tb_name):
-		self.cursor.execute("TRUNCATE TABLE " + tb_name)
+		self.cursor.execute("TRUNCATE TABLE IF EXISTS " + tb_name)
 
 	# ------------------ APPLICATION FUNCTIONALITIES ------------------ #
 	# USERS
@@ -361,20 +361,29 @@ class Database():
 		self.db.commit()
 
 	def importToExcel(self, assets_filepath, ops_filepath, photos_dir):
+		print("deleting")
 		self.deleteTable("assets")
 		self.deleteTable("operations")
 
+		print("creating assets")
 		# Assets Table: asset ID, asset name, company, owner, status, unit_loc, price, amount, payment_stat, image, modification date&time
 		self.cursor.execute("CREATE TABLE IF NOT EXISTS assets (id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), company VARCHAR(255), owner VARCHAR(255), status VARCHAR(255), unit_loc VARCHAR(255), price FLOAT(53,2), amount FLOAT(53,2), payment_stat VARCHAR(255), image LONGBLOB, mod_ts VARCHAR(255))")
 
+		print("creating operations")
 		# Operations Table: operation ID, receipt no., operation type, username, asset_id, company, ownership, new location, amount, payment_stat, approval status, operation timestamp
 		self.cursor.execute("CREATE TABLE IF NOT EXISTS operations (id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, receipt_no VARCHAR(255), op_type VARCHAR(255), username VARCHAR(255), authorized_by VARCHAR(255), asset_id INT(11), asset_name VARCHAR(255), recipient VARCHAR(255), company VARCHAR(255), owner VARCHAR(255), unit_loc VARCHAR(255), amount FLOAT(53,2), payment_stat VARCHAR(255), image LONGBLOB, approval_stat VARCHAR(255), op_ts VARCHAR(255))")
 
+		print("opening ops")
 		# Import Operations
 		wb = xlrd.open_workbook(ops_filepath)
+
+		print("getting ops sheet")
 		sheet = wb.sheet_by_index(0)
 
+		print("for loop ops")
+		print(f"len of sheet:\t{sheet.nrows}")
 		for i in range(1, sheet.nrows):
+			print(f"i\t{i}")
 			# Import image from folder of asset images
 			img = self.importImagesfromFolder(photos_dir, sheet.cell_value(i, 6))
 			if img is None:
@@ -386,10 +395,17 @@ class Database():
 							   sheet.cell_value(i, 10), sheet.cell_value(i, 11), sheet.cell_value(i, 12),
 							   sheet.cell_value(i, 13), img, sheet.cell_value(i, 14))
 
+		print("opening assets")
 		# Import Assets
 		wb = xlrd.open_workbook(assets_filepath)
+
+		print("getting assets sheet")
 		sheet = wb.sheet_by_index(0)
+
+		print("for loop assets")
+		print(f"len of sheet:\t{sheet.nrows}")
 		for i in range(1, sheet.nrows):
+			print(f"i\t{i}")
 			# Import image from folder of asset images
 			img = self.importImagesfromFolder(photos_dir, sheet.cell_value(i, 1))
 			if img is None:
