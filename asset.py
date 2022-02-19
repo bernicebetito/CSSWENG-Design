@@ -721,17 +721,17 @@ class findAsset():
             self.operation = "Move"
             self.status = "In Transit - Move"
         elif op_no == 2: 
-            self.operation = "Lend"
-            self.status = "In Transit - Lent"
-        elif op_no == 3:
-            self.operation = "Store"
-            self.status = "In Transit - Stored"
-        elif op_no == 4:
-            self.operation = "Sell"
+            self.operation = "Sold"
             self.status = "In Transit - Sold"
-        elif op_no == 5:
-            self.operation = "Dispose"
+        elif op_no == 3:
+            self.operation = "Disposed"
             self.status = "In Transit - Disposed"
+        elif op_no == 4:
+            self.operation = "Borrowed"
+            self.status = "In Transit - Borrowed"
+        elif op_no == 5:
+            self.operation = "Lent"
+            self.status = "In Transit - Lent"
         else: 
             self.operation = ""
 
@@ -822,9 +822,10 @@ class findAsset():
 
         del self.find_assets[0]
 
+        '''
         op = self.operation
         self.operation = "In Transit - " + self.operation
-
+        '''
         currTime = datetime.datetime.now()
 
         for x in range(len(self.find_assets)):
@@ -841,17 +842,17 @@ class findAsset():
                 self.database.duplicateAsset("assets", self.find_assets[x][2], self.find_assets[x][3], self.find_assets[x][4], self.find_assets[x][9], self.find_assets[x][5], self.find_assets[x][6], remaining, self.find_assets[x][8], img, currTime)
 
                 update_query = "UPDATE assets SET company = '" + self.company + "', owner = '" + self.owner\
-                                                                + "', unit_loc = '" + self.location + "', amount = '" + str(quantity) + "', status = '" + self.operation\
+                                                                + "', unit_loc = '" + self.location + "', amount = '" + str(quantity) + "', status = '" + self.status\
                                                                 + "' WHERE id = " + str(asset_id)
                 self.database.updateAsset(update_query)
 
             else:
                 update_query = "UPDATE assets SET company = '" + self.company + "', owner = '" + self.owner\
-                                                                + "', unit_loc = '" + self.location + "', status = '" + self.operation\
+                                                                + "', unit_loc = '" + self.location + "', status = '" + self.status\
                                                                 + "' WHERE id = " + str(asset_id)
                 self.database.updateAsset(update_query)
 
-            self.database.createReceipt(self.receipt_no, op, self.user, "Authorized", asset_id, self.find_assets[x][2], self.recipient, self.company, self.owner, self.location, quantity, self.find_assets[x][8], image, "Unapproved")
+            self.database.createReceipt(self.receipt_no, self.operation, self.user, "Authorized", asset_id, self.find_assets[x][2], self.recipient, self.company, self.owner, self.location, quantity, self.find_assets[x][8], image, "Unapproved")
 
         return False
 

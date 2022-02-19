@@ -401,21 +401,21 @@ def findAsset():
                               fg="#FFFFFF", bd=0, font=buttonA)
             move_btn.place(relx=.5, rely=0.25, anchor="center")
 
-            lend_btn = Button(findAsset_form_frame, text="Lend", width=13, command=lambda: performOperations(frames, 2), bg="#6D94AA",
+            sell_btn = Button(findAsset_form_frame, text="Sell", width=13, command=lambda: performOperations(frames, 2), bg="#6D94AA",
                               fg="#FFFFFF", bd=0, font=buttonA)
-            lend_btn.place(relx=.5, rely=0.35, anchor="center")
+            sell_btn.place(relx=.5, rely=0.35, anchor="center")
 
-            store_btn = Button(findAsset_form_frame, text="Store", width=13, command=lambda: performOperations(frames, 3), bg="#6D94AA",
+            dispose_btn = Button(findAsset_form_frame, text="Dispose", width=13, command=lambda: performOperations(frames, 3), bg="#6D94AA",
                               fg="#FFFFFF", bd=0, font=buttonA)
-            store_btn.place(relx=.5, rely=0.45, anchor="center")
+            dispose_btn.place(relx=.5, rely=0.45, anchor="center")
 
-            sell_btn = Button(findAsset_form_frame, text="Sell", width=13, command=lambda: performOperations(frames, 4), bg="#6D94AA",
+            borrow_btn = Button(findAsset_form_frame, text="Borrow", width=13, command=lambda: performOperations(frames, 4), bg="#6D94AA",
                               fg="#FFFFFF", bd=0, font=buttonA)
-            sell_btn.place(relx=.5, rely=0.55, anchor="center")
+            borrow_btn.place(relx=.5, rely=0.55, anchor="center")
 
-            dispose_btn = Button(findAsset_form_frame, text="Dispose", width=13, command=lambda: performOperations(frames, 5), bg="#6D94AA",
+            lend_btn = Button(findAsset_form_frame, text="Lend", width=13, command=lambda: performOperations(frames, 5), bg="#6D94AA",
                               fg="#FFFFFF", bd=0, font=buttonA)
-            dispose_btn.place(relx=.5, rely=0.65, anchor="center")
+            lend_btn.place(relx=.5, rely=0.65, anchor="center")
 
             
             back_btn = Button(findAsset_form_frame, text="Back", width=10, command=lambda: goToNext(frames, 8), bg="#2D2E2E",
