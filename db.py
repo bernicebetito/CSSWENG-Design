@@ -12,7 +12,6 @@ import xlrd
 import pandas.io.sql as sql
 import openpyxl
 
-
 class Database():
 	def __init__(self):
 		# Checks for the instance of the database
@@ -63,7 +62,7 @@ class Database():
 		self.cursor.execute("CREATE TABLE IF NOT EXISTS operations (id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, receipt_no VARCHAR(255), op_type VARCHAR(255), username VARCHAR(255), authorized_by VARCHAR(255), asset_id INT(11), asset_name VARCHAR(255), recipient VARCHAR(255), company VARCHAR(255), owner VARCHAR(255), unit_loc VARCHAR(255), amount FLOAT(53,2), payment_stat VARCHAR(255), image LONGBLOB, approval_stat VARCHAR(255), op_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
 
 	def deleteTable(self, tb_name):
-		self.cursor.execute("DROP TABLE " + tb_name)
+		self.cursor.execute("DROP TABLE IF EXISTS " + tb_name)
 
 	def emptyTable(self, tb_name):
 		self.cursor.execute("TRUNCATE TABLE " + tb_name)
@@ -374,20 +373,18 @@ class Database():
 		# Import Operations
 		wb = xlrd.open_workbook(ops_filepath)
 		sheet = wb.sheet_by_index(0)
+
 		for i in range(1, sheet.nrows):
 			# Import image from folder of asset images
 			img = self.importImagesfromFolder(photos_dir, sheet.cell_value(i, 6))
-			if img is not None:
-				# receipt_no, op_type, username, auth, asset_id, name, recipient, company, owner, unit_loc, amount, payment_stat, image, approv
-				self.importReceipt(sheet.cell_value(i, 1), sheet.cell_value(i, 2), sheet.cell_value(i, 3),
-							  sheet.cell_value(i, 4), sheet.cell_value(i, 5), sheet.cell_value(i, 6),
-							  sheet.cell_value(i, 7), sheet.cell_value(i, 8), sheet.cell_value(i, 9),
-							  sheet.cell_value(i, 10), sheet.cell_value(i, 11), sheet.cell_value(i, 12),
-							  sheet.cell_value(i, 13), img, sheet.cell_value(i, 14))
-			else:
-				self.emptyTable("operations")
-				self.emptyTable("assets")
-				raise TypeError
+			if img is None:
+				img = self.convertToBinaryData(r"assets\FILLER.jpg")
+			# receipt_no, op_type, username, auth, asset_id, name, recipient, company, owner, unit_loc, amount, payment_stat, image, approv
+			self.importReceipt(sheet.cell_value(i, 1), sheet.cell_value(i, 2), sheet.cell_value(i, 3),
+							   sheet.cell_value(i, 4), sheet.cell_value(i, 5), sheet.cell_value(i, 6),
+							   sheet.cell_value(i, 7), sheet.cell_value(i, 8), sheet.cell_value(i, 9),
+							   sheet.cell_value(i, 10), sheet.cell_value(i, 11), sheet.cell_value(i, 12),
+							   sheet.cell_value(i, 13), img, sheet.cell_value(i, 14))
 
 		# Import Assets
 		wb = xlrd.open_workbook(assets_filepath)
@@ -395,15 +392,12 @@ class Database():
 		for i in range(1, sheet.nrows):
 			# Import image from folder of asset images
 			img = self.importImagesfromFolder(photos_dir, sheet.cell_value(i, 1))
-			if img is not None:
-				# assetID, name, company, owner, status, unit_loc, price, amount, payment_stat, image, mod_ts
-				self.importAsset("assets", sheet.cell_value(i, 1), sheet.cell_value(i, 2), sheet.cell_value(i, 3),
-							sheet.cell_value(i, 4), sheet.cell_value(i, 5), sheet.cell_value(i, 6),
-							sheet.cell_value(i, 7), sheet.cell_value(i, 8), sheet.cell_value(i, 9), img)
-			else:
-				self.emptyTable("operations")
-				self.emptyTable("assets")
-				raise TypeError
+			if img is None:
+				img = self.convertToBinaryData(r"assets\FILLER.jpg")
+			# assetID, name, company, owner, status, unit_loc, price, amount, payment_stat, image, mod_ts
+			self.importAsset("assets", sheet.cell_value(i, 1), sheet.cell_value(i, 2), sheet.cell_value(i, 3),
+						sheet.cell_value(i, 4), sheet.cell_value(i, 5), sheet.cell_value(i, 6),
+						sheet.cell_value(i, 7), sheet.cell_value(i, 8), sheet.cell_value(i, 9), img)
 
 	def exportToExcel(self):
 		df=sql.read_sql('select id, receipt_no, op_type, username, authorized_by, asset_id, asset_name, recipient, company, owner, unit_loc, amount, payment_stat, approval_stat, op_ts from operations', self.db)

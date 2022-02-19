@@ -66,7 +66,7 @@ class History():
                             self.root.table_image.append(table_image)
                             curr_row.append(table_image)
                         except:
-                            image = Image.open(r"/assets/FILLER.jpg")
+                            image = Image.open(r"assets\FILLER.jpg")
                             resized_img = image.resize((50, 50), Image.ANTIALIAS)
                             table_image = ImageTk.PhotoImage(resized_img)
                             self.root.table_image.append(table_image)

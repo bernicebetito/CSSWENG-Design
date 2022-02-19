@@ -270,7 +270,7 @@ class receiveAsset():
                             self.root.table_image.append(table_image)
                             curr_row.append(table_image)
                         except:
-                            image = Image.open(r"/assets/FILLER.jpg")
+                            image = Image.open(r"assets\FILLER.jpg")
                             resized_img = image.resize((50, 50), Image.ANTIALIAS)
                             table_image = ImageTk.PhotoImage(resized_img)
                             self.root.table_image.append(table_image)
@@ -409,7 +409,7 @@ class deleteAsset():
                             self.root.table_image.append(table_image)
                             curr_row.insert(1, table_image)
                         except:
-                            image = Image.open(r"/assets/FILLER.jpg")
+                            image = Image.open(r"assets\FILLER.jpg")
                             resized_img = image.resize((50, 50), Image.ANTIALIAS)
                             table_image = ImageTk.PhotoImage(resized_img)
                             self.root.table_image.append(table_image)
@@ -592,7 +592,7 @@ class findAsset():
                             curr_row.insert(1, table_image)
                             self.photo_filepaths.append(filepath)
                         except:
-                            image = Image.open(r"/assets/FILLER.jpg")
+                            image = Image.open(r"assets\FILLER.jpg")
                             resized_img = image.resize((50, 50), Image.ANTIALIAS)
                             table_image = ImageTk.PhotoImage(resized_img)
                             self.root.table_image.append(table_image)
@@ -1038,7 +1038,7 @@ class updateAsset():
                             self.root.table_image.append(table_image)
                             curr_row.insert(1, table_image)
                         except:
-                            image = Image.open(r"/assets/FILLER.jpg")
+                            image = Image.open(r"assets\FILLER.jpg")
                             resized_img = image.resize((50, 50), Image.ANTIALIAS)
                             table_image = ImageTk.PhotoImage(resized_img)
                             self.root.table_image.append(table_image)
