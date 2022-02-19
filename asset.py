@@ -1330,8 +1330,10 @@ class updateAsset():
 
         if self.update_payment_status_int.get() == 1:
             payment_stat = "Paid"
-        else:
+        elif self.update_payment_status_int.get() == 2:
             payment_stat = "Unpaid"
+        else:
+            payment_stat = self.update_payment_status
 
         image = self.database.convertToBinaryData(self.update_photo_filename)
         if not image:
