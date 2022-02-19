@@ -65,7 +65,7 @@ class Database():
 		self.cursor.execute("DROP TABLE IF EXISTS " + tb_name)
 
 	def emptyTable(self, tb_name):
-		self.cursor.execute("TRUNCATE TABLE " + tb_name)
+		self.cursor.execute("DELETE from " + tb_name + " WHERE id > 0")
 
 	# ------------------ APPLICATION FUNCTIONALITIES ------------------ #
 	# USERS
