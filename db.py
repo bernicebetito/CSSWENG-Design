@@ -223,9 +223,9 @@ class Database():
 
 	def readBLOB(self, asset_ID, asset):
 		if asset:
-			query = "SELECT image FROM assets WHERE id = '{0}'"
+			query = "SELECT image FROM assets WHERE id = '{0}' LIMIT 1"
 		else:
-			query = "SELECT image FROM operations WHERE asset_id = '{0}'"
+			query = "SELECT image FROM operations WHERE asset_id = '{0}' LIMIT 1"
 		self.cursor.execute(query.format(str(asset_ID)))
 		result = self.cursor.fetchone()[0]
 
@@ -509,5 +509,60 @@ class Database():
 
 				self.cursor.execute(command)
 				return self.cursor.fetchall()
+			elif filter == 3:  # In Transit
+				receipt_num = filter_val["receipt_num"]
+				name = filter_val["asset_name"]
+				owner = filter_val["owner"]
+				location = filter_val["location"]
+				op_type = filter_val["op_type"]
+				in_transit = filter_val["in_transit"]
+
+				e = []
+				filters = " WHERE "
+				for x in range(5):
+					if in_transit:
+						# print(x)
+						if x == 0:
+							command = "SELECT operations.id, operations.receipt_no, operations.op_type, operations.username, operations.authorized_by, operations.asset_id, operations.image, operations.asset_name, operations.recipient, operations.company, operations.owner, operations.unit_loc, operations.amount, operations.payment_stat, operations.approval_stat FROM operations INNER JOIN assets ON assets.status LIKE 'In Transit%' AND assets.id = operations.asset_id AND operations.op_type LIKE 'Move'"
+						elif x == 1:
+							command = "SELECT operations.id, operations.receipt_no, operations.op_type, operations.username, operations.authorized_by, operations.asset_id, operations.image, operations.asset_name, operations.recipient, operations.company, operations.owner, operations.unit_loc, operations.amount, operations.payment_stat, operations.approval_stat FROM operations INNER JOIN assets ON assets.status LIKE 'In Transit%' AND assets.id = operations.asset_id AND operations.op_type LIKE 'Sold'"
+						elif x == 2:
+							command = "SELECT operations.id, operations.receipt_no, operations.op_type, operations.username, operations.authorized_by, operations.asset_id, operations.image, operations.asset_name, operations.recipient, operations.company, operations.owner, operations.unit_loc, operations.amount, operations.payment_stat, operations.approval_stat FROM operations INNER JOIN assets ON assets.status LIKE 'In Transit%' AND assets.id = operations.asset_id AND operations.op_type LIKE 'Disposed'"
+						elif x == 3:
+							command = "SELECT operations.id, operations.receipt_no, operations.op_type, operations.username, operations.authorized_by, operations.asset_id, operations.image, operations.asset_name, operations.recipient, operations.company, operations.owner, operations.unit_loc, operations.amount, operations.payment_stat, operations.approval_stat FROM operations INNER JOIN assets ON assets.status LIKE 'In Transit%' AND assets.id = operations.asset_id AND operations.op_type LIKE 'Borrowed'"
+						elif x == 4:
+							command = "SELECT operations.id, operations.receipt_no, operations.op_type, operations.username, operations.authorized_by, operations.asset_id, operations.image, operations.asset_name, operations.recipient, operations.company, operations.owner, operations.unit_loc, operations.amount, operations.payment_stat, operations.approval_stat FROM operations INNER JOIN assets ON assets.status LIKE 'In Transit%' AND assets.id = operations.asset_id AND operations.op_type LIKE 'Lent'"
+
+						filters = " AND "
+					if len(receipt_num) > 0:
+						filters += "operations.receipt_no = '" + str(receipt_num) + "'"
+					if len(name) > 0:
+						if filters != " WHERE " and filters != " AND ":
+							filters += " AND "
+						filters += "operations.asset_name = '" + str(name) + "'"
+					if len(owner) > 0:
+						if filters != " WHERE " and filters != " AND ":
+							filters += " AND "
+						filters += "operations.owner = '" + str(owner) + "'"
+					if len(location) > 0:
+						if filters != " WHERE " and filters != " AND ":
+							filters += " AND "
+						filters += "operations.unit_loc = '" + str(location) + "'"
+					if len(op_type) > 0:
+						if filters != " WHERE " and filters != " AND ":
+							filters += " AND "
+						if op_type == "Cancelled":
+							filters += "operations.op_type LIKE '" + str(op_type) + "%'"
+						else:
+							filters += "operations.op_type = '" + str(op_type) + "'"
+					if filters != " WHERE " and filters != " AND ":
+						command += filters
+
+					self.cursor.execute(command)
+					d = self.cursor.fetchall()
+					# print(d)
+					if len(d) != 0:
+						e = e + d
+				return e
 		except Error:
 			print("Failed to retrieve record/s")

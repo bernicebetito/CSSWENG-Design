@@ -256,7 +256,7 @@ class receiveAsset():
         self.receive_table_contents.append(curr_row)
 
         self.root.table_image = []
-        receive = self.database.viewTable(2, filter_val)
+        receive = self.database.viewTable(3, filter_val)
         if type(receive) == list:
             for row in range(len(receive)):
                 curr_row = []
