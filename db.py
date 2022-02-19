@@ -361,21 +361,14 @@ class Database():
 		self.db.commit()
 
 	def importToExcel(self, assets_filepath, ops_filepath, photos_dir):
-		print("emptying")
 		self.emptyTable("assets")
 		self.emptyTable("operations")
 
-		print("opening ops")
 		# Import Operations
 		wb = xlrd.open_workbook(ops_filepath)
-
-		print("getting ops sheet")
 		sheet = wb.sheet_by_index(0)
 
-		print("for loop ops")
-		print(f"len of sheet:\t{sheet.nrows}")
 		for i in range(1, sheet.nrows):
-			print(f"i\t{i}")
 			# Import image from folder of asset images
 			img = self.importImagesfromFolder(photos_dir, sheet.cell_value(i, 6))
 			if img is None:
@@ -387,17 +380,10 @@ class Database():
 							   sheet.cell_value(i, 10), sheet.cell_value(i, 11), sheet.cell_value(i, 12),
 							   sheet.cell_value(i, 13), img, sheet.cell_value(i, 14))
 
-		print("opening assets")
 		# Import Assets
 		wb = xlrd.open_workbook(assets_filepath)
-
-		print("getting assets sheet")
 		sheet = wb.sheet_by_index(0)
-
-		print("for loop assets")
-		print(f"len of sheet:\t{sheet.nrows}")
 		for i in range(1, sheet.nrows):
-			print(f"i\t{i}")
 			# Import image from folder of asset images
 			img = self.importImagesfromFolder(photos_dir, sheet.cell_value(i, 1))
 			if img is None:
