@@ -256,13 +256,13 @@ class receiveAsset():
         self.receive_table_contents.append(curr_row)
 
         self.root.table_image = []
-        receive = self.database.viewTable(3, filter_val)
+        receive = self.database.viewTable(2, filter_val)
         if type(receive) == list:
             for row in range(len(receive)):
                 curr_row = []
                 for column in range(1, len(receive[row]) - 1):
                     if type(receive[row][column]) == bytes:
-                        filepath = self.database.readBLOB(receive[row][5])
+                        filepath = self.database.readBLOB(receive[row][5], False)
                         image = Image.open(filepath)
                         resized_img = image.resize((50, 50), Image.ANTIALIAS)
                         table_image = ImageTk.PhotoImage(resized_img)
@@ -394,7 +394,7 @@ class deleteAsset():
                 curr_row = []
                 for column in range(len(delete[row])):
                     if type(delete[row][column]) == bytes:
-                        filepath = self.database.readBLOB(delete[row][0])
+                        filepath = self.database.readBLOB(delete[row][0], True)
                         image = Image.open(filepath)
                         resized_img = image.resize((50, 50), Image.ANTIALIAS)
                         table_image = ImageTk.PhotoImage(resized_img)
@@ -570,7 +570,7 @@ class findAsset():
                 curr_row = []
                 for column in range(len(findAsset[row])):
                     if type(findAsset[row][column]) == bytes:
-                        filepath = self.database.readBLOB(findAsset[row][0])
+                        filepath = self.database.readBLOB(findAsset[row][0], True)
                         image = Image.open(filepath)
                         resized_img = image.resize((50, 50), Image.ANTIALIAS)
                         table_image = ImageTk.PhotoImage(resized_img)
@@ -802,7 +802,6 @@ class findAsset():
 
         return True
 
-
     def operationSuccess(self):
        
         find_filepath = []
@@ -855,6 +854,7 @@ class findAsset():
             self.database.createReceipt(self.receipt_no, self.operation, self.user, "Authorized", asset_id, self.find_assets[x][2], self.recipient, self.company, self.owner, self.location, quantity, self.find_assets[x][8], image, "Unapproved")
 
         return False
+
 
 class updateAsset():
     def __init__(self, root):
@@ -1011,7 +1011,7 @@ class updateAsset():
                 curr_row = []
                 for column in range(len(update[row])):
                     if type(update[row][column]) == bytes:
-                        filepath = self.database.readBLOB(update[row][0])
+                        filepath = self.database.readBLOB(update[row][0], True)
                         image = Image.open(filepath)
                         resized_img = image.resize((50, 50), Image.ANTIALIAS)
                         table_image = ImageTk.PhotoImage(resized_img)
@@ -1091,7 +1091,7 @@ class updateAsset():
 
         filter_val = {"asset_name": "", "company": "", "owner": "", "location": "", "pay_status": "", "status": ""}
         update = self.database.viewTable(1, filter_val)
-        filepath = self.database.readBLOB(update[self.asset_index][0])
+        filepath = self.database.readBLOB(update[self.asset_index][0], True)
 
         self.update_photo_filename = filepath
 

@@ -58,7 +58,7 @@ class History():
                 curr_row = []
                 for column in range(6, len(history[row]) - 1):
                     if type(history[row][column]) == bytes:
-                        filepath = self.database.readBLOB(history[row][5])
+                        filepath = self.database.readBLOB(history[row][5], False)
                         image = Image.open(filepath)
                         resized_img = image.resize((50, 50), Image.ANTIALIAS)
                         table_image = ImageTk.PhotoImage(resized_img)
