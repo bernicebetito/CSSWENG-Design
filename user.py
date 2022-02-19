@@ -242,8 +242,8 @@ class manageUser():
 
         if len(self.new_password.get()) > 0 and len(self.confirm_password.get()) > 0:
             if self.new_password.get() == self.confirm_password.get():
-                if self.new_password.get() != self.manage_table_contents[self.selected_user + 1][3]:
-                    if self.database.changePassword(self.manage_table_contents[self.selected_user + 1][1], self.confirm_password.get()):
+                if self.new_password.get() != self.manage_table_contents[self.selected_index][3]:
+                    if self.database.changePassword(self.manage_table_contents[self.selected_index][1], self.confirm_password.get()):
                         return True
                     else:
                         self.change_error_label.config(text="Error Updating Password")
