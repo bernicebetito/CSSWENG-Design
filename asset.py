@@ -257,6 +257,7 @@ class receiveAsset():
 
         self.root.table_image = []
         receive = self.database.viewTable(2, filter_val)
+        #print(receive)
         if type(receive) == list:
             for row in range(len(receive)):
                 curr_row = []
@@ -822,10 +823,6 @@ class findAsset():
 
         del self.find_assets[0]
 
-        '''
-        op = self.operation
-        self.operation = "In Transit - " + self.operation
-        '''
         currTime = datetime.datetime.now()
 
         for x in range(len(self.find_assets)):
