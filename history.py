@@ -37,14 +37,14 @@ class History():
 
         history_filter = {"receipt_num": "", "asset_name": "", "owner": "", "location": "", "op_type": "", "in_transit": False}
         history_measurements = {"cell_width": 150, "cell_height": 75, "rows": self.getContent(history_filter),
-                                "columns": 8}
+                                "columns": 10}
         self.history_table = table.Table(history_measurements, self.history_canvas, self.history_table_contents)
         self.history_table.setScrollbars(history_table_frame)
         self.history_table.createTable()
         self.history_canvas.configure(scrollregion=self.history_canvas.bbox("all"))
 
     def getContent(self, filter_val):
-        history_table_header = ["Photo", "Asset Name", "Company", "Owner", "Location", "Amount", "Payment Status", "Status"]
+        history_table_header = ["Photo", "Asset Name", "Company", "Owner", "Location", "Amount", "Payment Status", "Status", "Receipt Number", "User"]
         curr_row = []
         self.history_table_contents = []
         for column in history_table_header:
@@ -74,6 +74,8 @@ class History():
                     elif column != 8:
                         curr_row.append(history[row][column])
                 curr_row.append(history[row][2])
+                curr_row.append(history[row][1])
+                curr_row.append(history[row][3])
                 self.history_table_contents.append(curr_row)
             return len(history) + 1
         return 1
