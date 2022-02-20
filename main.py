@@ -123,7 +123,7 @@ def nav():
     if role == "manager":
         nav_bg = Frame(root, bg="#DDDDDD", width=300, height=600)
     else:
-        nav_bg = Frame(root, bg="#DDDDDD", width=300, height=500)
+        nav_bg = Frame(root, bg="#DDDDDD", width=300, height=450)
 
     nav_bg.columnconfigure(0, weight=1)
     nav_bg.place(relx=.5, rely=.5, anchor="center")
@@ -152,13 +152,13 @@ def nav():
         delete_btn.place(relx=.5, rely=0.820, anchor="center")
         logout_btn.place(relx=.5, rely=0.905, anchor="center")
     elif role == "clerk":
-        displayHeader(nav_bg, 0.15, 0.20)
+        displayHeader(nav_bg, 0.15, 0.21)
 
         create_asset_btn.place(relx=.5, rely=0.350, anchor="center")
-        find_btn.place(relx=.5, rely=0.450, anchor="center")
-        receive_btn.place(relx=.5, rely=0.550, anchor="center")
-        update_btn.place(relx=.5, rely=0.650, anchor="center")
-        import_btn.place(relx=.5, rely=0.750, anchor="center")
+        find_btn.place(relx=.5, rely=0.470, anchor="center")
+        receive_btn.place(relx=.5, rely=0.590, anchor="center")
+        update_btn.place(relx=.5, rely=0.710, anchor="center")
+        #import_btn.place(relx=.5, rely=0.750, anchor="center")
         logout_btn.place(relx=.5, rely=0.850, anchor="center")
 
 
