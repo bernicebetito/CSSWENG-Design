@@ -324,6 +324,7 @@ class Database():
 
 			self.cursor.execute("SELECT asset_id FROM operations WHERE id = '" + str(op_id) + "'")
 			record = self.cursor.fetchone()
+
 			upd_query = "UPDATE assets SET status = 'Available' WHERE ID = '" + str(record[0]) + "'"
 			self.cursor.execute(upd_query)
 			self.db.commit()
@@ -469,7 +470,7 @@ class Database():
 				command = "SELECT id, receipt_no, op_type, username, authorized_by, asset_id, image, asset_name, recipient, company, owner, unit_loc, amount, payment_stat, approval_stat FROM operations"
 				filters = " WHERE "
 				if in_transit:
-					command = "SELECT MAX(operations.id), operations.receipt_no, operations.op_type, operations.username, operations.authorized_by, operations.asset_id, operations.image, operations.asset_name, operations.recipient, operations.company, operations.owner, operations.unit_loc, operations.amount, operations.payment_stat, operations.approval_stat FROM operations INNER JOIN assets ON assets.status LIKE 'In Transit%' AND assets.id = operations.asset_id AND operations.op_type IN ('Move', 'Sold', 'Disposed', 'Borrowed', 'Lent') GROUP BY operations.asset_id"
+					command = "SELECT opsA.id, opsA.receipt_no, opsA.op_type, opsA.username, opsA.authorized_by, opsA.asset_id, opsA.image, opsA.asset_name, opsA.recipient, opsA.company, opsA.owner, opsA.unit_loc, opsA.amount, opsA.payment_stat, opsA.approval_stat FROM operations as opsA INNER JOIN (SELECT max(id) as max_id, receipt_no, op_type, username, authorized_by, asset_id, image, asset_name, recipient, company, owner, unit_loc, amount, payment_stat, approval_stat FROM operations GROUP BY asset_id ) opsB ON opsA.id = max_id INNER JOIN assets ON assets.status LIKE 'In Transit%' AND assets.id = opsA.asset_id AND opsA.op_type IN ('Move', 'Sold', 'Disposed', 'Borrowed', 'Lent')"
 					filters = " AND "
 				if len(receipt_num) > 0:
 					filters += "operations.receipt_no = '" + str(receipt_num) + "'"
