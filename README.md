@@ -18,17 +18,17 @@ This project is a tool to help manage the inventory of Prime Properties.
   * Database driver to connect MySQL Database to the Python program
   * To download in **Windows**: `pip install mysql-connector`
 4. pymysql
-   * Python MySQL library.
-   * To download in **Windows**: `pip install PyMySQL`
+  * Python MySQL library.
+  * To download in **Windows**: `pip install PyMySQL`
 5. xlrd
-   * Python library for reading data and formatting information from Excel files.
-   * To download in **Windows**: `pip install xlrd==1.2.0`
+  * Python library for reading data and formatting information from Excel files.
+  * To download in **Windows**: `pip install xlrd==1.2.0`
 6. pandas.io.sql
-   * Python library for data manipulation and analysis.
-   * To download in **Windows**: `pip install pandas`
+  * Python library for data manipulation and analysis.
+  * To download in **Windows**: `pip install pandas`
 7. PyInstaller
-   * Converts Python programs into executables.
-   * To download in **Windows**: `pip install pyinstaller`
+  * Converts Python programs into executables.
+  * To download in **Windows**: `pip install pyinstaller`
 
 ## Executable file
 Open Windows Powershell and run the following command:
