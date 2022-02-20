@@ -213,7 +213,7 @@ def manageUser():
 
     manage_page = user.manageUser(root)
     manage_page.displayUsers(manage_form_frame, field_label, buttonA, buttonB)
-    manage_page.displayTable(manage_table_frame)
+    manage_page.displayTable(manage_table_frame, manage_bg)
 
     frames = [manage_bg, manage_form_frame, manage_table_frame]
 

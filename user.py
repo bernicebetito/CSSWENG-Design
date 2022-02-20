@@ -103,14 +103,15 @@ class manageUser():
         clear_btn = Button(manage_form_frame, text="Clear Filter", width=13, command=lambda: self.filterTable(), bg="#404040", fg="#FFFFFF", bd=0, font=buttonB)
         clear_btn.place(relx=.5, rely=0.555, anchor="center")
 
-    def displayTable(self, manage_table_frame):
+    def displayTable(self, manage_table_frame, manage_bg):
         self.manage_canvas = Canvas(manage_table_frame, bg="#191919", width=605, height=500)
-        manage_table_frame = manage_table_frame
+        self.manage_table_frame = manage_table_frame
+        self.manage_bg = manage_bg
 
         manage_filter = {"username": "", "role": ""}
         manage_measurements = {"cell_width": 150, "cell_height": 75, "rows": self.getContent(manage_filter), "columns": 4}
         self.manage_table = table.Table(manage_measurements, self.manage_canvas, self.manage_table_contents)
-        self.manage_table.setScrollbars(manage_table_frame)
+        self.manage_table.setScrollbars(self.manage_table_frame)
         self.manage_table.optionsTable(11, "radio")
         self.manage_canvas.configure(scrollregion=self.manage_canvas.bbox("all"))
 
@@ -134,7 +135,10 @@ class manageUser():
         return 1
 
     def filterTable(self):
-        self.manage_canvas.delete("all")
+        self.manage_table_frame.destroy()
+        self.manage_table_frame = Frame(self.manage_bg, bg="#191919", width=605, height=500)
+        self.manage_table_frame.place(relx=.665, rely=.5, anchor="center")
+        self.manage_canvas = Canvas(self.manage_table_frame, bg="#191919", width=605, height=500)
 
         if len(self.manage_username.get()) > 0 or self.manage_role_int.get() > 0:
             role = ""
@@ -148,8 +152,10 @@ class manageUser():
         else:
             manage_filter = {"username": "", "role": ""}
 
+        self.manage_table.canvas = self.manage_canvas
         self.manage_table.rows = self.getContent(manage_filter)
         self.manage_table.contents = self.manage_table_contents
+        self.manage_table.setScrollbars(self.manage_table_frame)
         self.manage_table.optionsTable(11, "radio")
         self.manage_canvas.configure(scrollregion=self.manage_canvas.bbox("all"))
 

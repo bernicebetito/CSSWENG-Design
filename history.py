@@ -1,6 +1,6 @@
 from tkinter import *
 from PIL import Image, ImageTk
-import os, table, db
+import table, db
 
 class History():
     def __init__(self, root):

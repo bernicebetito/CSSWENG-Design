@@ -234,8 +234,10 @@ class receiveAsset():
         clear_btn = Button(receive_form_frame, text="Clear Filter", width=13, command=lambda: self.filterTable(), bg="#404040", fg="#FFFFFF", bd=0, font=buttonB)
         clear_btn.place(relx=.5, rely=0.665, anchor="center")
 
-    def displayTable(self, receive_table_frame):
+    def displayTable(self, receive_table_frame, receive_bg):
         self.receive_canvas = Canvas(receive_table_frame, bg="#191919", width=825, height=500)
+        self.receive_table_frame = receive_table_frame
+        self.receive_bg = receive_bg
 
         receive_filter = {"receipt_num": "", "recipient": "", "asset_name": "", "owner": "", "location": "", "op_type": "", "in_transit": True}
         receive_measurements = {"cell_width": 150, "cell_height": 75, "rows": self.getContent(receive_filter),
@@ -283,7 +285,10 @@ class receiveAsset():
         return 1
 
     def filterTable(self):
-        self.receive_canvas.delete("all")
+        self.receive_table_frame.destroy()
+        self.receive_table_frame = Frame(self.receive_bg, bg="#191919", width=825, height=500)
+        self.receive_table_frame.place(relx=.625, rely=.5, anchor="center")
+        self.receive_canvas = Canvas(self.receive_table_frame, bg="#191919", width=825, height=500)
 
         if len(self.receive_receipt_num.get()) > 0 or len(self.receive_asset_name.get()) > 0 or len(self.receive_owner.get()) > 0:
             receive_filter = {"receipt_num": self.receive_receipt_num.get(), "asset_name": self.receive_asset_name.get(),
@@ -294,8 +299,10 @@ class receiveAsset():
         else:
             receive_filter = {"receipt_num": "", "asset_name": "", "owner": "", "location": "", "op_type": "", "in_transit": True}
 
+        self.receive_table.canvas = self.receive_canvas
         self.receive_table.rows = self.getContent(receive_filter)
         self.receive_table.contents = self.receive_table_contents
+        self.receive_table.setScrollbars(self.receive_table_frame)
         self.receive_table.optionsTable(25, "checkbox")
         self.receive_canvas.configure(scrollregion=self.receive_canvas.bbox("all"))
 
