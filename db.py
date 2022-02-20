@@ -493,6 +493,8 @@ class Database():
 						filters += "operations.op_type LIKE '" + str(op_type) + "%'"
 					else:
 						filters += "operations.op_type = '" + str(op_type) + "'"
+				if in_transit:
+					filters = filters.replace("operations", "opsA")
 				if filters != " WHERE " and filters != " AND ":
 					command += filters
 
