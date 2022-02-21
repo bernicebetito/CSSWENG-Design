@@ -16,7 +16,8 @@ This project is a tool to help manage the inventory of Prime Properties.
   * To download in **Windows**: [Pip for Windows](https://pip.pypa.io/en/stable/installation/)
 3. mysql.connector
   * Database driver to connect MySQL Database to the Python program
-  * To download in **Windows**: `pip install mysql-connector`
+  * Could be download and installed with MySQL Workbench
+  * To download in **Windows**: [MySQL Connector/Python](https://dev.mysql.com/downloads/connector/python/)
 4. pymysql
   * Python MySQL library.
   * To download in **Windows**: `pip install PyMySQL`

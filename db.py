@@ -4,13 +4,10 @@ import datetime
 import os
 from mysql.connector import Error
 
-import pymysql
 from pymysql import*
 
-import xlwt
 import xlrd
 import pandas.io.sql as sql
-import openpyxl
 
 class Database():
 	def __init__(self):
